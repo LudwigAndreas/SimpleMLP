@@ -21,10 +21,12 @@ Implementation of a basic multilayer perceptron.
 ## Useful links
 
 [Building a matrix library on C++](https://www.lyndonduong.com/linalg-cpp/)
-[Building a simple MLP on C++](https://lyndonduong.com/mlp-build-cpp/)
-[Training a model on C++](https://www.lyndonduong.com/mlp-train-cpp/)
-[MLP project on github written on C++](https://github.com/davidalbertonogueira/MLP)
 
+[Building a simple MLP on C++](https://lyndonduong.com/mlp-build-cpp/)
+
+[Training a model on C++](https://www.lyndonduong.com/mlp-train-cpp/)
+
+[MLP project on github written on C++](https://github.com/davidalbertonogueira/MLP)
 
 ## Chapter II
 
