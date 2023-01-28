@@ -164,16 +164,27 @@ public:
 };
 
 	/* print methods [or move it to another class] */
+//template <typename Type>
+//std::ostream &operator<<(std::ostream &os, const Matrix<Type> matrix) {
+//	for (size_t r = 0; r < matrix.get_rows(); ++r) {
+//		for (size_t c = 0; c < matrix.get_cols(); ++c) {
+//			os << matrix(r, c) << " ";
+//		}
+//		os << std::endl;
+//	}
+//	os << std::endl;
+//	return os;
+//}
+
 template <typename Type>
-std::ostream &operator<<(std::ostream &os, const Matrix<Type> matrix) {
+void print(Matrix<Type> matrix) {
 	for (size_t r = 0; r < matrix.get_rows(); ++r) {
-		for (size_t c = 0; c < matrix.get_cols(); ++c) {
-			os << matrix(r, c) << " ";
+		for (int c = 0; c < matrix.get_cols(); ++c) {
+			std::cout << matrix(r, c) << " ";
 		}
-		os << std::endl;
+		std::cout << std::endl;
 	}
-	os << std::endl;
-	return os;
+	std::cout << std::endl;
 }
 
 template <typename Type>
