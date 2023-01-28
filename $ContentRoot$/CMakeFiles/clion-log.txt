@@ -1,0 +1,4 @@
+Cannot generate into /Users/landreas/42Course/SimpleMLP/$ContentRoot$
+This directory is already used for 'Debug' profile
+
+Please either delete it manually or select another generation directory
