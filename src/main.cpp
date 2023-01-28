@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 
 	PrintShape(M);
 	std::cout << M << std::endl;
-	std::cout << (M-M) << std::endl;
+	std::cout << (M - M) << std::endl;
 	std::cout << M.multiply_scalar(2.f) << std::endl;
 	std::cout << M.multiply_elementwise(M) << std::endl;
 
