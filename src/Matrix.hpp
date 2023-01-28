@@ -9,41 +9,46 @@
 #include <functional>
 #include <random>
 
-template <typename T>
+template <typename Type>
 class Matrix {
 private:
 	size_t cols;
 	size_t rows;
 	std::tuple<size_t, size_t> shape;
 	int numel = rows * cols;
-	std::vector<T> data;
+	std::vector<Type> data;
 
 public:
 
 	/* constructors */
-	Matrix() : cols(0), rows(0), data({}) { shape = {rows, cols}; };
-
-	Matrix(size_t rows, size_t cols)
-		: cols(cols), rows(rows), data({}) {
-		data.resize(cols * rows, T()); //init empty vector for data
-		shape = {rows, cols};
+	Matrix() : cols(0), rows(0) {
+//		data = std::vector<T>(cols * rows, 0);
+		std::vector<Type> data(cols * rows, Type());
+//		data = std::vector<T>(cols * rows, T());
+		shape = (std::tuple<size_t, size_t>) {rows, cols};
 	}
 
-	Matrix &operator=(const Matrix<T> matrix);
+	Matrix(size_t rows, size_t cols) : cols(cols), rows(rows) {
+//		data = std::vector<T>(cols * rows, T());
+		std::vector<Type> data(cols * rows, Type());
+		shape = (std::tuple<size_t, size_t>) {rows, cols};
+	}
+
+//	Matrix &operator=(const Matrix<T> matrix);
 
 	~Matrix();
 
 	/* getters */
-	size_t get_cols() { return cols; }
+	size_t get_cols() const { return cols; }
 
-	size_t get_rows() { return rows; }
+	size_t get_rows() const { return rows; }
 
-	std::tuple<size_t, size_t> get_shape() { return shape; }
+	std::tuple<size_t, size_t> get_shape() const { return shape; }
 
-	int get_number_of_elements() { return numel; }
+	int get_number_of_elements() const { return numel; }
 
-	T& operator()(size_t row, size_t col) {
-		return data[row * col + col];
+	Type& operator()(size_t row, size_t col) {
+		return data[row * cols + col];
 	}
 
 	/*  linear algebra methods */
@@ -80,7 +85,7 @@ public:
 		return output;
 	}
 
-	Matrix multiply_scalar(T scalar) {
+	Matrix multiply_scalar(Type scalar) {
 		Matrix output((*this));
 		for (size_t r = 0; r < output.get_rows(); ++r) {
 			for (size_t c = 0; c < output.get_cols(); ++c) {
@@ -93,7 +98,7 @@ public:
 	/* Matrix addition */
 	Matrix add(Matrix &target) {
 		assert(shape == target.get_shape());
-		Matrix output(rows, get<1>(target.get_shape()));
+		Matrix output(rows, std::get<1>(target.get_shape()));
 
 		for (size_t r = 0; r < output.get_rows(); ++r) {
 			for (size_t c = 0; c < output.get_cols(); ++c) {
@@ -119,12 +124,12 @@ public:
 	}
 
 
-	Matrix sub(Matrix &target) {
+	Matrix sub(Matrix<Type> &target) {
 		Matrix neg_target = -target;
 		return add(neg_target);
 	}
 
-	Matrix operator-(Matrix &target) {  // for cleaner usage
+	Matrix operator-(Matrix<Type> &target) {  // for cleaner usage
 		return sub(target);
 	}
 
@@ -145,7 +150,7 @@ public:
 		return transpose();
 	}
 
-	Matrix apply_function(const std::function<T(const T &)> &function) {
+	Matrix apply_function(const std::function<Type(const Type &)> &function) {
 		Matrix output((*this));
 		for (size_t r = 0; r < rows; ++r) {
 			for (size_t c = 0; c < cols; ++c) {
@@ -154,13 +159,15 @@ public:
 		}
 		return output;
 	}
-}
+
+
+};
 
 	/* print methods [or move it to another class] */
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const Matrix<T> matrix) {
-	for (size_t r = 0; r < rows; ++r) {
-		for (size_t c = 0; c < cols; ++c) {
+template <typename Type>
+std::ostream &operator<<(std::ostream &os, const Matrix<Type> matrix) {
+	for (size_t r = 0; r < matrix.get_rows(); ++r) {
+		for (size_t c = 0; c < matrix.get_cols(); ++c) {
 			os << matrix(r, c) << " ";
 		}
 		os << std::endl;
@@ -169,9 +176,9 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> matrix) {
 	return os;
 }
 
-template <typename T>
-void PrintShape(Matrix<T> matrix) {
-	std::cout << "Matrix Size([" << matrix.get_rows << ", " << matrix.get_cols << "])" << std::endl;
+template <typename Type>
+void PrintShape(Matrix<Type> matrix) {
+	std::cout << "Matrix Size([" << matrix.get_rows() << ", " << matrix.get_cols() << "])" << std::endl;
 }
 
 
