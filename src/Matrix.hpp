@@ -23,20 +23,22 @@ public:
 	/* constructors */
 	Matrix() : cols(0), rows(0) {
 //		data = std::vector<T>(cols * rows, 0);
-		std::vector<Type> data(cols * rows, Type());
+//		std::vector<Type> data(cols * rows, Type());
 //		data = std::vector<T>(cols * rows, T());
+		data.reserve(0);
 		shape = (std::tuple<size_t, size_t>) {rows, cols};
 	}
 
 	Matrix(size_t rows, size_t cols) : cols(cols), rows(rows) {
 //		data = std::vector<T>(cols * rows, T());
-		std::vector<Type> data(cols * rows, Type());
+//		std::vector<Type> data(cols * rows, Type());
+		data.reserve(cols * rows);
 		shape = (std::tuple<size_t, size_t>) {rows, cols};
 	}
 
 //	Matrix &operator=(const Matrix<T> matrix);
 
-	~Matrix();
+	~Matrix() {}
 
 	/* getters */
 	size_t get_cols() const { return cols; }
@@ -48,7 +50,7 @@ public:
 	int get_number_of_elements() const { return numel; }
 
 	Type& operator()(size_t row, size_t col) {
-		return data[row * cols + col];
+		return data[row * col + col];
 	}
 
 	/*  linear algebra methods */

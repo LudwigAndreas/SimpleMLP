@@ -1,0 +1,3 @@
+/Users/landreas/42Course/SimpleMLP/$ContentRoot$/CMakeFiles/rebuild_cache.dir
+/Users/landreas/42Course/SimpleMLP/$ContentRoot$/CMakeFiles/edit_cache.dir
+/Users/landreas/42Course/SimpleMLP/$ContentRoot$/CMakeFiles/SimpleMLP.dir
