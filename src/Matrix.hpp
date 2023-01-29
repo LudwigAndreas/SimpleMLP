@@ -25,14 +25,14 @@ public:
 //		data = std::vector<T>(cols * rows, 0);
 //		std::vector<Type> data(cols * rows, Type());
 //		data = std::vector<T>(cols * rows, T());
-		data.reserve(0);
+		data.resize(0);
 		shape = (std::tuple<size_t, size_t>) {rows, cols};
 	}
 
 	Matrix(size_t rows, size_t cols) : cols(cols), rows(rows) {
 //		data = std::vector<T>(cols * rows, T());
 //		std::vector<Type> data(cols * rows, Type());
-		data.reserve(cols * rows);
+		data.resize(cols * rows);
 		shape = (std::tuple<size_t, size_t>) {rows, cols};
 	}
 
