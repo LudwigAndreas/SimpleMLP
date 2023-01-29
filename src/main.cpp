@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
 	auto MT = M.T(); // transpose the matrix
 	print(MT);
 	print(MT.matmul(M));  // form symm. pos. def. matrix
+	print(M.apply_function([](float x){ return x+1; }));
 //	std::cout << M << std::endl;
 //	std::cout << (M - M) << std::endl;
 //	std::cout << M.multiply_scalar(2.f) << std::endl;
