@@ -22,21 +22,29 @@ public:
 
 	/* constructors */
 	Matrix() : cols(0), rows(0) {
-//		data = std::vector<T>(cols * rows, 0);
-//		std::vector<Type> data(cols * rows, Type());
-//		data = std::vector<T>(cols * rows, T());
 		data.resize(0);
 		shape = (std::tuple<size_t, size_t>) {rows, cols};
 	}
 
 	Matrix(size_t rows, size_t cols) : cols(cols), rows(rows) {
-//		data = std::vector<T>(cols * rows, T());
-//		std::vector<Type> data(cols * rows, Type());
 		data.resize(cols * rows);
 		shape = (std::tuple<size_t, size_t>) {rows, cols};
 	}
 
-//	Matrix &operator=(const Matrix<T> matrix);
+	Matrix &operator=(const Matrix<Type> matrix) {
+		this->rows = matrix.get_rows();
+		this->cols = matrix.get_cols();
+		this->shape = (std::tuple<size_t, size_t>) {rows, cols};
+		this->numel = cols * rows;
+		data.clear();
+		data.resize(cols * rows);
+		for (int c = 0; c < cols; ++c) {
+			for (int r = 0; r < rows; ++r) {
+				(*this)(c * r) = matrix(r, c);
+			}
+		}
+		return (*this);
+	}
 
 	~Matrix() {}
 
@@ -50,7 +58,11 @@ public:
 	int get_number_of_elements() const { return numel; }
 
 	Type& operator()(size_t row, size_t col) {
-		return data[row * col + col];
+		return data[row * cols + col];
+	}
+
+	const Type& operator()(size_t row, size_t col) const{
+		return data[row * cols + col];
 	}
 
 	/*  linear algebra methods */
@@ -166,27 +178,16 @@ public:
 };
 
 	/* print methods [or move it to another class] */
-//template <typename Type>
-//std::ostream &operator<<(std::ostream &os, const Matrix<Type> matrix) {
-//	for (size_t r = 0; r < matrix.get_rows(); ++r) {
-//		for (size_t c = 0; c < matrix.get_cols(); ++c) {
-//			os << matrix(r, c) << " ";
-//		}
-//		os << std::endl;
-//	}
-//	os << std::endl;
-//	return os;
-//}
-
 template <typename Type>
-void print(Matrix<Type> matrix) {
+std::ostream &operator<<(std::ostream &os, const Matrix<Type> &matrix) {
 	for (size_t r = 0; r < matrix.get_rows(); ++r) {
-		for (int c = 0; c < matrix.get_cols(); ++c) {
-			std::cout << matrix(r, c) << " ";
+		for (size_t c = 0; c < matrix.get_cols(); ++c) {
+			os << matrix(r, c) << " ";
 		}
-		std::cout << std::endl;
+		os << std::endl;
 	}
-	std::cout << std::endl;
+	os << std::endl;
+	return os;
 }
 
 template <typename Type>
