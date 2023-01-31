@@ -8,4 +8,4 @@ include_directories(src)
 add_executable(SimpleMLP
         src/main.cpp
         src/Matrix.cpp
-        src/Matrix.hpp)
+        src/Matrix.hpp src/MLPMatrixModel.cpp src/MLPMatrixModel.hpp)

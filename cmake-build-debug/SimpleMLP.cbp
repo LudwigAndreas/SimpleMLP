@@ -86,6 +86,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/Users/lsherry/42Course/SimpleMLP/src/MLPMatrixModel.cpp">
+			<Option target="SimpleMLP"/>
+		</Unit>
+		<Unit filename="/Users/lsherry/42Course/SimpleMLP/src/MLPMatrixModel.hpp">
+			<Option target="SimpleMLP"/>
+		</Unit>
 		<Unit filename="/Users/lsherry/42Course/SimpleMLP/src/Matrix.cpp">
 			<Option target="SimpleMLP"/>
 		</Unit>
