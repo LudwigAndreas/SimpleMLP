@@ -36,28 +36,16 @@ struct mtx {
 int main(int argc, char **argv) {
 	(void )argc;
 	(void )argv;
-	Matrix<float> M = mtx<float>::randn(2, 2);
+	Matrix<float> M = mtx<float>::randn(3, 3);
 
 	PrintShape(M);
-	print(M); // print the OG matrix
+	std::cout << M << std::endl;
+	std::cout << (M - M) << std::endl;
+	std::cout << M.multiply_scalar(2.f) << std::endl;
+	std::cout << M.multiply_elementwise(M) << std::endl;
 
-	print(M-M);  // print M minus itself
-	print(M+M); // print its sum
-	print(M.multiply_scalar(2.f));  // print 2x itself
-
-	print(M.multiply_elementwise(M)); // mult M w itself
-
-	auto MT = M.T(); // transpose the matrix
-	print(MT);
-	print(MT.matmul(M));  // form symm. pos. def. matrix
-	print(M.apply_function([](float x){ return x+1; }));
-//	std::cout << M << std::endl;
-//	std::cout << (M - M) << std::endl;
-//	std::cout << M.multiply_scalar(2.f) << std::endl;
-//	std::cout << M.multiply_elementwise(M) << std::endl;
-//
-//	Matrix<float> MT = M.T();
-//	std::cout << MT << std::endl;
-//	std::cout << MT.matmul(M) << std::endl;
-//	std::cout << M.apply_function([](float x){ return x-x; }) << std::endl;
+	Matrix<float> MT = M.T();
+	std::cout << MT << std::endl;
+	std::cout << MT.matmul(M) << std::endl;
+	std::cout << M.apply_function([](float x){ return x-x; }) << std::endl;
 }
