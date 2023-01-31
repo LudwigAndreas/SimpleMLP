@@ -129,6 +129,30 @@ SimpleMLP/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleMLP.dir/build.make CMakeFiles/SimpleMLP.dir/build
 .PHONY : SimpleMLP/fast
 
+src/MLPMatrixModel.o: src/MLPMatrixModel.cpp.o
+.PHONY : src/MLPMatrixModel.o
+
+# target to build an object file
+src/MLPMatrixModel.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleMLP.dir/build.make CMakeFiles/SimpleMLP.dir/src/MLPMatrixModel.cpp.o
+.PHONY : src/MLPMatrixModel.cpp.o
+
+src/MLPMatrixModel.i: src/MLPMatrixModel.cpp.i
+.PHONY : src/MLPMatrixModel.i
+
+# target to preprocess a source file
+src/MLPMatrixModel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleMLP.dir/build.make CMakeFiles/SimpleMLP.dir/src/MLPMatrixModel.cpp.i
+.PHONY : src/MLPMatrixModel.cpp.i
+
+src/MLPMatrixModel.s: src/MLPMatrixModel.cpp.s
+.PHONY : src/MLPMatrixModel.s
+
+# target to generate assembly for a file
+src/MLPMatrixModel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleMLP.dir/build.make CMakeFiles/SimpleMLP.dir/src/MLPMatrixModel.cpp.s
+.PHONY : src/MLPMatrixModel.cpp.s
+
 src/Matrix.o: src/Matrix.cpp.o
 .PHONY : src/Matrix.o
 
@@ -186,6 +210,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... SimpleMLP"
+	@echo "... src/MLPMatrixModel.o"
+	@echo "... src/MLPMatrixModel.i"
+	@echo "... src/MLPMatrixModel.s"
 	@echo "... src/Matrix.o"
 	@echo "... src/Matrix.i"
 	@echo "... src/Matrix.s"
