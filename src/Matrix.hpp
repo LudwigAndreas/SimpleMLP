@@ -40,7 +40,7 @@ namespace s21 {
 			data.resize(cols * rows);
 			for (int c = 0; c < cols; ++c) {
 				for (int r = 0; r < rows; ++r) {
-					(*this)(c * r) = matrix(r, c);
+					(*this)(r, c) = matrix(r, c);
 				}
 			}
 			return (*this);
@@ -69,7 +69,7 @@ namespace s21 {
 
 		/* Matrix multiplication */
 		Matrix matmul(Matrix &target) {
-			assert(cols == target.get_cols());
+			assert(cols == target.get_rows());
 			Matrix output(rows, target.get_cols());
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -175,7 +175,9 @@ namespace s21 {
 			return output;
 		}
 
-
+		std::vector<Type> ToVector() {
+			return data;
+		}
 	};
 
 	/* print methods [or move it to another class] */
@@ -197,5 +199,26 @@ namespace s21 {
 				  << matrix.get_cols() << "])" << std::endl;
 	}
 
+	template <typename T>
+	static Matrix<T> GenerateNDMatrix(size_t rows, size_t cols) {
+		Matrix<T> M(rows, cols);
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+
+		// init Gaussian distr. w/ N(mean=0, stdev=1/sqrt(numel))
+		T n(M.get_number_of_elements());
+		T stdev(1 / sqrt(n));
+		std::normal_distribution <T> d(0, stdev);
+
+		// fill each element w/ draw from distribution
+		for (size_t r = 0; r < rows; ++r) {
+			for (size_t c = 0; c < cols; ++c) {
+				M(r, c) = d(gen);
+			}
+		}
+		return M;
+	}
 }
+
 #endif

@@ -7,45 +7,37 @@
 #include <tuple>
 
 #include "Matrix.hpp"
-
-template <typename T>
-struct mtx {
-	static Matrix<T> randn(size_t rows, size_t cols) {
-		Matrix<T> M(rows, cols);
-
-		std::random_device rd;
-		std::mt19937 gen(rd());
-
-		// init Gaussian distr. w/ N(mean=0, stdev=1/sqrt(numel))
-		T n(M.get_number_of_elements());
-		T stdev(1 / sqrt(n));
-		std::normal_distribution <T> d(0, stdev);
-
-		// fill each element w/ draw from distribution
-		for (size_t r = 0; r < rows; ++r) {
-			for (size_t c = 0; c < cols; ++c) {
-				M(r, c) = d(gen);
-			}
-		}
-		return M;
-	}
-};
+#include "IMLPModel.hpp"
+#include "MLPMatrixModel.hpp"
 
 
 
 int main(int argc, char **argv) {
 	(void )argc;
 	(void )argv;
-	Matrix<float> M = mtx<float>::randn(3, 3);
+//	s21::Matrix<float> M = s21::GenerateNDMatrix<float>(3, 3);
+//
+//	PrintShape(M);
+//	std::cout << M << std::endl;
+//	std::cout << (M - M) << std::endl;
+//	std::cout << M.multiply_scalar(2.f) << std::endl;
+//	std::cout << M.multiply_elementwise(M) << std::endl;
+//
+//	s21::Matrix<float> MT = M.T();
+//	std::cout << MT << std::endl;
+//	std::cout << MT.matmul(M) << std::endl;
+//	std::cout << M.apply_function([](float x){ return x-x; }) << std::endl;
 
-	PrintShape(M);
-	std::cout << M << std::endl;
-	std::cout << (M - M) << std::endl;
-	std::cout << M.multiply_scalar(2.f) << std::endl;
-	std::cout << M.multiply_elementwise(M) << std::endl;
+	s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(1, 1, 15, 3, .5f);
 
-	Matrix<float> MT = M.T();
-	std::cout << MT << std::endl;
-	std::cout << MT.matmul(M) << std::endl;
-	std::cout << M.apply_function([](float x){ return x-x; }) << std::endl;
+	const float PI = 3.14159;
+	for (int i = 0; i < 10000; ++i) {
+		auto x = s21::GenerateNDMatrix<float>(1, 1).multiply_scalar(PI);
+		auto y = x.apply_function([](float v) -> float {return 2 * v; });
+
+		auto y_hat = model->Forward(x);
+		model->Backward(y);
+
+		std::cout << "X = " << x << "Expected: " << y << "Result:   "<< y_hat[0] << "\n\nError:    " << (y(0, 0) - y_hat[0]) * (y(0, 0) - y_hat[0]) << std::endl << "---------------------------" << std::endl;
+	}
 }
