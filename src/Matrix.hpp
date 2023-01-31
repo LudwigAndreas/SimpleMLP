@@ -159,8 +159,8 @@ public:
 	/* print methods [or move it to another class] */
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const Matrix<T> matrix) {
-	for (size_t r = 0; r < rows; ++r) {
-		for (size_t c = 0; c < cols; ++c) {
+	for (size_t r = 0; r < matrix.rows; ++r) {
+		for (size_t c = 0; c < matrix.cols; ++c) {
 			os << matrix(r, c) << " ";
 		}
 		os << std::endl;
