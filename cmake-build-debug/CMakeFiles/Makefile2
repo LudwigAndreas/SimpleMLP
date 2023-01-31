@@ -81,12 +81,12 @@ clean: CMakeFiles/SimpleMLP.dir/clean
 CMakeFiles/SimpleMLP.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleMLP.dir/build.make CMakeFiles/SimpleMLP.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SimpleMLP.dir/build.make CMakeFiles/SimpleMLP.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/lsherry/42Course/SimpleMLP/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target SimpleMLP"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/lsherry/42Course/SimpleMLP/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4 "Built target SimpleMLP"
 .PHONY : CMakeFiles/SimpleMLP.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/SimpleMLP.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsherry/42Course/SimpleMLP/cmake-build-debug/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsherry/42Course/SimpleMLP/cmake-build-debug/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/SimpleMLP.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/lsherry/42Course/SimpleMLP/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/SimpleMLP.dir/rule
