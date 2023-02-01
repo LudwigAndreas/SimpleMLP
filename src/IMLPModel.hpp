@@ -12,8 +12,6 @@ namespace s21 {
 	public:
 		virtual std::vector<T> Forward(Matrix<T>) = 0;
 		virtual void Backward(Matrix<T>) = 0;
-		virtual int Import() = 0;
-		virtual int Export() = 0;
 		virtual int Train() = 0;
 		virtual int Test() = 0;
 		virtual int Predict() = 0;

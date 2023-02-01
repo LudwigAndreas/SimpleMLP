@@ -63,6 +63,26 @@ namespace s21 {
 
 		int get_number_of_elements() const { return numel; }
 
+		void set_cols(size_t cols) {
+			Matrix::cols = cols;
+		}
+
+		void set_rows(size_t rows) {
+			Matrix::rows = rows;
+		}
+
+		void set_shape(const std::tuple<size_t, size_t> &shape) {
+			Matrix::shape = shape;
+		}
+
+		void set_numel(int numel) {
+			Matrix::numel = numel;
+		}
+
+		void set_data(const std::vector<Type> &data) {
+			Matrix::data = data;
+		}
+
 		Type &operator()(size_t row, size_t col) {
 			return data[row * cols + col];
 		}
@@ -126,7 +146,8 @@ namespace s21 {
 
 		/* Matrix addition */
 		Matrix add(Matrix &target) {
-			assert(shape == target.get_shape());
+			if (shape != target.get_shape())
+				throw std::exception();
 			Matrix output(rows, std::get<1>(target.get_shape()));
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
