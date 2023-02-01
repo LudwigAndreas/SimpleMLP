@@ -20,7 +20,7 @@ namespace s21 {
 		std::vector<Matrix<T>> bias;
 		std::vector<Matrix<T>> weight_matrices;
 		std::vector<Matrix<T>> neuron_values;
-		std::vector<Matrix<T>> error;
+//		std::vector<Matrix<T>> error;
 
 		float lr;
 
@@ -37,7 +37,7 @@ namespace s21 {
 			}
 			for (size_t i = 0; i < units_per_layer.size(); ++i) {
 				neuron_values.push_back(Matrix<T>(units_per_layer[i], 1));
-				error.push_back(Matrix<T>(units_per_layer[i], 1));
+//				error.push_back(Matrix<T>(units_per_layer[i], 1));
 			}
 		}
 
@@ -61,25 +61,53 @@ namespace s21 {
 
 		MLPMatrixModel(MLPMatrixModel<T> const &) = delete;
 
-//
-//		const std::vector<size_t> &getUnitsPerLayer() const {
-//			return units_per_layer;
-//		}
-//
-//		const std::vector<Matrix<T>> &getBiasVectors() const {
-//			return bias_vectors;
-//		}
-//
-//		const std::vector<Matrix<T>> &getWeightMatrices() const {
-//			return weight_matrices;
-//		}
-//
-//		const std::vector<Matrix<T>> &getActivations() const {
-//			return activations;
-//		}
 
-		float getLr() const {
+		const std::vector<size_t> &get_units_per_layer() const {
+			return units_per_layer;
+		}
+
+		const std::vector<Matrix<T>> &get_bias_vectors() const {
+			return bias;
+		}
+
+		const std::vector<Matrix<T>> &get_weight_matrices() const {
+			return weight_matrices;
+		}
+
+		const std::vector<Matrix<T>> &get_neuron_values() const {
+			return neuron_values;
+		}
+
+		float get_lr() const {
 			return lr;
+		}
+
+		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer) {
+			units_per_layer = unitsPerLayer;
+			neuron_values.resize(0);
+			for (size_t i = 0; i < units_per_layer.size(); ++i)
+				neuron_values.push_back(Matrix<T>(units_per_layer[i], 1));
+			//TODO: add check for setter logic
+		}
+
+		void set_lr(float lr) {
+			MLPMatrixModel::lr = lr;
+		}
+
+		void set_bias(std::vector<Matrix<T>> bias) {
+			this->bias = bias;
+			//TODO: add check for setter logic
+		}
+
+		void set_weight_martices(std::vector<Matrix<T>> weight_matrices) {
+			this->weight_matrices = weight_matrices;
+
+			//TODO: add check for setter logic
+		}
+
+		void set_neuron_values(std::vector<Matrix<T>> neuron_values) {
+			this->neuron_values = neuron_values;
+			//TODO: add check for setter logic
 		}
 
 //		std::vector<T> Forward(Matrix<T> x) override {
@@ -154,16 +182,6 @@ namespace s21 {
 				weight_matrices[i] = weight_matrices[i].add(weight_gradients);
 				diff = prev_errors;
 			}
-		}
-
-		int Import() override {
-			return 0;
-		}
-
-	public:
-
-		int Export() override {
-			return 0;
 		}
 
 		int Train() override {
