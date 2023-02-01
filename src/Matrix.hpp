@@ -8,6 +8,7 @@
 #include <tuple>
 #include <functional>
 #include <random>
+#include <exception>
 namespace s21 {
 	template<typename Type>
 	class Matrix {
@@ -28,6 +29,11 @@ namespace s21 {
 
 		Matrix(size_t rows, size_t cols) : cols(cols), rows(rows) {
 			data.resize(cols * rows);
+			shape = (std::tuple<size_t, size_t>) {rows, cols};
+		}
+
+		Matrix(std::vector<Type> vector) : cols(1), rows(vector.size()){
+			data = vector;
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
 
@@ -69,7 +75,8 @@ namespace s21 {
 
 		/* Matrix multiplication */
 		Matrix matmul(Matrix &target) {
-			assert(cols == target.get_rows());
+			if (cols != target.get_rows())
+				throw std::exception();
 			Matrix output(rows, target.get_cols());
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -80,6 +87,10 @@ namespace s21 {
 				}
 			}
 			return output;
+		}
+
+		Matrix operator*(Matrix &target) {
+			return matmul(target);
 		}
 
 		Matrix multiply_elementwise(Matrix &target) {
@@ -107,6 +118,10 @@ namespace s21 {
 				}
 			}
 			return output;
+		}
+
+		Matrix operator*(Type &number) {
+			return multiply_scalar(number);
 		}
 
 		/* Matrix addition */
@@ -175,7 +190,7 @@ namespace s21 {
 			return output;
 		}
 
-		std::vector<Type> ToVector() {
+		std::vector<Type> ToVector() const {
 			return data;
 		}
 	};
