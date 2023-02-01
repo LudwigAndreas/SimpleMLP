@@ -5,12 +5,14 @@
 #include <cassert>
 #include <iostream>
 #include <tuple>
+#include <fstream>
+#include <string>
 
 #include "Matrix.hpp"
 #include "IMLPModel.hpp"
 #include "MLPMatrixModel.hpp"
-#include <fstream>
-#include "string"
+#include "MLPSerializer.hpp"
+
 int SearchMaxIndex(std::vector<float> value) {
 	double max = value[0];
 	int prediction = 0;
@@ -31,7 +33,7 @@ void log(std::fstream &file, const float &x, const s21::Matrix<float> &y, const 
 	file << mse << " "
 		 << x << " "
 		 << SearchMaxIndex(y.ToVector()) << " "
-		 << SearchMaxIndex(y_hat) << " \n";
+		 << SearchMaxIndex(y_hat) << std::endl;
 }
 
 std::vector<std::string> split (std::string s, std::string delimiter) {
@@ -84,7 +86,10 @@ int main(int argc, char **argv) {
 //		if (i % 50 == 0)
 //			log(file, x, y, y_hat);
 //	}
-	s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(784, 26, 256, 2, .5f);
+//	s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(784, 26, 256, 2, .5f);
+
+	auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
+	MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
 
 	std::fstream file, output;
 	file.open("/Users/landreas/42Course/SimpleMLP/datasets/emnist-letters/emnist-letters-train.csv", std::ofstream::in);
@@ -105,6 +110,12 @@ int main(int argc, char **argv) {
 		model->Backward(y);
 
 		if (++i % 50 == 0)
+		{
 			log(output, (float)i / 1000, y, y_hat);
+			std::cout << '\r' << i << std::flush;
+			if (i % 1000 == 0)
+				MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel<float> *)(model), "testmodel.mlpmodel");
+//			exit(123);
+		}
 	}
 }
