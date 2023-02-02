@@ -92,30 +92,33 @@ int main(int argc, char **argv) {
 	MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
 
 	std::fstream file, output;
-	file.open("/Users/landreas/42Course/SimpleMLP/datasets/emnist-letters/emnist-letters-train.csv", std::ofstream::in);
-	output.open("/Users/landreas/42Course/SimpleMLP/src/data.txt", std::ofstream::out | std::ofstream::trunc);
+	output.open("src/data.txt", std::ofstream::out | std::ofstream::trunc);
 	std::string str;
 	int i = 0;
-	while (file >> str) {
-		std::vector<std::string> letter = split(str, ",");
-		std::vector<float> pixels;
-		std::vector<float> answer(26, 0);
-		answer[std::atoi(letter[0].data()) - 1] = 1;
-		s21::Matrix<float> y(answer);
+	while (true) 
+	{
+		file.open("datasets/emnist-letters-train.csv", std::ofstream::in);
+		while (file >> str) {
+			std::vector<std::string> letter = split(str, ",");
+			std::vector<float> pixels;
+			std::vector<float> answer(26, 0);
+			answer[std::atoi(letter[0].data()) - 1] = 1;
+			s21::Matrix<float> y(answer);
 
-		for (auto it = letter.begin() + 1; it < letter.end(); ++it)
-			pixels.push_back(std::atoi((*it).data()));
-		s21::Matrix<float> x(pixels);
-		auto y_hat = model->Forward(x);
-		model->Backward(y);
+			for (auto it = letter.begin() + 1; it < letter.end(); ++it)
+				pixels.push_back(std::atoi((*it).data()));
+			s21::Matrix<float> x(pixels);
+			auto y_hat = model->Forward(x);
+			model->Backward(y);
 
-		if (++i % 50 == 0)
-		{
-			log(output, (float)i / 1000, y, y_hat);
-			std::cout << '\r' << i << std::flush;
-			if (i % 1000 == 0)
-				MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel<float> *)(model), "testmodel.mlpmodel");
-//			exit(123);
+			if (++i % 50 == 0)
+			{
+				log(output, (float)i / 1000, y, y_hat);
+				std::cout << '\r' << i / 88800 + 1 << " Epoch, " << i % 88800 << " Samples trained on" << std::flush;
+//				exit(123);
+			}
 		}
+		MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel<float> *)(model), "testmodel.mlpmodel");
+		file.close();
 	}
 }
