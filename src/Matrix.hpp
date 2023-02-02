@@ -9,6 +9,8 @@
 #include <functional>
 #include <random>
 #include <exception>
+#include <csignal>
+
 namespace s21 {
 	template<typename Type>
 	class Matrix {
@@ -96,7 +98,7 @@ namespace s21 {
 		/* Matrix multiplication */
 		Matrix matmul(Matrix &target) {
 			if (cols != target.get_rows())
-				throw std::exception();
+				std::raise(SIGINT);
 			Matrix output(rows, target.get_cols());
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -147,7 +149,10 @@ namespace s21 {
 		/* Matrix addition */
 		Matrix add(Matrix &target) {
 			if (shape != target.get_shape())
-				throw std::exception();
+			{
+				std::cerr << std::get<0>(shape) << ' ' << std::get<1>(shape);
+				std::raise(SIGINT);
+			}
 			Matrix output(rows, std::get<1>(target.get_shape()));
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
