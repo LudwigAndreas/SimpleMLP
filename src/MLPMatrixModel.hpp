@@ -162,7 +162,6 @@ namespace s21 {
 //		}
 
 		void Backward(Matrix<T> target) override {
-			std::cout << std::get<0>(target.get_shape()) << std::flush;
 			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
 
 			Matrix<T> y = target;
