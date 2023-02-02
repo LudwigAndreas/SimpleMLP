@@ -86,10 +86,10 @@ int main(int argc, char **argv) {
 //		if (i % 50 == 0)
 //			log(file, x, y, y_hat);
 //	}
-//	s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(784, 26, 256, 2, .5f);
+	s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(784, 26, 256, 2, .5f);
 
-	auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
-	MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
+	// auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
+	// MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
 
 	std::fstream file, output;
 	output.open("src/data.txt", std::ofstream::out | std::ofstream::trunc);

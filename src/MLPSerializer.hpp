@@ -4,6 +4,7 @@
 
 #include <string>
 #include <fstream>
+#include <algorithm>
 
 #include "Matrix.hpp"
 #include "MLPMatrixModel.hpp"
