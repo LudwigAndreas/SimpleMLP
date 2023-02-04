@@ -24,16 +24,18 @@ int SearchMaxIndex(std::vector<float> value) {
 			max = tmp;
 		}
 	}
-	return prediction + 1;
+	return prediction;
 }
 void log(std::fstream &file, const float &x, const s21::Matrix<float> &y, const std::vector<float> &y_hat){
-	auto mse = (y(0, 0) - y_hat[0]);
+	auto correct_guess = SearchMaxIndex(y.ToVector());
+	auto mse = (y(correct_guess, 0) - y_hat[correct_guess]);
 	mse = mse*mse;
 
-	file << mse << " "
-		 << x << " "
-		 << SearchMaxIndex(y.ToVector()) << " "
-		 << SearchMaxIndex(y_hat) << std::endl;
+	file << ((correct_guess == SearchMaxIndex(y_hat)) ? "✅" : "❌") << ' '
+		 << char('A' + correct_guess) << " "
+		 << char('A' + SearchMaxIndex(y_hat)) << ' ' 
+		 << y_hat[SearchMaxIndex(y_hat)] * 100 << "%\t"
+		 << mse << std::endl;
 }
 
 std::vector<std::string> split (std::string s, std::string delimiter) {
@@ -86,17 +88,20 @@ int main(int argc, char **argv) {
 //		if (i % 50 == 0)
 //			log(file, x, y, y_hat);
 //	}
-	s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(784, 26, 256, 2, .5f);
+	// s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(784, 26, 256, 2, .5f);
 
-	// auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
-	// MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
+	auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
+	MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
 
 	std::fstream file, output;
-	output.open("src/data.txt", std::ofstream::out | std::ofstream::trunc);
+	output.open("src/data2.txt", std::ofstream::out | std::ofstream::trunc);
 	std::string str;
-	int i = 0;
+	int epoch = 0;
 	while (true) 
 	{
+		int i = 0;
+		int corr = 0;
+		((s21::MLPMatrixModel<float> *) model)->set_lr(0.5f * exp(-epoch / 20.));
 		file.open("datasets/emnist-letters-train.csv", std::ofstream::in);
 		while (file >> str) {
 			std::vector<std::string> letter = split(str, ",");
@@ -109,8 +114,12 @@ int main(int argc, char **argv) {
 				pixels.push_back(std::atoi((*it).data()));
 			s21::Matrix<float> x(pixels);
 			auto y_hat = model->Forward(x);
-			model->Backward(y);
 
+			if (SearchMaxIndex(y.ToVector()) == SearchMaxIndex(y_hat))
+				++corr;
+			else {
+				model->Backward(y);
+			}
 			if (++i % 50 == 0)
 			{
 				log(output, (float)i / 1000, y, y_hat);
@@ -118,7 +127,9 @@ int main(int argc, char **argv) {
 //				exit(123);
 			}
 		}
+		++epoch;
 		MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel<float> *)(model), "testmodel.mlpmodel");
+		std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
 		file.close();
 	}
 }
