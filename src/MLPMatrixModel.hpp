@@ -20,7 +20,7 @@ namespace s21 {
 		std::vector<Matrix<T>> bias;
 		std::vector<Matrix<T>> weight_matrices;
 		std::vector<Matrix<T>> neuron_values;
-//		std::vector<Matrix<T>> error;
+		std::vector<Matrix<T>> error;
 
 		float lr;
 
@@ -37,7 +37,7 @@ namespace s21 {
 			}
 			for (size_t i = 0; i < units_per_layer.size(); ++i) {
 				neuron_values.push_back(Matrix<T>(units_per_layer[i], 1));
-//				error.push_back(Matrix<T>(units_per_layer[i], 1));
+				error.push_back(Matrix<T>(units_per_layer[i], 1));
 			}
 		}
 
@@ -85,8 +85,12 @@ namespace s21 {
 		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer) {
 			units_per_layer = unitsPerLayer;
 			neuron_values.resize(0);
-			for (size_t i = 0; i < units_per_layer.size(); ++i)
+			error.resize(0);
+
+			for (size_t i = 0; i < units_per_layer.size(); ++i) {
 				neuron_values.push_back(Matrix<T>(units_per_layer[i], 1));
+				error.push_back(Matrix<T>(units_per_layer[i], 1));
+			}
 			//TODO: add check for setter logic
 		}
 
@@ -126,63 +130,72 @@ namespace s21 {
 //		}
 
 		std::vector<T> Forward(Matrix<T> matrix) override {
+			std::vector<T>	normalized_vector;
+			T				length = 0;
+
 			neuron_values[0] = matrix;
 			for (int i = 1; i < units_per_layer.size(); ++i)
 				neuron_values[i] = ((weight_matrices[i - 1] * neuron_values[i - 1]) + bias[i - 1]).apply_function(sigmoid);
+			normalized_vector = neuron_values.back().ToVector();
+			
+			for (auto &elem : normalized_vector)
+				length += elem * elem;
+			// std::cout << length << std::endl;
+			// length = std::sqrt(length);
+			// for (auto &elem : normalized_vector)
+			// 	elem /= length;
 			return neuron_values.back().ToVector();
 		}
-
-
-
-//		void Backward(Matrix<T> target) override {
-//			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
-//
-//			for (int i = 0; i < units_per_layer.back(); ++i)
-//				error[units_per_layer.size() - 1](i, 0) = (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
-//						d_sigmoid(neuron_values[units_per_layer.size() - 1](i, 0));
-//			for (int i = units_per_layer.size() - 2; i > 0; --i){
-//				error[i] = weight_matrices[i].T() * error[i + 1];
-//				for (int j = 0; j < units_per_layer[i]; ++j)
-//					error[i](j, 0) *= d_sigmoid(error[i](j, 0));
-//			}
-//			UpdateWeights();
-//		}
-//
-//
-//		void UpdateWeights() {
-//			for (int i = 0; i < units_per_layer.size() - 1; ++i)
-//				for (int j = 0; j < units_per_layer[i + 1]; ++j)
-//					for (int k = 0; k < units_per_layer[i]; ++k)
-//						weight_matrices[i](j, k) += neuron_values[i](k, 0) * error[i + 1](j, 0) * lr;
-//			for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-//				for (int j = 0; j < units_per_layer[i + 1]; ++j) {
-//					bias[i](j, 0) += error[i + 1](j, 0) * lr;
-//				}
-//			}
-//		}
 
 		void Backward(Matrix<T> target) override {
 			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
 
-			Matrix<T> y = target;
-			Matrix<T> y_hat = neuron_values.back();
-			Matrix<T> diff = y - y_hat;
+			for (int i = 0; i < units_per_layer.back(); ++i)
+				error[units_per_layer.size() - 1](i, 0) = (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
+						d_sigmoid(neuron_values[units_per_layer.size() - 1](i, 0));
+			for (int i = units_per_layer.size() - 2; i > 0; --i) {
+				// error[i] = (weight_matrices[i].T() * error[i + 1]).apply_function(d_sigmoid);
+				for (int j = 0; j < units_per_layer[i]; ++j)
+					error[i](j, 0) *= d_sigmoid(neuron_values[i](j, 0));
+			}
+			UpdateWeights();
+		}
 
-			for (int i = weight_matrices.size() - 1; i >= 0; --i) {
-				Matrix<T> wt = weight_matrices[i].T();
-				Matrix<T> prev_errors = wt.matmul( diff);
 
-				Matrix<T> d_outputs = neuron_values[i + 1].apply_function(d_sigmoid);
-				Matrix<T> gradients = diff.multiply_elementwise(d_outputs);
-				gradients = gradients.multiply_scalar(lr);
-				Matrix<T> a_trans = neuron_values[i].T();
-				Matrix<T> weight_gradients = gradients.matmul(a_trans);
-
-				bias[i] = bias[i].add(gradients);
-				weight_matrices[i] = weight_matrices[i].add(weight_gradients);
-				diff = prev_errors;
+		void UpdateWeights() {
+			for (int i = 0; i < units_per_layer.size() - 1; ++i)
+				for (int j = 0; j < units_per_layer[i + 1]; ++j)
+					for (int k = 0; k < units_per_layer[i]; ++k)
+						weight_matrices[i](j, k) += neuron_values[i](k, 0) * error[i + 1](j, 0) * lr;
+			for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+				for (int j = 0; j < units_per_layer[i + 1]; ++j) {
+					bias[i](j, 0) += error[i + 1](j, 0) * lr;
+				}
 			}
 		}
+
+		// void Backward(Matrix<T> target) override {
+		// 	assert(std::get<0>(target.get_shape()) == units_per_layer.back());
+
+		// 	Matrix<T> y = target;
+		// 	Matrix<T> y_hat = neuron_values.back();
+		// 	Matrix<T> diff = y - y_hat;
+
+		// 	for (int i = weight_matrices.size() - 1; i >= 0; --i) {
+		// 		Matrix<T> wt = weight_matrices[i].T();
+		// 		Matrix<T> prev_errors = wt.matmul( diff);
+
+		// 		Matrix<T> d_outputs = neuron_values[i + 1].apply_function(d_sigmoid);
+		// 		Matrix<T> gradients = diff.multiply_elementwise(d_outputs);
+		// 		gradients = gradients.multiply_scalar(lr);
+		// 		Matrix<T> a_trans = neuron_values[i].T();
+		// 		Matrix<T> weight_gradients = gradients.matmul(a_trans);
+
+		// 		bias[i] = bias[i].add(gradients);
+		// 		weight_matrices[i] = weight_matrices[i].add(weight_gradients);
+		// 		diff = prev_errors;
+		// 	}
+		// }
 
 		int Train() override {
 			return 0;
