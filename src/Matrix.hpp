@@ -149,10 +149,7 @@ namespace s21 {
 		/* Matrix addition */
 		Matrix add(Matrix &target) {
 			if (shape != target.get_shape())
-			{
-				std::cerr << std::get<0>(shape) << ' ' << std::get<1>(shape);
-				std::raise(SIGINT);
-			}
+				std::raise(SIGTRAP);
 			Matrix output(rows, std::get<1>(target.get_shape()));
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -244,8 +241,9 @@ namespace s21 {
 	static Matrix<T> GenerateNDMatrix(size_t rows, size_t cols) {
 		Matrix<T> M(rows, cols);
 
-		std::random_device rd;
-		std::mt19937 gen(rd());
+		// std::random_device rd;
+		// std::mt19937 gen(rd());
+		std::mt19937 gen(time(nullptr));
 
 		// init Gaussian distr. w/ N(mean=0, stdev=1/sqrt(numel))
 		T n(M.get_number_of_elements());
