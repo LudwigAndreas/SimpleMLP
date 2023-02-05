@@ -3,15 +3,10 @@
 
 #include "IMLPModel.hpp"
 #include "Matrix.hpp"
+#include "ActivationFunction.hpp"
 
 namespace s21 {
-	inline auto sigmoid(float x) {
-		return 1.0f / (1 + exp(-x));
-	}
 
-	inline auto d_sigmoid(float x){
-		return (x * (1 - x));
-	}
 
 	template <typename T>
 	class MLPMatrixModel : s21::IMLPModel<T> {
@@ -135,7 +130,7 @@ namespace s21 {
 
 			neuron_values[0] = matrix;
 			for (int i = 1; i < units_per_layer.size(); ++i)
-				neuron_values[i] = ((weight_matrices[i - 1] * neuron_values[i - 1]) + bias[i - 1]).apply_function(sigmoid);
+				neuron_values[i] = ((weight_matrices[i - 1] * neuron_values[i - 1]) + bias[i - 1]).apply_function(s21::sigmoid);
 			normalized_vector = neuron_values.back().ToVector();
 			
 			for (auto &elem : normalized_vector)
@@ -152,7 +147,7 @@ namespace s21 {
 
 			for (int i = 0; i < units_per_layer.back(); ++i)
 				error[units_per_layer.size() - 1](i, 0) = (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
-						d_sigmoid(neuron_values[units_per_layer.size() - 1](i, 0));
+						s21::d_sigmoid(neuron_values[units_per_layer.size() - 1](i, 0));
 			for (int i = units_per_layer.size() - 2; i > 0; --i) {
 				// error[i] = (weight_matrices[i].T() * error[i + 1]).apply_function(d_sigmoid);
 				for (int j = 0; j < units_per_layer[i]; ++j)
@@ -197,7 +192,7 @@ namespace s21 {
 		// 	}
 		// }
 
-		int Train() override {
+		int Train(std::vector<Sample> samples, int groups) override {
 			return 0;
 		}
 
@@ -205,7 +200,7 @@ namespace s21 {
 			return 0;
 		}
 
-		int Predict() override {
+		int Predict(Matrix<float> x) override {
 			return 0;
 		}
 
