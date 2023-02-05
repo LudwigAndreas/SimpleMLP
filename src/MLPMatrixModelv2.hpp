@@ -200,7 +200,7 @@ namespace s21 {
 				std::cerr << "\rEpoch #" << i + 1 << ", " << dataset.size() << '/' << dataset.size() << " groups trained on.\n";
 				std::cerr << "Train: " << (training_accuracy * 100) / (dataset.size() - 1) << "% accuracy" << std::endl;
 				testing_accuracy = Test(dataset[dataset.current_iteration], true);
-				std::cerr << "Test: " << testing_accuracy * 100 << "% accuracy" << std::endl;
+				std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
 				++dataset.current_iteration;
 			}
 			return testing_accuracy;

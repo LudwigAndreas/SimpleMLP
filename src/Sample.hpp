@@ -34,7 +34,7 @@ namespace s21 {
 			groups.reserve(k);
 			for (auto it : samples) {
 				group.push_back(it);
-				if (group.size() <= group_size) {
+				if (group.size() >= group_size) {
 					groups.push_back(group);
 					group.resize(0);
 					group.reserve(group_size);
