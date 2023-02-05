@@ -2,6 +2,7 @@
 #define SIMPLEMLP_MLPMATRIXMODEL2_HPP
 
 #include "IMLPModel.hpp"
+#include "MLPSerializer.hpp"
 #include "Matrix.hpp"
 #include "ActivationFunction.hpp"
 
@@ -45,7 +46,7 @@ namespace s21 {
 					max = tmp;
 				}
 			}
-			return prediction + 1; // +1 for dataset (who tf thought that it would be a good idea to numerate dataset choices from 1 and not from 0)
+			return prediction; // +1 for dataset (who tf thought that it would be a good idea to numerate dataset choices from 1 and not from 0)
 		}
 
 	public:
@@ -202,6 +203,7 @@ namespace s21 {
 				testing_accuracy = Test(dataset[dataset.current_iteration], true);
 				std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
 				++dataset.current_iteration;
+				MLPSerializer<float>::SerializeMLPMatrixModel((MLPMatrixModelv2 *)this, "testmodel.mlpmodel");
 			}
 			return testing_accuracy;
 		}
