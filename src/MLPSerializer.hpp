@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "Matrix.hpp"
-#include "MLPMatrixModel.hpp"
+#include "MLPMatrixModelv2.hpp"
 
 template <typename T>
 class MLPSerializer {
@@ -28,7 +28,7 @@ private:
 	}
 
 public:
-	static void SerializeMLPMatrixModel(s21::MLPMatrixModel<T> *model, const std::string& filename) {
+	static void SerializeMLPMatrixModel(s21::MLPMatrixModelv2 *model, const std::string& filename) {
 		std::fstream file;
 		file.open(filename, std::ofstream::out | std::ofstream::trunc);
 
@@ -46,7 +46,7 @@ public:
 		file.close();
 	}
 
-	static void DeserializeMLPMatrixModel(s21::MLPMatrixModel<T> *model, const std::string& filename) {
+	static void DeserializeMLPMatrixModel(s21::MLPMatrixModelv2 *model, const std::string& filename) {
 		std::fstream file;
 		file.open(filename, std::ofstream::in);
 
@@ -106,6 +106,7 @@ public:
 				matrix_values.push_back(std::atof(line.data()));
 		}
 		model->set_bias(weights_matrices);
+		file.close();
 	}
 
 };
