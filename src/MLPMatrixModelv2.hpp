@@ -2,7 +2,6 @@
 #define SIMPLEMLP_MLPMATRIXMODEL2_HPP
 
 #include "IMLPModel.hpp"
-#include "MLPSerializer.hpp"
 #include "Matrix.hpp"
 #include "ActivationFunction.hpp"
 
@@ -203,7 +202,6 @@ namespace s21 {
 				testing_accuracy = Test(dataset[dataset.current_iteration], true);
 				std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
 				++dataset.current_iteration;
-				MLPSerializer<float>::SerializeMLPMatrixModel((MLPMatrixModelv2 *)this, "testmodel.mlpmodel");
 			}
 			return testing_accuracy;
 		}

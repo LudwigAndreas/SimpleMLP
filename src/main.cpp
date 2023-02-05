@@ -52,6 +52,27 @@ std::vector<std::string> split (std::string s, std::string delimiter) {
 	return res;
 }
 
+float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool silent_mode = false) {
+	float training_accuracy;
+	float testing_accuracy;
+	for (int i = 0; i < dataset.size(); ++i) {
+		training_accuracy = 0;
+		testing_accuracy = 0;
+		for (int j = 0; j < dataset.size(); ++j) {
+			std::cerr << "\rEpoch #" << i + 1 << ", " << j << '/' << dataset.size() << " groups trained on.";
+			if (j != dataset.current_iteration)
+				training_accuracy += model->Train(dataset[j], true);
+		}
+		std::cerr << "\rEpoch #" << i + 1 << ", " << dataset.size() << '/' << dataset.size() << " groups trained on.\n";
+		std::cerr << "Train: " << (training_accuracy * 100) / (dataset.size() - 1) << "% accuracy" << std::endl;
+		testing_accuracy = model->Test(dataset[dataset.current_iteration], true);
+		std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
+		++dataset.current_iteration;
+		MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)model, "testmodel.mlpmodel");
+	}
+	return testing_accuracy;
+}
+
 int main() {
 	s21::IMLPModel<float>		*model = s21::MLPMatrixModelv2::MakeModel(784, 26, 256, 2, .1f);
 	std::vector<s21::Sample>	samples;
@@ -79,7 +100,7 @@ int main() {
 	s21::Dataset dataset(samples, 32);
 	std::cerr << "Dataset split on " << dataset.size() << " with " << dataset[0].size() << " samples in each." << std::endl;
 
-	model->CrossValidation(dataset);
-	MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), "testmodel.mlpmodel");
+	CrossValidation(model, dataset);
+	// MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), "testmodel.mlpmodel");
 		// std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
 }
