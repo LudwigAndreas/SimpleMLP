@@ -2,15 +2,14 @@
 #include <random>
 #include <vector>
 #include <cmath>
+#include <chrono>
 #include <cassert>
 #include <iostream>
 #include <tuple>
 #include <fstream>
 #include <string>
 
-#include "Matrix.hpp"
-#include "IMLPModel.hpp"
-#include "MLPMatrixModel.hpp"
+#include "MLPMatrixModelv2.hpp"
 #include "MLPSerializer.hpp"
 
 int SearchMaxIndex(std::vector<float> value) {
@@ -53,83 +52,34 @@ std::vector<std::string> split (std::string s, std::string delimiter) {
 	return res;
 }
 
-int main(int argc, char **argv) {
-	(void )argc;
-	(void )argv;
-//	s21::Matrix<float> M = s21::GenerateNDMatrix<float>(3, 3);
-//
-//	PrintShape(M);
-//	std::cout << M << std::endl;
-//	std::cout << (M - M) << std::endl;
-//	std::cout << M.multiply_scalar(2.f) << std::endl;
-//	std::cout << M.multiply_elementwise(M) << std::endl;
-//
-//	s21::Matrix<float> MT = M.T();
-//	std::cout << MT << std::endl;
-//	std::cout << MT.matmul(M) << std::endl;
-//	std::cout << M.apply_function([](float x){ return x-x; }) << std::endl;
+int main() {
+	s21::IMLPModel<float>		*model = s21::MLPMatrixModelv2::MakeModel(784, 26, 256, 2, .1f);
+	std::vector<s21::Sample>	samples;
+	samples.reserve(88800);
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+	// auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
+	// MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
 
-//	s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(1, 1, 15, 3, .5f);
-//
-//	std::fstream file;
-//	file.open("data.txt", std::ofstream::out | std::ofstream::trunc);
-//	const float PI = 3.14159;
-//	for (int i = 0; i < 100000; ++i) {
-//		auto x = s21::GenerateNDMatrix<float>(1, 1).multiply_scalar(PI);
-//		while (x(0, 0) > PI / 2)
-//			x(0, 0) -= PI / 2;
-//		while (x(0, 0) < -PI / 2)
-//			x(0, 0) += PI / 2;
-//		auto y = x.apply_function([](float v) -> float {return sin(v) * sin(v) * sin(v) * sin(v); });
-//
-//		auto y_hat = model->Forward(x);
-//		model->Backward(y);
-//
-//		if (i % 50 == 0)
-//			log(file, x, y, y_hat);
-//	}
-	// s21::IMLPModel<float> *model = s21::MLPMatrixModel<float>::Instance(784, 26, 256, 2, .5f);
-
-	auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
-	MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
-
-	std::fstream file, output;
-	output.open("src/data2.txt", std::ofstream::out | std::ofstream::trunc);
+	std::fstream file;
 	std::string str;
-	int epoch = 0;
-	while (true) 
-	{
-		int i = 0;
-		int corr = 0;
-		((s21::MLPMatrixModel<float> *) model)->set_lr(0.5f * exp(-epoch / 20.));
-		file.open("datasets/emnist-letters-train.csv", std::ofstream::in);
-		while (file >> str) {
-			std::vector<std::string> letter = split(str, ",");
-			std::vector<float> pixels;
-			std::vector<float> answer(26, 0);
-			answer[std::atoi(letter[0].data()) - 1] = 1;
-			s21::Matrix<float> y(answer);
+	file.open("datasets/emnist-letters-train.csv", std::ofstream::in);	
+	while (file >> str) {
+		std::vector<std::string> letter = split(str, ",");
+		std::vector<float> pixels;
+		std::vector<float> answer(26, 0);
+		answer[std::atoi(letter[0].data()) - 1] = 1;
 
-			for (auto it = letter.begin() + 1; it < letter.end(); ++it)
-				pixels.push_back(std::atoi((*it).data()));
-			s21::Matrix<float> x(pixels);
-			auto y_hat = model->Forward(x);
-
-			if (SearchMaxIndex(y.ToVector()) == SearchMaxIndex(y_hat))
-				++corr;
-			else {
-				model->Backward(y);
-			}
-			if (++i % 50 == 0)
-			{
-				log(output, (float)i / 1000, y, y_hat);
-				std::cout << '\r' << i / 88800 + 1 << " Epoch, " << i % 88800 << " Samples trained on" << std::flush;
-//				exit(123);
-			}
-		}
-		++epoch;
-		MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel<float> *)(model), "testmodel.mlpmodel");
-		std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
-		file.close();
+		for (auto it = letter.begin() + 1; it < letter.end(); ++it)
+			pixels.push_back(std::atoi((*it).data()));
+		s21::Sample s(pixels, answer);
+		samples.push_back(s);
 	}
+	file.close();
+	std::cerr << "Dataset loaded! " << samples.size() << " samples." << std::endl;
+	s21::Dataset dataset(samples, 32);
+	std::cerr << "Dataset split on " << dataset.size() << " with " << dataset[0].size() << " samples in each." << std::endl;
+
+	model->CrossValidation(dataset);
+	MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), "testmodel.mlpmodel");
+		// std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
 }
