@@ -55,20 +55,24 @@ std::vector<std::string> split (std::string s, std::string delimiter) {
 float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool silent_mode = false) {
 	float training_accuracy;
 	float testing_accuracy;
+	int trained_on;
 	for (int i = 0; i < dataset.size(); ++i) {
 		training_accuracy = 0;
 		testing_accuracy = 0;
+		trained_on = 0;
 		for (int j = 0; j < dataset.size(); ++j) {
-			std::cerr << "\rEpoch #" << i + 1 << ", " << j << '/' << dataset.size() << " groups trained on.";
-			if (j != dataset.current_iteration)
+			std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
+			if (j)
+				std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%'; 
+			if (j != dataset.current_iteration && ++trained_on)
 				training_accuracy += model->Train(dataset[j], true);
+			
 		}
-		std::cerr << "\rEpoch #" << i + 1 << ", " << dataset.size() << '/' << dataset.size() << " groups trained on.\n";
-		std::cerr << "Train: " << (training_accuracy * 100) / (dataset.size() - 1) << "% accuracy" << std::endl;
+		std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
+		std::cerr << "Train: " << (training_accuracy * 100) / (trained_on) << "% accuracy" << std::endl;
 		testing_accuracy = model->Test(dataset[dataset.current_iteration], true);
 		std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
 		++dataset.current_iteration;
-		MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)model, "testmodel.mlpmodel");
 	}
 	return testing_accuracy;
 }
@@ -77,9 +81,9 @@ int main() {
 	s21::IMLPModel<float>		*model = s21::MLPMatrixModelv2::MakeModel(784, 26, 256, 2, .1f);
 	std::vector<s21::Sample>	samples;
 	samples.reserve(88800);
-	std::chrono::time_point<std::chrono::system_clock> start, end;
-	// auto model = s21::MLPMatrixModel<float>::Instance(0, 0, 0, 0, 0);
-	// MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel<float> *)model, "testmodel.mlpmodel");
+	// std::chrono::time_point<std::chrono::system_clock> start, end;
+	// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
+	// MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModelv2 *)model, "testmodel.mlpmodel");
 
 	std::fstream file;
 	std::string str;
@@ -92,6 +96,7 @@ int main() {
 
 		for (auto it = letter.begin() + 1; it < letter.end(); ++it)
 			pixels.push_back(std::atoi((*it).data()));
+			// pixels.push_back(((float)std::atoi((*it).data())) / 255);
 		s21::Sample s(pixels, answer);
 		samples.push_back(s);
 	}
