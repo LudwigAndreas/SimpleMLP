@@ -14,6 +14,14 @@ namespace s21 {
 		return (x * (1 - x));
 	}
 	
+	inline float bsigmoid(float x) {
+		return 2.0f / (1 + std::exp(-x)) - 1;
+	}
+
+	inline float d_bsigmoid(float x){
+		return (2 * x * (1 - x));
+	}
+	
 	inline float relu(float x) {
 		return (x >= 0) ? x : x / 100;
 	}
@@ -39,6 +47,8 @@ namespace s21 {
 		{
 			if (name == "sigmoid")
 				return new ActivationFunction(sigmoid, d_sigmoid);
+			if (name == "bipolar sigmoid")
+				return new ActivationFunction(bsigmoid, d_bsigmoid);
 			else if (name == "ReLU")
 				return new ActivationFunction(relu, d_relu);
 			return (nullptr);

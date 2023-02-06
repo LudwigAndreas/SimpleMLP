@@ -20,7 +20,8 @@ namespace s21 {
 
 		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .1f) :
 								units_per_layer(units_per_layer), lr(lr) {
-			af = ActivationFunction::getFunctionByName("sigmoid");
+			// af = ActivationFunction::getFunctionByName("sigmoid");
+			af = ActivationFunction::getFunctionByName("bipolar sigmoid");
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				size_t in_channels = units_per_layer[i];
 				size_t out_channels = units_per_layer[i + 1];
@@ -126,7 +127,8 @@ namespace s21 {
 			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
 
 			for (int i = 0; i < units_per_layer.back(); ++i)
-				error[units_per_layer.size() - 1](i, 0) = (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
+				error[units_per_layer.size() - 1](i, 0) = 
+					(target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
 						af->applyDerivative(neuron_values[units_per_layer.size() - 1](i, 0));
 			for (int i = units_per_layer.size() - 2; i > 0; --i) {
 				for (int j = 0; j < units_per_layer[i]; ++j)
@@ -189,16 +191,21 @@ namespace s21 {
 		float CrossValidation(Dataset dataset, bool silent_mode = false) override {
 			float training_accuracy;
 			float testing_accuracy;
+			int trained_on;
 			for (int i = 0; i < dataset.size(); ++i) {
 				training_accuracy = 0;
 				testing_accuracy = 0;
+				trained_on = 0;
 				for (int j = 0; j < dataset.size(); ++j) {
-					std::cerr << "\rEpoch #" << i + 1 << ", " << j << '/' << dataset.size() << " groups trained on.";
-					if (j != dataset.current_iteration)
+					std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
+					if (j)
+						std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%'; 
+					if (j != dataset.current_iteration && ++trained_on)
 						training_accuracy += Train(dataset[j], true);
+					
 				}
-				std::cerr << "\rEpoch #" << i + 1 << ", " << dataset.size() << '/' << dataset.size() << " groups trained on.\n";
-				std::cerr << "Train: " << (training_accuracy * 100) / (dataset.size() - 1) << "% accuracy" << std::endl;
+				std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
+				std::cerr << "Train: " << (training_accuracy * 100) / (trained_on) << "% accuracy" << std::endl;
 				testing_accuracy = Test(dataset[dataset.current_iteration], true);
 				std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
 				++dataset.current_iteration;
