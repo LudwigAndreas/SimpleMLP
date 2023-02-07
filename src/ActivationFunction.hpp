@@ -30,6 +30,20 @@ namespace s21 {
 		return (x >= 0) ? 1 : 1. / 100;
 	}
 	
+	inline float bounded_linear(float x) {
+		if (x < -1)
+			return -1;
+		if (x > 1)
+			return 1;
+		return x;
+	}
+
+	inline float d_bounded_linear(float x) {
+		if (x < -1 || x > 1)
+			return 0;
+		return 1;
+	}
+	
 
 	class ActivationFunction {
 	private:
@@ -47,10 +61,12 @@ namespace s21 {
 		{
 			if (name == "sigmoid")
 				return new ActivationFunction(sigmoid, d_sigmoid);
-			if (name == "bipolar sigmoid")
+			else if (name == "bipolar sigmoid")
 				return new ActivationFunction(bsigmoid, d_bsigmoid);
 			else if (name == "ReLU")
 				return new ActivationFunction(relu, d_relu);
+			else if (name == "bounded linear")
+				return new ActivationFunction(bounded_linear, d_bounded_linear);
 			return (nullptr);
 		}
 	};
