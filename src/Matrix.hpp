@@ -85,6 +85,11 @@ namespace s21 {
 			Matrix::data = data;
 		}
 
+		void update_shape() {
+			std::get<0>(Matrix::shape) = get_rows();
+			std::get<1>(Matrix::shape) = get_cols();
+		}
+
 		Type &operator()(size_t row, size_t col) {
 			return data[row * cols + col];
 		}
@@ -98,7 +103,7 @@ namespace s21 {
 		/* Matrix multiplication */
 		Matrix matmul(Matrix &target) {
 			if (cols != target.get_rows())
-				std::raise(SIGINT);
+				std::raise(SIGTRAP);
 			Matrix output(rows, target.get_cols());
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -216,11 +221,21 @@ namespace s21 {
 		std::vector<Type> ToVector() const {
 			return data;
 		}
+
+		// static Matrix getY(std::vector<Type> values) {
+		// 	Matrix y(values);
+		// 	int tmp;
+		// 	tmp = y.get_cols();
+		// 	y.set_cols(y.get_rows());
+		// 	y.update_shape();
+		// 	return y;
+		// }
 	};
 
 	/* print methods [or move it to another class] */
 	template<typename Type>
 	std::ostream &operator<<(std::ostream &os, const Matrix<Type> &matrix) {
+		os << matrix.get_rows() << ' ' << matrix.get_cols() << std::endl;
 		for (size_t r = 0; r < matrix.get_rows(); ++r) {
 			for (size_t c = 0; c < matrix.get_cols(); ++c) {
 				os << matrix(r, c) << " ";
@@ -230,6 +245,20 @@ namespace s21 {
 		os << std::endl;
 		return os;
 	}
+
+	// template<typename Type>
+	// std::istream &operator>>(std::istream &is, Matrix<Type> &matrix) {
+		
+	// 	os << matrix.get_rows() << ' ' << matrix.get_cols() << std::endl;
+	// 	for (size_t r = 0; r < matrix.get_rows(); ++r) {
+	// 		for (size_t c = 0; c < matrix.get_cols(); ++c) {
+	// 			os << matrix(r, c) << " ";
+	// 		}
+	// 		os << std::endl;
+	// 	}
+	// 	os << std::endl;
+	// 	return is;
+	// }
 
 	template<typename Type>
 	void PrintShape(Matrix<Type> matrix) {

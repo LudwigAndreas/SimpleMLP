@@ -1,6 +1,8 @@
 #ifndef SIMPLEMLP_MLPMATRIXMODEL2_HPP
 #define SIMPLEMLP_MLPMATRIXMODEL2_HPP
 
+#include <fstream>
+
 #include "IMLPModel.hpp"
 #include "Matrix.hpp"
 #include "ActivationFunction.hpp"
@@ -20,8 +22,10 @@ namespace s21 {
 
 		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .1f) :
 								units_per_layer(units_per_layer), lr(lr) {
+			// af = ActivationFunction::getFunctionByName("bounded linear");
+			af = ActivationFunction::getFunctionByName("ReLU");
 			// af = ActivationFunction::getFunctionByName("sigmoid");
-			af = ActivationFunction::getFunctionByName("bipolar sigmoid");
+			// af = ActivationFunction::getFunctionByName("bipolar sigmoid");
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				size_t in_channels = units_per_layer[i];
 				size_t out_channels = units_per_layer[i + 1];
@@ -72,19 +76,23 @@ namespace s21 {
 			return neuron_values;
 		}
 
+		const std::vector<Matrix<float>> &get_error() const {
+			return error;
+		}
+
 		float get_lr() const {
 			return lr;
 		}
 
 		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer) {
 			units_per_layer = unitsPerLayer;
-			neuron_values.resize(0);
-			error.resize(0);
+			// neuron_values.resize(0);
+			// error.resize(0);
 
-			for (size_t i = 0; i < units_per_layer.size(); ++i) {
-				neuron_values.push_back(Matrix<float>(units_per_layer[i], 1));
-				error.push_back(Matrix<float>(units_per_layer[i], 1));
-			}
+			// for (size_t i = 0; i < units_per_layer.size(); ++i) {
+			// 	neuron_values.push_back(Matrix<float>(units_per_layer[i], 1));
+			// 	error.push_back(Matrix<float>(units_per_layer[i], 1));
+			// }
 			//TODO: add check for setter logic
 		}
 
@@ -108,6 +116,11 @@ namespace s21 {
 			//TODO: add check for setter logic
 		}
 
+		void set_error(std::vector<Matrix<float>> error) {
+			this->error = error;
+			//TODO: add check for setter logic
+		}
+
 		std::vector<float> Forward(Matrix<float> matrix) override {
 			// std::vector<float>	normalized_vector;
 			// float				length = 0;
@@ -125,15 +138,18 @@ namespace s21 {
 
 		void Backward(Matrix<float> target) override {
 			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
+			const int last_layer_index = units_per_layer.size() - 1;
+			Matrix<float> diff = (target - neuron_values.back());
+			Matrix<float> d_neuron = neuron_values.back().apply_function(af->getDerivative()).T();
 
-			for (int i = 0; i < units_per_layer.back(); ++i)
-				error[units_per_layer.size() - 1](i, 0) = 
-					(target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
-						af->applyDerivative(neuron_values[units_per_layer.size() - 1](i, 0));
-			for (int i = units_per_layer.size() - 2; i > 0; --i) {
+			error[last_layer_index] = diff.matmul(d_neuron);
+			// for (int i = 0; i < units_per_layer.back(); ++i)
+				// error[units_per_layer.size() - 1](i, 0) = 
+					// (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
+						// af->applyDerivative(neuron_values[units_per_layer.size() - 1](i, 0));
+			for (int i = units_per_layer.size() - 2; i > 0; --i)
 				for (int j = 0; j < units_per_layer[i]; ++j)
 					error[i](j, 0) *= af->applyFunction(neuron_values[i](j, 0));
-			}
 			UpdateWeights();
 		}
 
@@ -150,7 +166,7 @@ namespace s21 {
 			}
 		}
 
-		// void Backward(Matrix<float> target) override {
+		// void Backward(Matrix<float> &target) override {
 		// 	assert(std::get<0>(target.get_shape()) == units_per_layer.back());
 
 		// 	Matrix<float> y = target;
@@ -158,13 +174,13 @@ namespace s21 {
 		// 	Matrix<float> diff = y - y_hat;
 
 		// 	for (int i = weight_matrices.size() - 1; i >= 0; --i) {
-		// 		Matrix<float> wt = weight_matrices[i].float();
+		// 		Matrix<float> wt = weight_matrices[i];
 		// 		Matrix<float> prev_errors = wt.matmul( diff);
 
 		// 		Matrix<float> d_outputs = neuron_values[i + 1].apply_function(d_sigmoid);
 		// 		Matrix<float> gradients = diff.multiply_elementwise(d_outputs);
 		// 		gradients = gradients.multiply_scalar(lr);
-		// 		Matrix<float> a_trans = neuron_values[i].float();
+		// 		Matrix<float> a_trans = neuron_values[i];
 		// 		Matrix<float> weight_gradients = gradients.matmul(a_trans);
 
 		// 		bias[i] = bias[i].add(gradients);
@@ -185,6 +201,7 @@ namespace s21 {
 			accuracy = ((float)correct_guesses / samples.size());
 			if (!silent_mode)
 				std::cerr << "Train: " << accuracy * 100 << "% accuracy" << std::endl;
+			lr *= .999;
 			return accuracy;
 		}
 
@@ -219,6 +236,36 @@ namespace s21 {
 			for (int i = 0; i < samples.size(); ++i) {
 				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
 					++correct_guesses;
+			}
+			accuracy = ((float)correct_guesses / samples.size());
+			if (!silent_mode)
+				std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
+			return accuracy;
+		}
+
+		void log(std::fstream &file, int y, int y_hat, float probability) {
+			file << ((y == y_hat) ? "✅" : "❌") << ' '
+				<< char('A' + y) << " "
+				<< char('A' + y_hat) << ' ' 
+				<< probability * 100 << "%" << std::endl;
+		}
+
+		float TestOutput(DatasetGroup samples, bool silent_mode = false, std::string filename = "") override {
+			std::fstream		output;
+			int					correct_guesses = 0;
+			float				accuracy;
+			std::vector<float>	y_hat;
+			int					index;
+
+			if (!filename.empty())
+				output.open(filename, std::ofstream::out | std::ofstream::trunc);
+			for (int i = 0; i < samples.size(); ++i) {
+				y_hat = Forward(samples[i].x);
+				index = getMostProbablePrediction(y_hat);
+				if (index == getMostProbablePrediction(samples[i].y.ToVector()))
+					++correct_guesses;
+				if (output.is_open())
+					log(output, getMostProbablePrediction(samples[i].y.ToVector()), index, y_hat[index]);
 			}
 			accuracy = ((float)correct_guesses / samples.size());
 			if (!silent_mode)
