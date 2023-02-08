@@ -246,19 +246,26 @@ namespace s21 {
 		return os;
 	}
 
-	// template<typename Type>
-	// std::istream &operator>>(std::istream &is, Matrix<Type> &matrix) {
-		
-	// 	os << matrix.get_rows() << ' ' << matrix.get_cols() << std::endl;
-	// 	for (size_t r = 0; r < matrix.get_rows(); ++r) {
-	// 		for (size_t c = 0; c < matrix.get_cols(); ++c) {
-	// 			os << matrix(r, c) << " ";
-	// 		}
-	// 		os << std::endl;
-	// 	}
-	// 	os << std::endl;
-	// 	return is;
-	// }
+	template<typename Type>
+	std::istream &operator>>(std::istream &is, Matrix<Type> &matrix) {
+		int							rows, cols;
+		std::vector<float>			data;
+		// std::vector<std::string>	split_line;
+		// std::string					line;
+		float						tmp;
+
+		is >> rows >> cols;
+		data.reserve(rows * cols);
+		for (size_t elem = 0; elem < rows * cols; ++elem) {
+			is >> tmp;
+			data.push_back(tmp);
+		}
+		matrix = Matrix<float>(data);
+		matrix.set_rows(rows);
+		matrix.set_cols(cols);
+		matrix.update_shape();
+		return is;
+	}
 
 	template<typename Type>
 	void PrintShape(Matrix<Type> matrix) {
