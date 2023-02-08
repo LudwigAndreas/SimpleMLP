@@ -136,58 +136,58 @@ namespace s21 {
 			return neuron_values.back().ToVector();
 		}
 
-		void Backward(Matrix<float> target) override {
-			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
-			const int last_layer_index = units_per_layer.size() - 1;
-			Matrix<float> diff = (target - neuron_values.back());
-			Matrix<float> d_neuron = neuron_values.back().apply_function(af->getDerivative()).T();
-
-			error[last_layer_index] = diff.matmul(d_neuron);
-			// for (int i = 0; i < units_per_layer.back(); ++i)
-				// error[units_per_layer.size() - 1](i, 0) = 
-					// (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
-						// af->applyDerivative(neuron_values[units_per_layer.size() - 1](i, 0));
-			for (int i = units_per_layer.size() - 2; i > 0; --i)
-				for (int j = 0; j < units_per_layer[i]; ++j)
-					error[i](j, 0) *= af->applyFunction(neuron_values[i](j, 0));
-			UpdateWeights();
-		}
-
-
-		void UpdateWeights() {
-			for (int i = 0; i < units_per_layer.size() - 1; ++i)
-				for (int j = 0; j < units_per_layer[i + 1]; ++j)
-					for (int k = 0; k < units_per_layer[i]; ++k)
-						weight_matrices[i](j, k) += neuron_values[i](k, 0) * error[i + 1](j, 0) * lr;
-			for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-				for (int j = 0; j < units_per_layer[i + 1]; ++j) {
-					bias[i](j, 0) += error[i + 1](j, 0) * lr;
-				}
-			}
-		}
-
-		// void Backward(Matrix<float> &target) override {
+		// void Backward(Matrix<float> target) override {
 		// 	assert(std::get<0>(target.get_shape()) == units_per_layer.back());
+		// 	const int last_layer_index = units_per_layer.size() - 1;
+		// 	Matrix<float> diff = (target - neuron_values.back());
+		// 	Matrix<float> d_neuron = neuron_values.back().apply_function(af->getDerivative()).T();
 
-		// 	Matrix<float> y = target;
-		// 	Matrix<float> y_hat = neuron_values.back();
-		// 	Matrix<float> diff = y - y_hat;
+		// 	error[last_layer_index] = diff.matmul(d_neuron);
+		// 	// for (int i = 0; i < units_per_layer.back(); ++i)
+		// 		// error[units_per_layer.size() - 1](i, 0) = 
+		// 			// (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
+		// 				// af->applyDerivative(neuron_values[units_per_layer.size() - 1](i, 0));
+		// 	for (int i = units_per_layer.size() - 2; i > 0; --i)
+		// 		for (int j = 0; j < units_per_layer[i]; ++j)
+		// 			error[i](j, 0) *= af->applyFunction(neuron_values[i](j, 0));
+		// 	UpdateWeights();
+		// }
 
-		// 	for (int i = weight_matrices.size() - 1; i >= 0; --i) {
-		// 		Matrix<float> wt = weight_matrices[i];
-		// 		Matrix<float> prev_errors = wt.matmul( diff);
 
-		// 		Matrix<float> d_outputs = neuron_values[i + 1].apply_function(d_sigmoid);
-		// 		Matrix<float> gradients = diff.multiply_elementwise(d_outputs);
-		// 		gradients = gradients.multiply_scalar(lr);
-		// 		Matrix<float> a_trans = neuron_values[i];
-		// 		Matrix<float> weight_gradients = gradients.matmul(a_trans);
-
-		// 		bias[i] = bias[i].add(gradients);
-		// 		weight_matrices[i] = weight_matrices[i].add(weight_gradients);
-		// 		diff = prev_errors;
+		// void UpdateWeights() {
+		// 	for (int i = 0; i < units_per_layer.size() - 1; ++i)
+		// 		for (int j = 0; j < units_per_layer[i + 1]; ++j)
+		// 			for (int k = 0; k < units_per_layer[i]; ++k)
+		// 				weight_matrices[i](j, k) += neuron_values[i](k, 0) * error[i + 1](j, 0) * lr;
+		// 	for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+		// 		for (int j = 0; j < units_per_layer[i + 1]; ++j) {
+		// 			bias[i](j, 0) += error[i + 1](j, 0) * lr;
+		// 		}
 		// 	}
 		// }
+
+		void Backward(Matrix<float> target) override {
+			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
+
+			Matrix<float> y = target;
+			Matrix<float> y_hat = neuron_values.back();
+			Matrix<float> diff = (y - y_hat).T();
+
+			for (int i = weight_matrices.size() - 1; i >= 0; --i) {
+				Matrix<float> wt = weight_matrices[i];
+				Matrix<float> prev_errors = diff.matmul(wt);
+
+				Matrix<float> d_outputs = neuron_values[i + 1].apply_function(d_sigmoid);
+				Matrix<float> gradients = diff.multiply_elementwise(d_outputs);
+				gradients = gradients.multiply_scalar(lr);
+				Matrix<float> a_trans = neuron_values[i];
+				Matrix<float> weight_gradients = gradients.matmul(a_trans);
+
+				bias[i] = bias[i].add(gradients);
+				weight_matrices[i] = weight_matrices[i].add(weight_gradients);
+				diff = prev_errors;
+			}
+		}
 
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
 			int correct_guesses = 0;
