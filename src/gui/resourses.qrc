@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/img"/>
+    <qresource prefix="/">
+        <file>img/empty_file.png</file>
+        <file>my_letter.bmp</file>
+    </qresource>
+</RCC>
