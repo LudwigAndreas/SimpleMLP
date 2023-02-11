@@ -222,6 +222,21 @@ namespace s21 {
 			return data;
 		}
 
+		int SearchMaxIndex() {
+			std::vector<float> value = data;
+			double max = value[0];
+			int prediction = 0;
+			double tmp;
+			for (int j = 1; j < value.size(); j++) {
+				tmp = value[j];
+				if (tmp > max) {
+					prediction = j;
+					max = tmp;
+				}
+			}
+			return prediction;
+		}
+
 		// static Matrix getY(std::vector<Type> values) {
 		// 	Matrix y(values);
 		// 	int tmp;

@@ -20,12 +20,8 @@ namespace s21 {
 		ActivationFunction			*af;
 		float						lr;
 
-		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .1f) :
-								units_per_layer(units_per_layer), lr(lr) {
-			// af = ActivationFunction::getFunctionByName("bounded linear");
-			af = ActivationFunction::getFunctionByName("ReLU");
-			// af = ActivationFunction::getFunctionByName("sigmoid");
-			// af = ActivationFunction::getFunctionByName("bipolar sigmoid");
+		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, ActivationFunction *activationFunction, float lr = .1f) :
+								units_per_layer(units_per_layer), lr(lr), af(activationFunction) {
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				size_t in_channels = units_per_layer[i];
 				size_t out_channels = units_per_layer[i + 1];
@@ -277,7 +273,7 @@ namespace s21 {
 			return getMostProbablePrediction(Forward(x));
 		}
 
-		static IMLPModel<float> *MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr){
+		static IMLPModel<float> *MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction *activationFunction){
 			std::vector<size_t> units_per_layer;
 			units_per_layer.push_back(in_channels);
 
@@ -285,7 +281,7 @@ namespace s21 {
 				units_per_layer.push_back(hidden_units_per_layer);
 
 			units_per_layer.push_back(out_channels);
-			auto *model = new MLPMatrixModelv2(units_per_layer, lr);
+			auto *model = new MLPMatrixModelv2(units_per_layer, activationFunction, lr);
 			return model;
 		}
 	};

@@ -37,6 +37,13 @@ void MainWindow::on_start_model_button_clicked()
 
 void MainWindow::on_train_model_push_button_pressed()
 {
+    if (ui->tabWidget->currentIndex() == 0){
+        qDebug() << "create model";
+
+//        this->current_model =
+    } else {
+        qDebug() << "import model";
+    }
     ui->stackedWidget->setCurrentIndex(1);
 }
 
