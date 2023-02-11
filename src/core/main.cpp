@@ -11,20 +11,8 @@
 
 #include "MLPMatrixModelv2.hpp"
 #include "MLPSerializer.hpp"
+#include "LetterRecognitionMlpModelBuilder.hpp"
 
-int SearchMaxIndex(std::vector<float> value) {
-	double max = value[0];
-	int prediction = 0;
-	double tmp;
-	for (int j = 1; j < value.size(); j++) {
-		tmp = value[j];
-		if (tmp > max) {
-			prediction = j;
-			max = tmp;
-		}
-	}
-	return prediction;
-}
 // void log(std::fstream &file, const float &x, const s21::Matrix<float> &y, const std::vector<float> &y_hat){
 // 	auto correct_guess = SearchMaxIndex(y.ToVector());
 // 	auto mse = (y(correct_guess, 0) - y_hat[correct_guess]);
@@ -105,7 +93,8 @@ std::vector<s21::Sample> ReadDataset(std::string filename)
 }
 
 int main() {
-	s21::IMLPModel<float>		*model = s21::MLPMatrixModelv2::MakeModel(784, 26, 256, 2, .1f);
+	s21::LetterRecognitionMLPModelBuilder *builder = new s21::LetterRecognitionMLPModelBuilder();
+	s21::IMLPModel<float>		*model = builder->GetResult();
 	std::vector<s21::Sample>	samples;
 	// std::chrono::time_point<std::chrono::system_clock> start, end;
 	// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
@@ -113,13 +102,13 @@ int main() {
 
 
 	// s21::Dataset dataset(ReadDataset("datasets/emnist-letters-test.csv"), 16);
-	s21::Dataset dataset(ReadDataset("datasets/emnist-letters-train.csv"), 32);
+	s21::Dataset dataset(ReadDataset("../datasets/emnist-letters-train.csv"), 32);
 	// s21::Dataset dataset(samples, 32);
 	// std::cerr << "Dataset split on " << dataset.size() << " with " << dataset[0].size() << " samples in each." << std::endl;
 	CrossValidation(model, dataset);
 
-	model->TestOutput(ReadDataset("datasets/emnist-letters-test.csv"), false, "test.output");
+	model->TestOutput(ReadDataset("../datasets/emnist-letters-test.csv"), false, "test.output");
 	// CrossValidation(model, dataset);
 	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), "testmodel.mlpmodel");
-		// std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
+	// std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
 }
