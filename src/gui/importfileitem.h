@@ -2,6 +2,7 @@
 #define IMPORTFILEITEM_H
 
 #include <QFile>
+#include <QDebug>
 #include <QLabel>
 #include <QMimeData>
 #include <QDropEvent>
