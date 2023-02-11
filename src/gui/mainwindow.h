@@ -5,6 +5,8 @@
 #include <QFile>
 #include <QGraphicsScene>
 
+#include "src/core/IMLPModel.hpp"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -58,6 +60,8 @@ private:
     QFile *model_config_file;
     QFile *training_dataset_file;
     QFile *testing_dataset_file;
+    s21::IMLPModel<float> *current_model;
+
 
     void modelConfigFileWasUploaded(QFile *file);
     void trainDatasetFileWasUploaded(QFile *file);
