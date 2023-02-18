@@ -2,6 +2,7 @@
 #define PAINTVIEW_H
 
 #include <QFile>
+#include <QDebug>
 #include <QWidget>
 #include <QVector>
 #include <QPixmap>
