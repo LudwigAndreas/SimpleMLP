@@ -7,6 +7,7 @@
 #include <iostream>
 #include <tuple>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 #include "matrix/MLPMatrixModelv2.hpp"
@@ -52,11 +53,20 @@ std::vector<std::string> split (std::string s, std::string delimiter) {
 	return res;
 }
 
+void	SaveModel(s21::IMLPModel<float> *model, int iteration) {
+	std::string			name;
+	std::stringstream	ss;
+
+	ss << "testmodel" << iteration << ".mlpmodel";
+	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), name);
+}
+
 float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool silent_mode = false) {
 	float training_accuracy;
 	float testing_accuracy;
 	int trained_on;
 	for (int i = 0; i < dataset.size(); ++i) {
+		SaveModel(model, i);
 		training_accuracy = 0;
 		testing_accuracy = 0;
 		trained_on = 0;
