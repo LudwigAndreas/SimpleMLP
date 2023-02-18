@@ -172,8 +172,8 @@ namespace s21 {
 				t[i] = ((h[i - 1] * W[i - 1]) + b[i - 1]);
 				if (i != units_per_layer.size() - 1)
 					h[i] = Matrix<float>(t[i]).apply_function(af->getFunction());
-				else
-				 	h[i] = softmax(t[i]);
+				// else
+				//  	h[i] = softmax(t[i]);
 			}
 			// add cross entropy
 			return h.back().ToVector();
