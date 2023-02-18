@@ -34,7 +34,8 @@ namespace s21 {
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
 
-		Matrix(std::vector<Type> vector) : cols(1), rows(vector.size()){
+		Matrix(std::vector<Type> vector) : cols(vector.size()), rows(1) {
+		// Matrix(std::vector<Type> vector, int cols) : cols(1), rows(vector.size()) {
 			data = vector;
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
@@ -101,6 +102,18 @@ namespace s21 {
 		/*  linear algebra methods */
 
 		/* Matrix multiplication */
+
+		Matrix multiply_elementwise(Matrix &target) {
+			assert(shape == target.get_shape());
+			Matrix output((*this));
+			for (size_t r = 0; r < output.get_rows(); ++r) {
+				for (size_t c = 0; c < output.get_cols(); ++c) {
+					output(r, c) = target(r, c) * (*this)(r, c);
+				}
+			}
+			return output;
+		}
+
 		Matrix matmul(Matrix &target) {
 			if (cols != target.get_rows())
 				std::raise(SIGTRAP);
@@ -116,20 +129,10 @@ namespace s21 {
 			return output;
 		}
 
-		Matrix operator*(Matrix &target) {
-			return matmul(target);
-		}
-
-		Matrix multiply_elementwise(Matrix &target) {
-			assert(shape == target.get_shape());
-			Matrix output((*this));
-			for (size_t r = 0; r < output.get_rows(); ++r) {
-				for (size_t c = 0; c < output.get_cols(); ++c) {
-					output(r, c) = target(r, c) * (*this)(r, c);
-				}
-			}
-			return output;
-		}
+		Matrix operator&(const Matrix &target) const	{ return multiply_elementwise(target); }
+		Matrix operator&(Matrix target)					{ return multiply_elementwise(target); }
+		Matrix operator*(const Matrix &target) const	{ return matmul(target); }
+		Matrix operator*(Matrix target)  				{ return matmul(target); }
 
 		Matrix square() {
 			Matrix output((*this));
@@ -147,12 +150,25 @@ namespace s21 {
 			return output;
 		}
 
-		Matrix operator*(Type &number) {
+		Matrix operator*(Type number) {
 			return multiply_scalar(number);
 		}
 
 		/* Matrix addition */
-		Matrix add(Matrix &target) {
+		Matrix add(const Matrix &target) const {
+			if (shape != target.get_shape())
+				std::raise(SIGTRAP);
+			Matrix output(rows, std::get<1>(target.get_shape()));
+
+			for (size_t r = 0; r < output.get_rows(); ++r) {
+				for (size_t c = 0; c < output.get_cols(); ++c) {
+					output(r, c) = (*this)(r, c) + target(r, c);
+				}
+			}
+			return output;
+		}
+		
+		Matrix add(Matrix target) {
 			if (shape != target.get_shape())
 				std::raise(SIGTRAP);
 			Matrix output(rows, std::get<1>(target.get_shape()));
@@ -181,12 +197,21 @@ namespace s21 {
 		}
 
 
-		Matrix sub(Matrix<Type> &target) {
+		Matrix sub(const Matrix<Type> &target) const {
 			Matrix neg_target = -target;
 			return add(neg_target);
 		}
 
-		Matrix operator-(Matrix<Type> &target) {  // for cleaner usage
+		Matrix sub(Matrix<Type> target) {
+			Matrix neg_target = -target;
+			return add(neg_target);
+		}
+
+		Matrix operator-(const Matrix<Type> &target) const {  // for cleaner usage
+			return sub(target);
+		}
+
+		Matrix operator-(Matrix<Type> target) {  // for cleaner usage
 			return sub(target);
 		}
 

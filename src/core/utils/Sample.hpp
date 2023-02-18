@@ -1,7 +1,7 @@
 #ifndef SAMPLE_HPP
 #define SAMPLE_HPP
 
-#include "Matrix.hpp"
+#include "../matrix/Matrix.hpp"
 
 namespace s21 {
 	struct Sample {

@@ -3,9 +3,9 @@
 
 #include <fstream>
 
-#include "IMLPModel.hpp"
+#include "../utils/IMLPModel.hpp"
 #include "Matrix.hpp"
-#include "ActivationFunction.hpp"
+#include "../utils/ActivationFunction.hpp"
 
 namespace s21 {
 	
@@ -13,30 +13,38 @@ namespace s21 {
 	class MLPMatrixModelv2 : s21::IMLPModel<float> {
 	private:
 		std::vector<size_t>			units_per_layer;
-		std::vector<Matrix<float>>	bias;
-		std::vector<Matrix<float>>	weight_matrices;
-		std::vector<Matrix<float>>	neuron_values;
-		std::vector<Matrix<float>>	error;
+		std::vector<Matrix<float>>	W;
+		std::vector<Matrix<float>>	b;
+		std::vector<Matrix<float>>	t;
+		std::vector<Matrix<float>>	h;
+		// std::vector<Matrix<float>>	error;
+		std::vector<Matrix<float>>	dedt;
+		std::vector<Matrix<float>>	dedw;
+		std::vector<Matrix<float>>	dedb;
+		std::vector<Matrix<float>>	dedh;
+		Matrix<float>				output_vector;
 		ActivationFunction			*af;
 		float						lr;
 
-		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .1f) :
+		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .05f) :
 								units_per_layer(units_per_layer), lr(lr) {
-			// af = ActivationFunction::getFunctionByName("bounded linear");
 			af = ActivationFunction::getFunctionByName("ReLU");
 			// af = ActivationFunction::getFunctionByName("sigmoid");
-			// af = ActivationFunction::getFunctionByName("bipolar sigmoid");
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				size_t in_channels = units_per_layer[i];
 				size_t out_channels = units_per_layer[i + 1];
 
-				weight_matrices.push_back(GenerateNDMatrix<float>(out_channels, in_channels));
-				bias.push_back(GenerateNDMatrix<float>(out_channels, 1));
+				W.push_back(GenerateNDMatrix<float>(in_channels, out_channels));
+				b.push_back(GenerateNDMatrix<float>(1, out_channels));
 			}
 			for (size_t i = 0; i < units_per_layer.size(); ++i) {
-				neuron_values.push_back(Matrix<float>(units_per_layer[i], 1));
-				error.push_back(Matrix<float>(units_per_layer[i], 1));
+				h.push_back(Matrix<float>(units_per_layer[i], 1));
+				t.push_back(Matrix<float>(units_per_layer[i], 1));
 			}
+			dedt.resize(units_per_layer.size() - 1);
+			dedw.resize(units_per_layer.size() - 1);
+			dedb.resize(units_per_layer.size() - 1);
+			dedh.resize(units_per_layer.size() - 2);
 		}
 
 		int getMostProbablePrediction(std::vector<float> value) {
@@ -65,19 +73,19 @@ namespace s21 {
 		}
 
 		const std::vector<Matrix<float>> &get_bias_vectors() const {
-			return bias;
+			return b;
 		}
 
 		const std::vector<Matrix<float>> &get_weight_matrices() const {
-			return weight_matrices;
+			return W;
 		}
 
 		const std::vector<Matrix<float>> &get_neuron_values() const {
-			return neuron_values;
+			return h;
 		}
 
 		const std::vector<Matrix<float>> &get_error() const {
-			return error;
+			return dedw;
 		}
 
 		float get_lr() const {
@@ -86,11 +94,11 @@ namespace s21 {
 
 		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer) {
 			units_per_layer = unitsPerLayer;
-			// neuron_values.resize(0);
+			// h.resize(0);
 			// error.resize(0);
 
 			// for (size_t i = 0; i < units_per_layer.size(); ++i) {
-			// 	neuron_values.push_back(Matrix<float>(units_per_layer[i], 1));
+			// 	h.push_back(Matrix<float>(units_per_layer[i], 1));
 			// 	error.push_back(Matrix<float>(units_per_layer[i], 1));
 			// }
 			//TODO: add check for setter logic
@@ -100,94 +108,135 @@ namespace s21 {
 			MLPMatrixModelv2::lr = lr;
 		}
 
-		void set_bias(std::vector<Matrix<float>> bias) {
-			this->bias = bias;
+		void set_bias(std::vector<Matrix<float>> b) {
+			this->b = b;
 			//TODO: add check for setter logic
 		}
 
-		void set_weight_martices(std::vector<Matrix<float>> weight_matrices) {
-			this->weight_matrices = weight_matrices;
+		void set_weight_martices(std::vector<Matrix<float>> W) {
+			this->W = W;
 
 			//TODO: add check for setter logic
 		}
 
-		void set_neuron_values(std::vector<Matrix<float>> neuron_values) {
-			this->neuron_values = neuron_values;
+		void set_neuron_values(std::vector<Matrix<float>> h) {
+			this->h = h;
 			//TODO: add check for setter logic
 		}
 
 		void set_error(std::vector<Matrix<float>> error) {
-			this->error = error;
+			this->dedw = error;
 			//TODO: add check for setter logic
 		}
 
-		std::vector<float> Forward(Matrix<float> matrix) override {
-			// std::vector<float>	normalized_vector;
-			// float				length = 0;
+		void PrintConfig() {
+			for (int i = 0; i < W.size(); ++i)
+				std::cout << "W[" << i << "] shape: " << W[i].get_rows() << 'x' << W[i].get_cols() << std::endl;
+			std::cout << " -----\n";
+			for (int i = 0; i < b.size(); ++i)
+				std::cout << "b[" << i << "] shape: " << b[i].get_rows() << 'x' << b[i].get_cols() << std::endl;
+			std::cout << " -----\n";
+			for (int i = 0; i < t.size(); ++i)
+				std::cout << "t[" << i << "] shape: " << t[i].get_rows() << 'x' << t[i].get_cols() << std::endl;
+			std::cout << " -----\n";
+			for (int i = 0; i < h.size(); ++i)
+				std::cout << "h[" << i << "] shape: " << h[i].get_rows() << 'x' << h[i].get_cols() << std::endl;
+			std::cout << " -----\n";
+			for (int i = 0; i < dedw.size(); ++i)
+				std::cout << "dedw[" << i << "] shape: " << dedw[i].get_rows() << 'x' << dedw[i].get_cols() << std::endl;
+			std::cout << " -----\n";
+			for (int i = 0; i < dedb.size(); ++i)
+				std::cout << "dedb[" << i << "] shape: " << dedb[i].get_rows() << 'x' << dedb[i].get_cols() << std::endl;
+			std::cout << " -----\n";
+			for (int i = 0; i < dedt.size(); ++i)
+				std::cout << "dedt[" << i << "] shape: " << dedt[i].get_rows() << 'x' << dedt[i].get_cols() << std::endl;
+			std::cout << " -----\n";
+			for (int i = 0; i < dedh.size(); ++i)
+				std::cout << "dedh[" << i << "] shape: " << dedh[i].get_rows() << 'x' << dedh[i].get_cols() << std::endl;
+		}
 
-			neuron_values[0] = matrix;
+		Matrix<float> softmax(Matrix<float> matrix) {
+			float	sum;
+
+			sum = 0;
+			for (auto val : matrix.ToVector())
+				sum += std::exp(val);
+			return matrix * (1. / sum);
+		}
+
+		std::vector<float> Forward(Matrix<float> matrix) override {
+			t[0] = matrix;
+			h[0] = matrix;
 			for (int i = 1; i < units_per_layer.size(); ++i)
-				neuron_values[i] = ((weight_matrices[i - 1] * neuron_values[i - 1])
-									+ bias[i - 1]).apply_function(af->getFunction());
-			// normalized_vector = neuron_values.back().ToVector();
-			
-			// for (auto &elem : normalized_vector)
-			// 	length += elem * elem;
-			return neuron_values.back().ToVector();
+			{
+				t[i] = ((h[i - 1] * W[i - 1]) + b[i - 1]);
+				if (i != units_per_layer.size() - 1)
+					h[i] = Matrix<float>(t[i]).apply_function(af->getFunction());
+				else
+				 	h[i] = softmax(t[i]);
+			}
+			// add cross entropy
+			return h.back().ToVector();
 		}
 
 		void Backward(Matrix<float> target) override {
-			assert(std::get<0>(target.get_shape()) == units_per_layer.back());
-			const int last_layer_index = units_per_layer.size() - 1;
-			Matrix<float> diff = (target - neuron_values.back());
-			Matrix<float> d_neuron = neuron_values.back().apply_function(af->getDerivative());
+			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
+			const int last_layer_index = units_per_layer.size() - 3;
+			// Matrix<float> diff = (h.back() - target);
+			// Matrix<float> d_neuron = h.back().apply_function(af->getDerivative());
 
-			error[last_layer_index] = diff.multiply_elementwise(d_neuron);
-			// for (int i = 0; i < units_per_layer.back(); ++i)
-				// error[units_per_layer.size() - 1](i, 0) = 
-					// (target(0, i) - neuron_values[units_per_layer.size() - 1](i, 0)) *
-						// af->applyDerivative(neuron_values[units_per_layer.size() - 1](i, 0));
-			for (int i = units_per_layer.size() - 2; i > 0; --i)
-				for (int j = 0; j < units_per_layer[i]; ++j)
-					error[i](j, 0) *= af->applyFunction(neuron_values[i](j, 0));
+			dedt.back() = h.back() - target;
+			dedw.back() = h[h.size() - 2].T() * dedt.back();
+			dedb.back() = dedt.back();
+			for (int i = last_layer_index; i >= 0; --i)
+			{
+				dedh[i] = dedt[i + 1] * W[i + 1].T();
+				dedt[i] = dedh[i] & t[i + 1].apply_function(af->getDerivative());
+				dedw[i] = h[i].T() * dedt[i];
+				dedb[i] = dedt[i];
+			}
+			// dedh[0] = dedt[1] * W[1].T();
+			// dedt[0] = dedh[0] & t[1].apply_function(af->getDerivative());
+			// dedw[0] = h[0].T() * dedt[0];
+			// dedb[0] = dedt[0];
+			
+			// for (int i = last_layer_index; i >= 0; --i)
+			// {
+			// 	dedh[i] = dedt[i + 1] * W[i + 1].T();
+			// 	dedt[i] = dedh[i] & t[i + 1].apply_function(af->getDerivative());
+			// 	dedw[i] = h[i + 1].T() * dedt[i];
+			// 	dedb[i] = dedt[i];
+			// }
+
+			// dedt[1] = h[2] - target;
+			// dedw[1] = h[1].T() * dedt[1];
+			// dedb[1] = dedt[1];
+			// dedh[0] = dedt[1] * W[1].T();
+			// dedt[0] = dedh[0] & t[1].apply_function(af->getDerivative());
+			// dedw[0] = h[0].T() * dedt[0];
+			// dedb[0] = dedt[0];
+
+
+			
 			UpdateWeights();
 		}
 
 
 		void UpdateWeights() {
-			for (int i = 0; i < units_per_layer.size() - 1; ++i)
-				for (int j = 0; j < units_per_layer[i + 1]; ++j)
-					for (int k = 0; k < units_per_layer[i]; ++k)
-						weight_matrices[i](j, k) += neuron_values[i](k, 0) * error[i + 1](j, 0) * lr;
-			for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-				for (int j = 0; j < units_per_layer[i + 1]; ++j) {
-					bias[i](j, 0) += error[i + 1](j, 0) * lr;
-				}
-			}
+			for (int i = 0; i < W.size(); ++i)
+				W[i] = W[i] - (dedw[i] * lr);
+			for (int i = 0; i < b.size(); ++i)
+				b[i] = b[i] - (dedb[i] * lr);
+			// for (int i = 0; i < units_per_layer.size() - 1; ++i)
+			// 	for (int j = 0; j < units_per_layer[i + 1]; ++j)
+			// 		for (int k = 0; k < units_per_layer[i]; ++k)
+			// 			W[i](j, k) += h[i](k, 0) * error[i + 1](j, 0) * lr;
+			// for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+			// 	for (int j = 0; j < units_per_layer[i + 1]; ++j) {
+			// 		b[i](j, 0) += error[i + 1](j, 0) * lr;
+			// 	}
+			// }
 		}
-
-		// void Backward(Matrix<float> target) override {
-		// 	assert(std::get<0>(target.get_shape()) == units_per_layer.back());
-
-		// 	Matrix<float> y = target;
-		// 	Matrix<float> y_hat = neuron_values.back();
-		// 	Matrix<float> diff = (y - y_hat).T();
-
-		// 	for (int i = weight_matrices.size() - 1; i >= 0; --i) {
-		// 		Matrix<float> wt = weight_matrices[i];
-		// 		Matrix<float> prev_errors = diff.matmul(wt);
-
-		// 		Matrix<float> d_outputs = neuron_values[i + 1].apply_function(d_sigmoid);
-		// 		Matrix<float> gradients = diff.multiply_elementwise(d_outputs);
-		// 		gradients = gradients.multiply_scalar(lr);
-		// 		Matrix<float> a_trans = neuron_values[i];
-		// 		Matrix<float> weight_gradients = gradients.matmul(a_trans);
-
-		// 		bias[i] = bias[i].add(gradients);
-		// 		weight_matrices[i] = weight_matrices[i].add(weight_gradients);
-		// 		diff = prev_errors;
-		// 	}
-		// }
 
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
 			int correct_guesses = 0;

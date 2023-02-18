@@ -6,8 +6,8 @@
 #include <fstream>
 #include <algorithm>
 
-#include "Matrix.hpp"
-#include "MLPMatrixModelv2.hpp"
+#include "../matrix/Matrix.hpp"
+#include "../matrix/MLPMatrixModelv2.hpp"
 
 namespace s21 {
 	template<typename T>
