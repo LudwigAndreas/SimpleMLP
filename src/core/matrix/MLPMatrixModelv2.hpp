@@ -30,8 +30,7 @@ namespace s21 {
 		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .05f) :
 								units_per_layer(units_per_layer), lr(lr) {
 			// af = ActivationFunction::getFunctionByName("ReLU");
-			af = ActivationFunction::getFunctionByName("bipolar sigmoid");
-			// af = ActivationFunction::getFunctionByName("sigmoid");
+			af = ActivationFunction::getFunctionByName("sigmoid");
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				size_t in_channels = units_per_layer[i];
 				size_t out_channels = units_per_layer[i + 1];
@@ -200,12 +199,13 @@ namespace s21 {
 			// dedb.back() = dedt.back();
 			for (int i = last_layer_index; i >= 0; --i)
 			{
-				dedh[i] = dedt[i + 1] * W[i + 1].T();
-				dedt[i] = dedh[i] & h[i + 1].apply_function(af->getDerivative());
+				// dedh[i] = dedt[i + 1] * W[i + 1].T();
+				dedt[i] = (dedt[i + 1] * W[i + 1].T())
+						& h[i + 1].apply_function(af->getDerivative());
 				b[i] = b[i] - (dedt[i] * lr);
 
-				dedw[i] = h[i].T() * dedt[i];
-				W[i] = W[i] - (dedw[i] * lr);
+				// dedw[i] = h[i].T() * dedt[i];
+				W[i] = W[i] - ((h[i].T() * dedt[i]) * lr);
 				// dedb[i] = dedt[i];
 			}
 			// UpdateWeights();
