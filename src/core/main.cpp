@@ -105,11 +105,11 @@ std::vector<s21::Sample> ReadDataset(std::string filename)
 }
 
 int main() {
-	s21::IMLPModel<float>		*model = s21::MLPMatrixModelv2::MakeModel(784, 26, 256, 1, .1f);
+	s21::IMLPModel<float>		*model = s21::MLPMatrixModelv2::MakeModel(784, 26, 256, 2, .1f);
 	std::vector<s21::Sample>	samples;
 	// std::chrono::time_point<std::chrono::system_clock> start, end;
 	// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
-	// MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModelv2 *)model, "testmodel.mlpmodel");
+	// s21::MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModelv2 *)model, "testmodel.mlpmodel");
 
 
 	// s21::Dataset dataset(ReadDataset("datasets/emnist-letters-test.csv"), 16);

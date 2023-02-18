@@ -181,7 +181,11 @@ namespace s21 {
 			return output;
 		}
 
-		Matrix operator+(Matrix &target) {
+		Matrix operator+(Matrix target) {
+			return add(target);
+		}
+
+		Matrix operator+(const Matrix &target) const {
 			return add(target);
 		}
 
@@ -302,9 +306,9 @@ namespace s21 {
 	static Matrix<T> GenerateNDMatrix(size_t rows, size_t cols) {
 		Matrix<T> M(rows, cols);
 
-		// std::random_device rd;
-		// std::mt19937 gen(rd());
-		std::mt19937 gen(time(nullptr));
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// std::mt19937 gen(time(nullptr));
 
 		// init Gaussian distr. w/ N(mean=0, stdev=1/sqrt(numel))
 		T n(M.get_number_of_elements());
