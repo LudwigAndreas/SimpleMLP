@@ -2,6 +2,7 @@
 #define SIMPLEMLP_MLPMATRIXMODEL2_HPP
 
 #include <fstream>
+#include <algorithm>
 
 #include "../utils/IMLPModel.hpp"
 #include "Matrix.hpp"
@@ -28,7 +29,8 @@ namespace s21 {
 
 		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .05f) :
 								units_per_layer(units_per_layer), lr(lr) {
-			af = ActivationFunction::getFunctionByName("ReLU");
+			// af = ActivationFunction::getFunctionByName("ReLU");
+			af = ActivationFunction::getFunctionByName("bipolar sigmoid");
 			// af = ActivationFunction::getFunctionByName("sigmoid");
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				size_t in_channels = units_per_layer[i];
@@ -156,12 +158,15 @@ namespace s21 {
 		}
 
 		Matrix<float> softmax(Matrix<float> matrix) {
+			std::vector<float>	values;
 			float	sum;
 
-			sum = 0;
 			for (auto val : matrix.ToVector())
-				sum += std::exp(val);
-			return matrix * (1. / sum);
+				values.push_back(std::exp(val));
+			sum = std::accumulate(values.begin(), values.end(), 0);
+			std::transform(values.begin(), values.end(),
+						   values.begin(), [sum](float x){ return x / sum; });
+			return s21::Matrix<float>(values);
 		}
 
 		std::vector<float> Forward(Matrix<float> matrix) override {
@@ -172,71 +177,85 @@ namespace s21 {
 				t[i] = ((h[i - 1] * W[i - 1]) + b[i - 1]);
 				if (i != units_per_layer.size() - 1)
 					h[i] = Matrix<float>(t[i]).apply_function(af->getFunction());
-				// else
-				//  	h[i] = softmax(t[i]);
+				else
+				 	// h[i] = t[i];
+				 	h[i] = softmax(t[i]);
 			}
 			// add cross entropy
 			return h.back().ToVector();
+		}		
+		
+		void UpdateWeights() {
+			for (int i = 0; i < W.size(); ++i)
+				W[i] = W[i] + (dedw[i] * lr);
+			for (int i = 0; i < b.size(); ++i)
+				b[i] = b[i] + (dedt[i] * lr);
 		}
-
+		
 		void Backward(Matrix<float> target) override {
-			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 			const int last_layer_index = units_per_layer.size() - 3;
-			// Matrix<float> diff = (h.back() - target);
-			// Matrix<float> d_neuron = h.back().apply_function(af->getDerivative());
-
+			
 			dedt.back() = h.back() - target;
 			dedw.back() = h[h.size() - 2].T() * dedt.back();
-			dedb.back() = dedt.back();
+			// dedb.back() = dedt.back();
 			for (int i = last_layer_index; i >= 0; --i)
 			{
 				dedh[i] = dedt[i + 1] * W[i + 1].T();
-				dedt[i] = dedh[i] & t[i + 1].apply_function(af->getDerivative());
+				dedt[i] = dedh[i] & h[i + 1].apply_function(af->getDerivative());
+				b[i] = b[i] - (dedt[i] * lr);
+
 				dedw[i] = h[i].T() * dedt[i];
-				dedb[i] = dedt[i];
-			}
-			// dedh[0] = dedt[1] * W[1].T();
-			// dedt[0] = dedh[0] & t[1].apply_function(af->getDerivative());
-			// dedw[0] = h[0].T() * dedt[0];
-			// dedb[0] = dedt[0];
-			
-			// for (int i = last_layer_index; i >= 0; --i)
-			// {
-			// 	dedh[i] = dedt[i + 1] * W[i + 1].T();
-			// 	dedt[i] = dedh[i] & t[i + 1].apply_function(af->getDerivative());
-			// 	dedw[i] = h[i + 1].T() * dedt[i];
-			// 	dedb[i] = dedt[i];
-			// }
-
-			// dedt[1] = h[2] - target;
-			// dedw[1] = h[1].T() * dedt[1];
-			// dedb[1] = dedt[1];
-			// dedh[0] = dedt[1] * W[1].T();
-			// dedt[0] = dedh[0] & t[1].apply_function(af->getDerivative());
-			// dedw[0] = h[0].T() * dedt[0];
-			// dedb[0] = dedt[0];
-
-
-			
-			UpdateWeights();
-		}
-
-
-		void UpdateWeights() {
-			for (int i = 0; i < W.size(); ++i)
 				W[i] = W[i] - (dedw[i] * lr);
-			for (int i = 0; i < b.size(); ++i)
-				b[i] = b[i] - (dedb[i] * lr);
-			// for (int i = 0; i < units_per_layer.size() - 1; ++i)
-			// 	for (int j = 0; j < units_per_layer[i + 1]; ++j)
-			// 		for (int k = 0; k < units_per_layer[i]; ++k)
-			// 			W[i](j, k) += h[i](k, 0) * error[i + 1](j, 0) * lr;
-			// for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-			// 	for (int j = 0; j < units_per_layer[i + 1]; ++j) {
-			// 		b[i](j, 0) += error[i + 1](j, 0) * lr;
-			// 	}
-			// }
+				// dedb[i] = dedt[i];
+			}
+			// UpdateWeights();
 		}
+		
+		// void Backward(Matrix<float> target) override {
+		// 	assert(std::get<1>(target.get_shape()) == units_per_layer.back());
+		// 	const int last_layer_index = units_per_layer.size() - 3;
+		// 	// Matrix<float> diff = (h.back() - target);
+		// 	// Matrix<float> d_neuron = h.back().apply_function(af->getDerivative());
+
+		// 	dedt.back() = h.back() - target;
+		// 	dedw.back() = h[h.size() - 2].T() * dedt.back();
+		// 	// dedb.back() = dedt.back();
+		// 	for (int i = last_layer_index; i >= 0; --i)
+		// 	{
+		// 		dedh[i] = dedt[i + 1] * W[i + 1].T();
+		// 		dedt[i] = dedh[i] & t[i + 1].apply_function(af->getDerivative());
+		// 		dedw[i] = h[i].T() * dedt[i];
+		// 		// dedb[i] = dedt[i];
+		// 	}
+		// 	// dedt[1] = h[2] - target;
+		// 	// dedw[1] = h[1].T() * dedt[1];
+		// 	// dedb[1] = dedt[1];
+		// 	// dedh[0] = dedt[1] * W[1].T();
+		// 	// dedt[0] = dedh[0] & t[1].apply_function(af->getDerivative());
+		// 	// dedw[0] = h[0].T() * dedt[0];
+		// 	// dedb[0] = dedt[0];
+
+
+			
+		// 	UpdateWeights();
+		// }
+
+
+		// void UpdateWeights() {
+		// 	for (int i = 0; i < W.size(); ++i)
+		// 		W[i] = W[i] + (dedw[i] * lr);
+		// 	for (int i = 0; i < b.size(); ++i)
+		// 		b[i] = b[i] + (dedt[i] * lr);
+		// 	// for (int i = 0; i < units_per_layer.size() - 1; ++i)
+		// 	// 	for (int j = 0; j < units_per_layer[i + 1]; ++j)
+		// 	// 		for (int k = 0; k < units_per_layer[i]; ++k)
+		// 	// 			W[i](j, k) += h[i](k, 0) * error[i + 1](j, 0) * lr;
+		// 	// for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+		// 	// 	for (int j = 0; j < units_per_layer[i + 1]; ++j) {
+		// 	// 		b[i](j, 0) += error[i + 1](j, 0) * lr;
+		// 	// 	}
+		// 	// }
+		// }
 
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
 			int correct_guesses = 0;
