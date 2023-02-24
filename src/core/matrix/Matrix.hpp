@@ -18,7 +18,6 @@ namespace s21 {
 		size_t cols;
 		size_t rows;
 		std::tuple<size_t, size_t> shape;
-		int numel = rows * cols;
 		std::vector<Type> data;
 
 	public:
@@ -34,7 +33,7 @@ namespace s21 {
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
 
-		Matrix(std::vector<Type> vector) : cols(1), rows(vector.size()){
+		Matrix(std::vector<Type> vector) : cols(vector.size()), rows(1) {
 			data = vector;
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
@@ -43,7 +42,6 @@ namespace s21 {
 			this->rows = matrix.get_rows();
 			this->cols = matrix.get_cols();
 			this->shape = (std::tuple<size_t, size_t>) {rows, cols};
-			this->numel = cols * rows;
 			data.clear();
 			data.resize(cols * rows);
 			for (int c = 0; c < cols; ++c) {
@@ -63,8 +61,6 @@ namespace s21 {
 
 		std::tuple<size_t, size_t> get_shape() const { return shape; }
 
-		int get_number_of_elements() const { return numel; }
-
 		void set_cols(size_t cols) {
 			Matrix::cols = cols;
 		}
@@ -75,10 +71,6 @@ namespace s21 {
 
 		void set_shape(const std::tuple<size_t, size_t> &shape) {
 			Matrix::shape = shape;
-		}
-
-		void set_numel(int numel) {
-			Matrix::numel = numel;
 		}
 
 		void set_data(const std::vector<Type> &data) {
@@ -101,24 +93,6 @@ namespace s21 {
 		/*  linear algebra methods */
 
 		/* Matrix multiplication */
-		Matrix matmul(Matrix &target) {
-			if (cols != target.get_rows())
-				std::raise(SIGTRAP);
-			Matrix output(rows, target.get_cols());
-
-			for (size_t r = 0; r < output.get_rows(); ++r) {
-				for (size_t c = 0; c < output.get_cols(); ++c) {
-					for (size_t k = 0; k < target.get_rows(); ++k) {
-						output(r, c) += (*this)(r, k) * target(k, c);
-					}
-				}
-			}
-			return output;
-		}
-
-		Matrix operator*(Matrix &target) {
-			return matmul(target);
-		}
 
 		Matrix multiply_elementwise(Matrix &target) {
 			assert(shape == target.get_shape());
@@ -130,6 +104,28 @@ namespace s21 {
 			}
 			return output;
 		}
+
+		Matrix matmul(Matrix &target) {
+			if (cols != target.get_rows())
+				std::raise(SIGTRAP);
+			Matrix output(rows, target.get_cols());
+
+			for (size_t r = 0; r < output.get_rows(); ++r) {
+				for (size_t c = 0; c < output.get_cols(); ++c) {
+					output(r, c) = 0;
+					for (size_t k = 0; k < target.get_rows(); ++k) {
+						output(r, c) += (*this)(r, k) * target(k, c);
+					}
+				}
+			}
+			return output;
+		}
+
+		Matrix operator&(const Matrix &target) const	{ return multiply_elementwise(target); }
+		Matrix operator&(Matrix target)					{ return multiply_elementwise(target); }
+		Matrix operator*(const Matrix &target) const	{ return matmul(target); }
+		Matrix operator*(Matrix target)  				{ return matmul(target); }
+		Matrix operator*(Type number) 					{ return multiply_scalar(number); }
 
 		Matrix square() {
 			Matrix output((*this));
@@ -147,15 +143,24 @@ namespace s21 {
 			return output;
 		}
 
-		Matrix operator*(Type &number) {
-			return multiply_scalar(number);
-		}
-
 		/* Matrix addition */
-		Matrix add(Matrix &target) {
+		Matrix add(const Matrix &target) const {
 			if (shape != target.get_shape())
 				std::raise(SIGTRAP);
-			Matrix output(rows, std::get<1>(target.get_shape()));
+			Matrix output(rows, cols);
+
+			for (size_t r = 0; r < output.get_rows(); ++r) {
+				for (size_t c = 0; c < output.get_cols(); ++c) {
+					output(r, c) = (*this)(r, c) + target(r, c);
+				}
+			}
+			return output;
+		}
+		
+		Matrix add(Matrix target) {
+			if (shape != target.get_shape())
+				std::raise(SIGTRAP);
+			Matrix output(rows, cols);
 
 			for (size_t r = 0; r < output.get_rows(); ++r) {
 				for (size_t c = 0; c < output.get_cols(); ++c) {
@@ -165,7 +170,11 @@ namespace s21 {
 			return output;
 		}
 
-		Matrix operator+(Matrix &target) {
+		Matrix operator+(Matrix target) {
+			return add(target);
+		}
+
+		Matrix operator+(const Matrix &target) const {
 			return add(target);
 		}
 
@@ -181,12 +190,21 @@ namespace s21 {
 		}
 
 
-		Matrix sub(Matrix<Type> &target) {
+		Matrix sub(const Matrix<Type> &target) const {
 			Matrix neg_target = -target;
 			return add(neg_target);
 		}
 
-		Matrix operator-(Matrix<Type> &target) {  // for cleaner usage
+		Matrix sub(Matrix<Type> target) {
+			Matrix neg_target = -target;
+			return add(neg_target);
+		}
+
+		Matrix operator-(const Matrix<Type> &target) const {  // for cleaner usage
+			return sub(target);
+		}
+
+		Matrix operator-(Matrix<Type> target) {  // for cleaner usage
 			return sub(target);
 		}
 
@@ -209,7 +227,7 @@ namespace s21 {
 
 		Matrix
 		apply_function(const std::function<Type(const Type &)> &function) {
-			Matrix output((*this));
+			Matrix output(rows, cols);
 			for (size_t r = 0; r < rows; ++r) {
 				for (size_t c = 0; c < cols; ++c) {
 					output(r, c) = function((*this)(r, c));
@@ -221,30 +239,6 @@ namespace s21 {
 		std::vector<Type> ToVector() const {
 			return data;
 		}
-
-		int SearchMaxIndex() {
-			std::vector<float> value = data;
-			double max = value[0];
-			int prediction = 0;
-			double tmp;
-			for (int j = 1; j < value.size(); j++) {
-				tmp = value[j];
-				if (tmp > max) {
-					prediction = j;
-					max = tmp;
-				}
-			}
-			return prediction;
-		}
-
-		// static Matrix getY(std::vector<Type> values) {
-		// 	Matrix y(values);
-		// 	int tmp;
-		// 	tmp = y.get_cols();
-		// 	y.set_cols(y.get_rows());
-		// 	y.update_shape();
-		// 	return y;
-		// }
 	};
 
 	/* print methods [or move it to another class] */
@@ -265,13 +259,11 @@ namespace s21 {
 	std::istream &operator>>(std::istream &is, Matrix<Type> &matrix) {
 		int							rows, cols;
 		std::vector<float>			data;
-		// std::vector<std::string>	split_line;
-		// std::string					line;
 		float						tmp;
 
 		is >> rows >> cols;
 		data.reserve(rows * cols);
-		for (size_t elem = 0; elem < rows * cols; ++elem) {
+		for (int i = 0; i < rows * cols; ++i) {
 			is >> tmp;
 			data.push_back(tmp);
 		}
@@ -292,12 +284,12 @@ namespace s21 {
 	static Matrix<T> GenerateNDMatrix(size_t rows, size_t cols) {
 		Matrix<T> M(rows, cols);
 
-		// std::random_device rd;
-		// std::mt19937 gen(rd());
-		std::mt19937 gen(time(nullptr));
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		// std::mt19937 gen(time(nullptr));
 
 		// init Gaussian distr. w/ N(mean=0, stdev=1/sqrt(numel))
-		T n(M.get_number_of_elements());
+		T n(M.get_cols() * M.get_rows());
 		T stdev(1 / sqrt(n));
 		std::normal_distribution <T> d(0, stdev);
 
