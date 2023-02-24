@@ -1,12 +1,14 @@
 #ifndef SAMPLE_HPP
 #define SAMPLE_HPP
 
+#include <utility>
+
 #include "../matrix/Matrix.hpp"
 
 namespace s21 {
 	struct Sample {
-		Sample() {}
-		Sample(Matrix<float> x_, Matrix<float> y_) : x(x_), y(y_) {}
+		Sample() = default;
+		Sample(const Matrix<float>& x_, const Matrix<float>& y_) : x(x_), y(y_) {}
 		Matrix<float>	x;
 		Matrix<float>	y;
 	};
@@ -15,7 +17,7 @@ namespace s21 {
 	private:
 		std::vector<Sample> samples;
 	public:
-		DatasetGroup(std::vector<Sample> smpl) : samples(smpl) {}
+		explicit DatasetGroup(std::vector<Sample> smpl) : samples(std::move(smpl)) {}
 		Sample &operator[](int index)				{ return samples[index]; }
 		const Sample &operator[](int index) const	{ return samples[index]; }
 		size_t size()								{ return samples.size(); }
@@ -27,16 +29,16 @@ namespace s21 {
 	public:
 		int current_iteration;
 
-		Dataset(std::vector<DatasetGroup> samples) : groups(samples), current_iteration(0) {}
-		Dataset(std::vector<Sample> samples, int k) : current_iteration(0) {
+		explicit Dataset(std::vector<DatasetGroup> samples) : groups(std::move(samples)), current_iteration(0) {}
+		Dataset(const std::vector<Sample>& samples, int k) : current_iteration(0) {
 			int group_size = samples.size() / k + (samples.size() % k > 0);
 			std::vector<Sample> group;
 			group.reserve(group_size);
 			groups.reserve(k);
-			for (auto it : samples) {
+			for (const auto& it : samples) {
 				group.push_back(it);
 				if (group.size() >= group_size) {
-					groups.push_back(group);
+					groups.emplace_back(group);
 					group.resize(0);
 					group.reserve(group_size);
 				}
