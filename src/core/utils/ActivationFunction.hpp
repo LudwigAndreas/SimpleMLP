@@ -11,7 +11,7 @@ namespace s21 {
 	}
 
 	inline float d_sigmoid(float x){
-		return (x * (1 - x));
+		return std::exp(x) / std::pow(std::exp(x) + 1, 2);
 	}
 	
 	inline float bsigmoid(float x) {
@@ -47,8 +47,6 @@ namespace s21 {
 
 	class ActivationFunction {
 	private:
-		// using Signature = float (float);
-		// using FunctionType = std::function<Signature>;
 		std::function<float (float)> f;
 		std::function<float (float)> df;
 	public:
@@ -63,6 +61,7 @@ namespace s21 {
 			ReLU = 4,
 			BoundedLinear = 8
 		};
+
 		static ActivationFunction* getFunctionByName(std::string name)
 		{
 			if (name == "sigmoid")

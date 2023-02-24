@@ -125,40 +125,19 @@
             <rect>
              <x>10</x>
              <y>60</y>
-             <width>361</width>
-             <height>181</height>
+             <width>321</width>
+             <height>182</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_3">
+            <item row="2" column="1">
+             <widget class="QLabel" name="label_5">
               <property name="text">
-               <string>Number of hidden layers</string>
+               <string>Activation function</string>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Perceptron implementation</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QComboBox" name="perceptron_imp_comboBox">
-              <item>
-               <property name="text">
-                <string>Matrix</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Graph</string>
-               </property>
-              </item>
              </widget>
             </item>
             <item row="0" column="0">
@@ -191,6 +170,20 @@
               </item>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QComboBox" name="perceptron_imp_comboBox">
+              <item>
+               <property name="text">
+                <string>Matrix</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Graph</string>
+               </property>
+              </item>
+             </widget>
+            </item>
             <item row="2" column="0">
              <widget class="QComboBox" name="activation_func_comboBox">
               <property name="enabled">
@@ -203,10 +196,17 @@
               </item>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="label_5">
+            <item row="1" column="1">
+             <widget class="QLabel" name="label_4">
               <property name="text">
-               <string>Activation function</string>
+               <string>Perceptron implementation</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Number of hidden layers</string>
               </property>
              </widget>
             </item>
@@ -986,7 +986,7 @@ It consists of a single node or neuron that takes a row of data as input and pre
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSimpleMLP">
@@ -1000,8 +1000,15 @@ It consists of a single node or neuron that takes a row of data as input and pre
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionEnable_advanced_settings"/>
+   </widget>
    <addaction name="menuSimpleMLP"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuTools"/>
   </widget>
   <action name="actionImport">
    <property name="text">
@@ -1016,6 +1023,14 @@ It consists of a single node or neuron that takes a row of data as input and pre
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionEnable_advanced_settings">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable advanced settings</string>
    </property>
   </action>
  </widget>

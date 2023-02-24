@@ -1,9 +1,11 @@
 #include "ActivationFunction.hpp"
 
+#include <utility>
+
 namespace s21 {
 	ActivationFunction::ActivationFunction(
 		std::function<float (float)> func, std::function<float (float)> derivative)
-		: f(func), df(derivative) {}
+		: f(std::move(func)), df(std::move(derivative)) {}
 
 	std::function<float (float)> ActivationFunction::getFunction()		{ return f; }
 	std::function<float (float)> ActivationFunction::getDerivative()	{ return df; }
