@@ -11,7 +11,7 @@ namespace s21 {
 	}
 
 	inline float d_sigmoid(float x){
-		return (x * (1 - x));
+		return std::exp(x) / std::pow(std::exp(x) + 1, 2);
 	}
 	
 	inline float bsigmoid(float x) {
@@ -47,8 +47,6 @@ namespace s21 {
 
 	class ActivationFunction {
 	private:
-		// using Signature = float (float);
-		// using FunctionType = std::function<Signature>;
 		std::function<float (float)> f;
 		std::function<float (float)> df;
 	public:
@@ -57,6 +55,13 @@ namespace s21 {
 		std::function<float (float)> getDerivative();
 		float applyFunction(float);
 		float applyDerivative(float);
+		enum ActivationFunctionFlags {
+			Sigmoid = 1,
+			BipolarSigmoid = 2,
+			ReLU = 4,
+			BoundedLinear = 8
+		};
+
 		static ActivationFunction* getFunctionByName(std::string name)
 		{
 			if (name == "sigmoid")
@@ -66,6 +71,19 @@ namespace s21 {
 			else if (name == "ReLU")
 				return new ActivationFunction(relu, d_relu);
 			else if (name == "bounded linear")
+				return new ActivationFunction(bounded_linear, d_bounded_linear);
+			return (nullptr);
+		}
+
+		static ActivationFunction* getFunctionByFlag(ActivationFunctionFlags flag)
+		{
+			if (flag == Sigmoid)
+				return new ActivationFunction(sigmoid, d_sigmoid);
+			else if (flag == BipolarSigmoid)
+				return new ActivationFunction(bsigmoid, d_bsigmoid);
+			else if (flag == ReLU)
+				return new ActivationFunction(relu, d_relu);
+			else if (flag == BoundedLinear)
 				return new ActivationFunction(bounded_linear, d_bounded_linear);
 			return (nullptr);
 		}

@@ -5,6 +5,8 @@
 #include <QFile>
 #include <QGraphicsScene>
 
+#include "../core/utils/IMLPModel.hpp"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -31,7 +33,9 @@ private slots:
 
     void on_start_training_push_button_pressed();
 
-    void on_toolButton_pressed();
+	void update_training_status(int epoch, int group, float accuracy);
+
+	void on_toolButton_pressed();
 
     void on_model_config_was_uploaded();
 
@@ -58,6 +62,8 @@ private:
     QFile *model_config_file;
     QFile *training_dataset_file;
     QFile *testing_dataset_file;
+    s21::IMLPModel<float> *current_model;
+
 
     void modelConfigFileWasUploaded(QFile *file);
     void trainDatasetFileWasUploaded(QFile *file);

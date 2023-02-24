@@ -6,6 +6,9 @@
 #include "ui_mainwindow.h"
 #include "importfileitem.h"
 #include "testdatainfodialog.h"
+#include "../core/LetterRecognitionMlpModelBuilder.hpp"
+#include "../core/utils/MLPSerializer.hpp"
+#include "../core/MTWorker.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -34,9 +37,27 @@ void MainWindow::on_start_model_button_clicked()
 //    this->hide();
 }
 
-
+//TODO add advanced settings: lr, units_per_layer
 void MainWindow::on_train_model_push_button_pressed()
 {
+    if (ui->tabWidget->currentIndex() == 0){
+
+		auto *builder =
+				new s21::LetterRecognitionMLPModelBuilder();
+		current_model = builder
+                ->HiddenLayers(ui->num_of_hidden_layers_comboBox->currentText().toInt())
+                ->ActivationFunc(ui->activation_func_comboBox->currentText().toStdString())
+				->HiddenUnitsPerLayer(392)
+                ->PerceptionBase(ui->perceptron_imp_comboBox->currentText().toStdString())
+				->GetResult();
+		qDebug() << "create model";
+    } else if (ui->tabWidget->currentIndex() == 1 && !ui->file_path_label->text().isEmpty()){
+		current_model = s21::MLPSerializer<float>::DeserializeMLPMatrixModel(ui->file_path_label->text().toStdString());
+        qDebug() << "import model";
+//		TODO import model in another thread
+    } else {
+		QMessageBox::information(this, tr("Unable to create model"), "There is an error in creating model");
+	}
     ui->stackedWidget->setCurrentIndex(1);
 }
 
@@ -142,11 +163,29 @@ void MainWindow::on_toolButton_pressed()
 void MainWindow::on_start_training_push_button_pressed()
 {
 //    TODO: in new QThead start training with updating progress_bar value;
-    ui->training_progress_bar->setValue(ui->training_progress_bar->value() + 25);
+//    ui->training_progress_bar->setValue(ui->training_progress_bar->value() + 25);
     ui->training_progress_bar->show();
     ui->start_training_push_button->hide();
-    if (ui->training_progress_bar->value() == 100)
-        ui->test_model_push_button_2->setEnabled(true);
+	QThread *thread = new QThread();
+	MTWorker *worker = new MTWorker();
+	worker->setModel(current_model);
+	worker->setDatasetFileName((ui->file_path_label_2->text().toStdString()));
+	worker->moveToThread(thread);
+	connect(thread, SIGNAL(started()), worker, SLOT(process()));
+	connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+	connect(worker, SIGNAL(statusChanged(int, int, float)), this, SLOT(update_training_status(int, int, float)));
+	connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+	thread->start();
+
+
+}
+
+void MainWindow::update_training_status(int epoch, int completion, float accuracy) {
+	ui->training_progress_bar->setValue(completion);
+	if (ui->training_progress_bar->value() == 100) {
+		ui->test_model_push_button_2->setEnabled(true);
+	}
 }
 
 

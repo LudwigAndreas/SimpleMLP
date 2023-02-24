@@ -13,46 +13,54 @@ namespace s21 {
 
 	class MLPMatrixModelv2 : s21::IMLPModel<float> {
 	private:
-		std::vector<size_t>			units_per_layer;
-		std::vector<Matrix<float>>	W;
-		std::vector<Matrix<float>>	b;
-		std::vector<Matrix<float>>	t;
-		std::vector<Matrix<float>>	h;
-		// std::vector<Matrix<float>>	error;
-		std::vector<Matrix<float>>	dedt;
-		std::vector<Matrix<float>>	dedw;
-		std::vector<Matrix<float>>	dedb;
-		std::vector<Matrix<float>>	dedh;
-		Matrix<float>				output_vector;
+		std::vector<size_t> units_per_layer;
+		std::vector<Matrix<float>> bias;
+		std::vector<Matrix<float>> weight_matrices;
+		std::vector<Matrix<float>> neuron_values;
+		std::vector<Matrix<float>> error;
+		std::vector<Matrix<float>> raw;
+		bool auto_decrease;
+
 		ActivationFunction			*af;
 		float						lr;
+		float						start_lr;
 
-		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer, float lr = .05f) :
-								units_per_layer(units_per_layer), lr(lr) {
-			// af = ActivationFunction::getFunctionByName("ReLU");
-			af = ActivationFunction::getFunctionByName("sigmoid");
+		explicit MLPMatrixModelv2(std::vector<size_t> units_per_layer,
+								  ActivationFunction *func,
+								  bool use_auto_decrease = true,
+								  float lr = .05f) :
+								units_per_layer(units_per_layer),
+								auto_decrease(use_auto_decrease), lr(lr) {
+			af = func;
+			start_lr = lr;
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				size_t in_channels = units_per_layer[i];
 				size_t out_channels = units_per_layer[i + 1];
 
-				W.push_back(GenerateNDMatrix<float>(in_channels, out_channels));
-				b.push_back(GenerateNDMatrix<float>(1, out_channels));
+				auto W = GenerateNDMatrix<float>(in_channels,
+												 out_channels);
+				weight_matrices.push_back(W);
+
+				auto b = GenerateNDMatrix<float>(1,
+												 out_channels);
+				bias.push_back(b);
 			}
-			for (size_t i = 0; i < units_per_layer.size(); ++i) {
-				h.push_back(Matrix<float>(units_per_layer[i], 1));
-				t.push_back(Matrix<float>(units_per_layer[i], 1));
+			for (unsigned long & i : units_per_layer) {
+				neuron_values.emplace_back(1, i);
+				raw.emplace_back(1, i);
+				error.emplace_back(1, i);
 			}
-			dedt.resize(units_per_layer.size() - 1);
-			dedw.resize(units_per_layer.size() - 1);
-			dedb.resize(units_per_layer.size() - 1);
-			dedh.resize(units_per_layer.size() - 2);
+			// dedt.resize(units_per_layer.size() - 1);
+			// dedw.resize(units_per_layer.size() - 1);
+			// dedb.resize(units_per_layer.size() - 1);
+			// dedh.resize(units_per_layer.size() - 2);
 		}
 
-		int getMostProbablePrediction(std::vector<float> value) {
+		static int getMostProbablePrediction(std::vector<float> value) {
 			double max = value[0];
 			int prediction = 0;
 			double tmp;
-			for (int j = 1; j < value.size(); j++) {
+			for (int j = 1; j < (int) value.size(); j++) {
 				tmp = value[j];
 				if (tmp > max) {
 					prediction = j;
@@ -110,50 +118,24 @@ namespace s21 {
 		}
 
 		void set_bias(std::vector<Matrix<float>> b) {
-			this->b = b;
+			this->bias = b;
 			//TODO: add check for setter logic
 		}
 
 		void set_weight_martices(std::vector<Matrix<float>> W) {
-			this->W = W;
+			this->weight_matrices = W;
 
 			//TODO: add check for setter logic
 		}
 
 		void set_neuron_values(std::vector<Matrix<float>> h) {
-			this->h = h;
+			this->neuron_values = h;
 			//TODO: add check for setter logic
 		}
 
 		void set_error(std::vector<Matrix<float>> error) {
 			this->dedw = error;
 			//TODO: add check for setter logic
-		}
-
-		void PrintConfig() {
-			for (int i = 0; i < W.size(); ++i)
-				std::cout << "W[" << i << "] shape: " << W[i].get_rows() << 'x' << W[i].get_cols() << std::endl;
-			std::cout << " -----\n";
-			for (int i = 0; i < b.size(); ++i)
-				std::cout << "b[" << i << "] shape: " << b[i].get_rows() << 'x' << b[i].get_cols() << std::endl;
-			std::cout << " -----\n";
-			for (int i = 0; i < t.size(); ++i)
-				std::cout << "t[" << i << "] shape: " << t[i].get_rows() << 'x' << t[i].get_cols() << std::endl;
-			std::cout << " -----\n";
-			for (int i = 0; i < h.size(); ++i)
-				std::cout << "h[" << i << "] shape: " << h[i].get_rows() << 'x' << h[i].get_cols() << std::endl;
-			std::cout << " -----\n";
-			for (int i = 0; i < dedw.size(); ++i)
-				std::cout << "dedw[" << i << "] shape: " << dedw[i].get_rows() << 'x' << dedw[i].get_cols() << std::endl;
-			std::cout << " -----\n";
-			for (int i = 0; i < dedb.size(); ++i)
-				std::cout << "dedb[" << i << "] shape: " << dedb[i].get_rows() << 'x' << dedb[i].get_cols() << std::endl;
-			std::cout << " -----\n";
-			for (int i = 0; i < dedt.size(); ++i)
-				std::cout << "dedt[" << i << "] shape: " << dedt[i].get_rows() << 'x' << dedt[i].get_cols() << std::endl;
-			std::cout << " -----\n";
-			for (int i = 0; i < dedh.size(); ++i)
-				std::cout << "dedh[" << i << "] shape: " << dedh[i].get_rows() << 'x' << dedh[i].get_cols() << std::endl;
 		}
 
 		Matrix<float> softmax(Matrix<float> matrix) {
@@ -169,107 +151,52 @@ namespace s21 {
 		}
 
 		std::vector<float> Forward(Matrix<float> matrix) override {
-			t[0] = matrix;
-			h[0] = matrix;
-			for (int i = 1; i < units_per_layer.size(); ++i)
-			{
-				t[i] = ((h[i - 1] * W[i - 1]) + b[i - 1]);
-				if (i != units_per_layer.size() - 1)
-					h[i] = Matrix<float>(t[i]).apply_function(af->getFunction());
-				else
-				 	// h[i] = t[i];
-				 	h[i] = softmax(t[i]);
-			}
-			// add cross entropy
-			return h.back().ToVector();
-		}		
-		
-		void UpdateWeights() {
-			for (int i = 0; i < W.size(); ++i)
-				W[i] = W[i] + (dedw[i] * lr);
-			for (int i = 0; i < b.size(); ++i)
-				b[i] = b[i] + (dedt[i] * lr);
+		assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
+
+		neuron_values[0] = matrix;
+		raw[0] = matrix;
+		for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+			Matrix<float> y = neuron_values[i] * weight_matrices[i];
+			y = y + bias[i];
+			raw[i + 1] = y;
+			y = y.apply_function(af->getFunction());
+			neuron_values[i + 1] = y;
+		}
+		return neuron_values.back().ToVector();
 		}
 		
 		void Backward(Matrix<float> target) override {
-			const int last_layer_index = units_per_layer.size() - 3;
-			
-			dedt.back() = h.back() - target;
-			dedw.back() = h[h.size() - 2].T() * dedt.back();
-			// dedb.back() = dedt.back();
-			for (int i = last_layer_index; i >= 0; --i)
-			{
-				// dedh[i] = dedt[i + 1] * W[i + 1].T();
-				dedt[i] = (dedt[i + 1] * W[i + 1].T())
-						& h[i + 1].apply_function(af->getDerivative());
-				b[i] = b[i] - (dedt[i] * lr);
+			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 
-				// dedw[i] = h[i].T() * dedt[i];
-				W[i] = W[i] - ((h[i].T() * dedt[i]) * lr);
-				// dedb[i] = dedt[i];
+
+			error[units_per_layer.size() - 1] = (neuron_values.back() - target);
+			for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {
+					error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
 			}
-			// UpdateWeights();
+			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
+				weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
+				bias[i] = bias[i] - error[i + 1] * lr;
+			}
 		}
-		
-		// void Backward(Matrix<float> target) override {
-		// 	assert(std::get<1>(target.get_shape()) == units_per_layer.back());
-		// 	const int last_layer_index = units_per_layer.size() - 3;
-		// 	// Matrix<float> diff = (h.back() - target);
-		// 	// Matrix<float> d_neuron = h.back().apply_function(af->getDerivative());
-
-		// 	dedt.back() = h.back() - target;
-		// 	dedw.back() = h[h.size() - 2].T() * dedt.back();
-		// 	// dedb.back() = dedt.back();
-		// 	for (int i = last_layer_index; i >= 0; --i)
-		// 	{
-		// 		dedh[i] = dedt[i + 1] * W[i + 1].T();
-		// 		dedt[i] = dedh[i] & t[i + 1].apply_function(af->getDerivative());
-		// 		dedw[i] = h[i].T() * dedt[i];
-		// 		// dedb[i] = dedt[i];
-		// 	}
-		// 	// dedt[1] = h[2] - target;
-		// 	// dedw[1] = h[1].T() * dedt[1];
-		// 	// dedb[1] = dedt[1];
-		// 	// dedh[0] = dedt[1] * W[1].T();
-		// 	// dedt[0] = dedh[0] & t[1].apply_function(af->getDerivative());
-		// 	// dedw[0] = h[0].T() * dedt[0];
-		// 	// dedb[0] = dedt[0];
-
-
-			
-		// 	UpdateWeights();
-		// }
-
-
-		// void UpdateWeights() {
-		// 	for (int i = 0; i < W.size(); ++i)
-		// 		W[i] = W[i] + (dedw[i] * lr);
-		// 	for (int i = 0; i < b.size(); ++i)
-		// 		b[i] = b[i] + (dedt[i] * lr);
-		// 	// for (int i = 0; i < units_per_layer.size() - 1; ++i)
-		// 	// 	for (int j = 0; j < units_per_layer[i + 1]; ++j)
-		// 	// 		for (int k = 0; k < units_per_layer[i]; ++k)
-		// 	// 			W[i](j, k) += h[i](k, 0) * error[i + 1](j, 0) * lr;
-		// 	// for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-		// 	// 	for (int j = 0; j < units_per_layer[i + 1]; ++j) {
-		// 	// 		b[i](j, 0) += error[i + 1](j, 0) * lr;
-		// 	// 	}
-		// 	// }
-		// }
 
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
+			static float lower_bound = 0;
 			int correct_guesses = 0;
-			float accuracy;
-			for (int i = 0; i < samples.size(); ++i) {
+			for (int i = 0; i < (int) samples.size(); ++i) {
 				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
 					++correct_guesses;
 				else 
 					Backward(samples[i].y);
 			}
-			accuracy = ((float)correct_guesses / samples.size());
+			float accuracy = ((float) correct_guesses / (float) samples.size());
 			if (!silent_mode)
 				std::cerr << "Train: " << accuracy * 100 << "% accuracy" << std::endl;
-			lr *= .999;
+			if (auto_decrease) {
+//				lr *= (1.f - bsigmoid((accuracy - lower_bound) / (1 - lower_bound)));
+//				lower_bound = accuracy;
+//				std::cerr << lr << std::endl;
+				lr = start_lr * (1 - accuracy);
+			}
 			return accuracy;
 		}
 
@@ -318,7 +245,7 @@ namespace s21 {
 				<< probability * 100 << "%" << std::endl;
 		}
 
-		float TestOutput(DatasetGroup samples, bool silent_mode = false, std::string filename = "") override {
+		float TestOutput(std::vector<s21::Sample> samples, bool silent_mode = false, std::string filename = "") override {
 			std::fstream		output;
 			int					correct_guesses = 0;
 			float				accuracy;
@@ -345,7 +272,7 @@ namespace s21 {
 			return getMostProbablePrediction(Forward(x));
 		}
 
-		static IMLPModel<float> *MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr){
+		static IMLPModel<float> *MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction *func, bool use_auto_decrease = true){
 			std::vector<size_t> units_per_layer;
 			units_per_layer.push_back(in_channels);
 
@@ -353,7 +280,7 @@ namespace s21 {
 				units_per_layer.push_back(hidden_units_per_layer);
 
 			units_per_layer.push_back(out_channels);
-			auto *model = new MLPMatrixModelv2(units_per_layer, lr);
+			auto *model = new MLPMatrixModelv2(units_per_layer, func, use_auto_decrease, lr);
 			return model;
 		}
 	};
