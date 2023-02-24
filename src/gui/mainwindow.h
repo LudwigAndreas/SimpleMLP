@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QGraphicsScene>
 
-#include "src/core/IMLPModel.hpp"
+#include "../core/utils/IMLPModel.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -33,7 +33,9 @@ private slots:
 
     void on_start_training_push_button_pressed();
 
-    void on_toolButton_pressed();
+	void update_training_status(int epoch, int group, float accuracy);
+
+	void on_toolButton_pressed();
 
     void on_model_config_was_uploaded();
 

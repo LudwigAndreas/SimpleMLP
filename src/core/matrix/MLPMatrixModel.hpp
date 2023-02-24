@@ -1,9 +1,9 @@
 #ifndef SIMPLEMLP_MLPMATRIXMODEL_HPP
 #define SIMPLEMLP_MLPMATRIXMODEL_HPP
 
-#include "IMLPModel.hpp"
 #include "Matrix.hpp"
-#include "ActivationFunction.hpp"
+#include "../utils/IMLPModel.hpp"
+#include "../utils/ActivationFunction.hpp"
 
 namespace s21 {
 
@@ -132,7 +132,7 @@ namespace s21 {
 			for (int i = 1; i < units_per_layer.size(); ++i)
 				neuron_values[i] = ((weight_matrices[i - 1] * neuron_values[i - 1]) + bias[i - 1]).apply_function(s21::sigmoid);
 			normalized_vector = neuron_values.back().ToVector();
-			
+
 			for (auto &elem : normalized_vector)
 				length += elem * elem;
 			// std::cout << length << std::endl;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 9.0.1, 2023-02-09T17:24:33. -->
+<!-- Written by QtCreator 9.0.1, 2023-02-19T23:02:17. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -236,7 +236,6 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">SimpleMLP2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/landreas/42Course/SimpleMLP/src/gui/SimpleMLP.pro</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/Users/landreas/42Course/SimpleMLP/src/gui/SimpleMLP.pro</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
