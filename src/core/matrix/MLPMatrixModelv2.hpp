@@ -9,7 +9,7 @@
 #include "../utils/ActivationFunction.hpp"
 
 namespace s21 {
-	
+
 
 	class MLPMatrixModelv2 : s21::IMLPModel<float> {
 	private:
@@ -147,27 +147,27 @@ namespace s21 {
 		}
 
 		std::vector<float> Forward(Matrix<float> matrix) override {
-		assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
+            assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
 
-		neuron_values[0] = matrix;
-		raw[0] = matrix;
-		for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-			Matrix<float> y = neuron_values[i] * weight_matrices[i];
-			y = y + bias[i];
-			raw[i + 1] = y;
-			y = y.apply_function(af->getFunction());
-			neuron_values[i + 1] = y;
+            neuron_values[0] = matrix;
+            raw[0] = matrix;
+            for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+                Matrix<float> y = neuron_values[i] * weight_matrices[i];
+                y = y + bias[i];
+                raw[i + 1] = y;
+                y = y.apply_function(af->getFunction());
+                neuron_values[i + 1] = y;
+            }
+            return neuron_values.back().ToVector();
 		}
-		return neuron_values.back().ToVector();
-		}
-		
+
 		void Backward(Matrix<float> target) override {
 			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 
 
 			error[units_per_layer.size() - 1] = (neuron_values.back() - target);
-			for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {
-					error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
+			for (int i = (int) units_per_layer.size() - 2; i > 0; --i) {
+					error[i] = (error[i + 1].matmulTransposed(weight_matrices[i])) & raw[i].apply_function(af->getDerivative());
 			}
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
@@ -181,7 +181,7 @@ namespace s21 {
 			for (int i = 0; i < (int) samples.size(); ++i) {
 				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
 					++correct_guesses;
-				else 
+				else
 					Backward(samples[i].y);
 			}
 			float accuracy = ((float) correct_guesses / (float) samples.size());
@@ -207,10 +207,10 @@ namespace s21 {
 				for (int j = 0; j < dataset.size(); ++j) {
 					std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
 					if (j)
-						std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%'; 
+						std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%';
 					if (j != dataset.current_iteration && ++trained_on)
 						training_accuracy += Train(dataset[j], true);
-					
+
 				}
 				std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
 				std::cerr << "Train: " << (training_accuracy * 100) / (trained_on) << "% accuracy" << std::endl;
@@ -237,7 +237,7 @@ namespace s21 {
 		void log(std::fstream &file, int y, int y_hat, float probability) {
 			file << ((y == y_hat) ? "✅" : "❌") << ' '
 				<< char('A' + y) << " "
-				<< char('A' + y_hat) << ' ' 
+				<< char('A' + y_hat) << ' '
 				<< probability * 100 << "%" << std::endl;
 		}
 
