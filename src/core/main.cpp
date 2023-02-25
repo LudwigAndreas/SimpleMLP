@@ -58,6 +58,22 @@ float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool s
 	return testing_accuracy;
 }
 
+//int main()
+//{
+////    s21::Matrix<float> first = s21::GenerateNDMatrix<float>(100, 150),
+////                        second = s21::GenerateNDMatrix<float>(150, 200),
+//    s21::Matrix<float> first = s21::GenerateNDMatrix<float>(2, 4),
+//                        second = s21::GenerateNDMatrix<float>(4, 3),
+//                        correct = first.matmul(second),
+//                       test = first.matmul727(second);
+//
+//    std::cout << correct << test;
+////
+////    std::vector<float> f{1, 2, 3}, s{1, 5, 9};
+////    std::cout << std::inner_product(f.begin(), f.end(),
+////                                    s.begin(), 0);
+//}
+
 int main() {
 	s21::LetterRecognitionMLPModelBuilder *builder = new s21::LetterRecognitionMLPModelBuilder();
 	s21::IMLPModel<float>		*model = builder
@@ -73,12 +89,12 @@ int main() {
 
 
 	// s21::Dataset dataset(ReadDataset("datasets/emnist-letters-test.csv"), 16);
-	s21::Dataset dataset(ReadDataset("/Users/landreas/42Course/SimpleMLP/datasets/emnist-letters-train.csv"), 32);
+	s21::Dataset dataset(ReadDataset("/home/landreas/42Course/SimpleMLP/datasets/emnist-letters-train.csv"), 4);
 	// s21::Dataset dataset(samples, 32);
 	// std::cerr << "Dataset split on " << dataset.size() << " with " << dataset[0].size() << " samples in each." << std::endl;
 	CrossValidation(model, dataset);
 
-	model->TestOutput(ReadDataset("/Users/landreas/42Course/SimpleMLP/datasets/emnist-letters-test.csv"), false, "test.output");
+	model->TestOutput(ReadDataset("/home/landreas/42Course/SimpleMLP/datasets/emnist-letters-test.csv"), false, "test.output");
 	// CrossValidation(model, dataset);
 	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), "testmodel.mlpmodel");
 	// std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
