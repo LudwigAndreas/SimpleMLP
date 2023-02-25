@@ -181,10 +181,12 @@ namespace s21 {
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
 			static float lower_bound = 0;
 			int correct_guesses = 0;
-			for (int i = 0; i < (int) samples.size(); ++i) {
+			const int mini_batch_size = 32;
+			for (int i = 0; i < (int) samples.size(); i += mini_batch_size) {
+				
 				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
 					++correct_guesses;
-				else 
+				else
 					Backward(samples[i].y);
 			}
 			float accuracy = ((float) correct_guesses / (float) samples.size());
