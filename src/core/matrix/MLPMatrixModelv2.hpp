@@ -82,19 +82,19 @@ namespace s21 {
 		}
 
 		const std::vector<Matrix<float>> &get_bias_vectors() const {
-			return b;
+			return bias;
 		}
 
 		const std::vector<Matrix<float>> &get_weight_matrices() const {
-			return W;
+			return weight_matrices;
 		}
 
 		const std::vector<Matrix<float>> &get_neuron_values() const {
-			return h;
+			return neuron_values;
 		}
 
 		const std::vector<Matrix<float>> &get_error() const {
-			return dedw;
+			return error;
 		}
 
 		float get_lr() const {
@@ -134,7 +134,7 @@ namespace s21 {
 		}
 
 		void set_error(std::vector<Matrix<float>> error) {
-			this->dedw = error;
+			this->error = error;
 			//TODO: add check for setter logic
 		}
 
@@ -167,7 +167,6 @@ namespace s21 {
 		
 		void Backward(Matrix<float> target) override {
 			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
-
 
 			error[units_per_layer.size() - 1] = (neuron_values.back() - target);
 			for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {

@@ -33,14 +33,6 @@ void	SaveModel(s21::IMLPModel<float> *model, int iteration) {
 	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), ss.str());
 }
 
-void	SaveModel(s21::IMLPModel<float> *model, int iteration) {
-	std::string			name;
-	std::stringstream	ss;
-
-	ss << "testmodel" << iteration << ".mlpmodel";
-	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), name);
-}
-
 float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool silent_mode = false) {
 	float training_accuracy;
 	float testing_accuracy;
@@ -81,7 +73,7 @@ int main() {
 
 
 	// s21::Dataset dataset(ReadDataset("datasets/emnist-letters-test.csv"), 16);
-	s21::Dataset dataset(ReadDataset("../../datasets/emnist-letters-train.csv"), 32);
+	s21::Dataset dataset(ReadDataset("../../datasets/emnist-letters-train.csv"), 4);
 	// s21::Dataset dataset(samples, 32);
 	// std::cerr << "Dataset split on " << dataset.size() << " with " << dataset[0].size() << " samples in each." << std::endl;
 	CrossValidation(model, dataset);
