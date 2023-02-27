@@ -10,6 +10,7 @@ namespace s21 {
 	public:
 		virtual std::vector<T> Forward(Matrix<T>) = 0;
 		virtual void Backward(Matrix<T>) = 0;
+		virtual void Backward(Matrix<T>, Matrix<T>) = 0;
 		virtual float Train(DatasetGroup samples, bool b = false) = 0;
 		virtual float CrossValidation(Dataset samples, bool b = false) = 0;
 		virtual float Test(DatasetGroup samples, bool b = false) = 0;
