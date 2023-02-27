@@ -151,24 +151,24 @@ namespace s21 {
 		}
 
 		std::vector<float> Forward(Matrix<float> matrix) override {
-		assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
+			assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
 
-		neuron_values[0] = matrix;
-		raw[0] = matrix;
-		for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-			Matrix<float> y = neuron_values[i] * weight_matrices[i];
-			y = y + bias[i];
-			raw[i + 1] = y;
-			y = y.apply_function(af->getFunction());
-			neuron_values[i + 1] = y;
-		}
-		return neuron_values.back().ToVector();
+			neuron_values[0] = matrix;
+			raw[0] = matrix;
+			for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+				Matrix<float> y = neuron_values[i] * weight_matrices[i];
+				y = y + bias[i];
+				raw[i + 1] = y;
+				y = y.apply_function(af->getFunction());
+				neuron_values[i + 1] = y;
+			}
+			return neuron_values.back().ToVector();
 		}
 		
-		void Backward(Matrix<float> target) override {
-			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
+		void Backward(Matrix<float> target, Matrix<float> y) override {
+			assert(std::get<1>(target.get_shape()) == std::get<1>(y.get_shape()));
 
-			error[units_per_layer.size() - 1] = (neuron_values.back() - target);
+			error[units_per_layer.size() - 1] = (y - target);
 			for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {
 					error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
 			}
@@ -177,19 +177,46 @@ namespace s21 {
 				bias[i] = bias[i] - error[i + 1] * lr;
 			}
 		}
+		
+		void Backward(Matrix<float> target) override {
+			Backward(target, neuron_values.back());
+			// assert(std::get<1>(target.get_shape()) == units_per_layer.back());
+
+			// error[units_per_layer.size() - 1] = (neuron_values.back() - target);
+			// for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {
+			// 		error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
+			// }
+			// for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
+			// 	weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
+			// 	bias[i] = bias[i] - error[i + 1] * lr;
+			// }
+		}
 
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
-			static float lower_bound = 0;
-			int correct_guesses = 0;
-			const int mini_batch_size = 32;
+			static float		lower_bound = 0;
+			int					correct_guesses = 0;
+			const int			mini_batch_size = 32;
+			std::vector<float>	guesses;
+			std::vector<float> 	correct;
+			std::vector<float> 	prediction;
+			int					correct_index;
+
 			for (int i = 0; i < (int) samples.size(); i += mini_batch_size) {
-				
-				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
-					++correct_guesses;
-				else
-					Backward(samples[i].y);
+				guesses = std::vector<float> (units_per_layer.back(), 0.f);
+				correct = std::vector<float> (units_per_layer.back(), 0.f);
+				for (int j = 0; j < mini_batch_size; ++j) {
+					prediction    = Forward                  (samples[i * mini_batch_size + j].x);
+					correct_index = getMostProbablePrediction(samples[i * mini_batch_size + j].y.ToVector());
+					if (getMostProbablePrediction(prediction) == correct_index)
+						++correct_guesses;
+					else {
+						std::transform(guesses.begin(), guesses.end(), prediction.begin(), guesses.begin(), std::plus<float>());
+						++correct[correct_index];
+					}
+				}
+				Backward(correct, guesses);
 			}
-			float accuracy = ((float) correct_guesses / (float) samples.size());
+			float accuracy = ((float)correct_guesses / (float)samples.size());
 			if (!silent_mode)
 				std::cerr << "Train: " << accuracy * 100 << "% accuracy" << std::endl;
 			if (auto_decrease) {
