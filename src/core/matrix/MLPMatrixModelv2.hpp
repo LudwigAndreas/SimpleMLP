@@ -56,7 +56,7 @@ namespace s21 {
 			double max = value[0];
 			int prediction = 0;
 			double tmp;
-			for (int j = 1; j < (int) value.size(); j++) {
+			for (int j = 1; j < (int) value.size(); ++j) {
 				tmp = value[j];
 				if (tmp > max) {
 					prediction = j;
@@ -147,14 +147,17 @@ namespace s21 {
 		}
 
 		std::vector<float> Forward(Matrix<float> matrix) override {
+//			std::cout << get<1>(matrix.get_shape()) << std::endl;
+//			std::cout << units_per_layer[0] << std::endl;
             assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
 
             neuron_values[0] = matrix;
             raw[0] = matrix;
-            for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+            for (int i = 0; i < (int) units_per_layer.size() - 1; ++i) {
                 Matrix<float> y = neuron_values[i] * weight_matrices[i];
                 y = y + bias[i];
-                raw[i + 1] = y;
+//				TODO: if we try to forward diffirent matrix app crashes
+//                raw[i + 1] = y;
                 y = y.apply_function(af->getFunction());
                 neuron_values[i + 1] = y;
             }
@@ -176,7 +179,7 @@ namespace s21 {
 		}
 
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
-			static float lower_bound = 0;
+//			static float lower_bound = 0;
 			int correct_guesses = 0;
 			for (int i = 0; i < (int) samples.size(); ++i) {
 				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
@@ -197,34 +200,37 @@ namespace s21 {
 		}
 
 		float CrossValidation(Dataset dataset, bool silent_mode = false) override {
-			float training_accuracy;
-			float testing_accuracy;
-			int trained_on;
-			for (int i = 0; i < dataset.size(); ++i) {
-				training_accuracy = 0;
-				testing_accuracy = 0;
-				trained_on = 0;
-				for (int j = 0; j < dataset.size(); ++j) {
-					std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
-					if (j)
-						std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%';
-					if (j != dataset.current_iteration && ++trained_on)
-						training_accuracy += Train(dataset[j], true);
-
-				}
-				std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
-				std::cerr << "Train: " << (training_accuracy * 100) / (trained_on) << "% accuracy" << std::endl;
-				testing_accuracy = Test(dataset[dataset.current_iteration], true);
-				std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
-				++dataset.current_iteration;
-			}
-			return testing_accuracy;
+			(void) dataset;
+			(void ) silent_mode;
+//			float training_accuracy;
+//			float testing_accuracy;
+//			int trained_on;
+//			for (int i = 0; i < dataset.size(); ++i) {
+//				training_accuracy = 0;
+//				testing_accuracy = 0;
+//				trained_on = 0;
+//				for (int j = 0; j < dataset.size(); ++j) {
+//					std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
+//					if (j)
+//						std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%';
+//					if (j != dataset.current_iteration && ++trained_on)
+//						training_accuracy += Train(dataset[j], true);
+//
+//				}
+//				std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
+//				std::cerr << "Train: " << (training_accuracy * 100) / (trained_on) << "% accuracy" << std::endl;
+//				testing_accuracy = Test(dataset[dataset.current_iteration], true);
+//				std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
+//				++dataset.current_iteration;
+//			}
+//			return testing_accuracy;
+			return 0;
 		}
 
 		float Test(DatasetGroup samples, bool silent_mode = false) override {
 			int correct_guesses = 0;
 			float accuracy;
-			for (int i = 0; i < samples.size(); ++i) {
+			for (size_t i = 0; i < samples.size(); ++i) {
 				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
 					++correct_guesses;
 			}
@@ -250,13 +256,13 @@ namespace s21 {
 
 			if (!filename.empty())
 				output.open(filename, std::ofstream::out | std::ofstream::trunc);
-			for (int i = 0; i < samples.size(); ++i) {
-				y_hat = Forward(samples[i].x);
+			for (auto & sample : samples) {
+				y_hat = Forward(sample.x);
 				index = getMostProbablePrediction(y_hat);
-				if (index == getMostProbablePrediction(samples[i].y.ToVector()))
+				if (index == getMostProbablePrediction(sample.y.ToVector()))
 					++correct_guesses;
 				if (output.is_open())
-					log(output, getMostProbablePrediction(samples[i].y.ToVector()), index, y_hat[index]);
+					log(output, getMostProbablePrediction(sample.y.ToVector()), index, y_hat[index]);
 			}
 			accuracy = ((float)correct_guesses / samples.size());
 			if (!silent_mode)

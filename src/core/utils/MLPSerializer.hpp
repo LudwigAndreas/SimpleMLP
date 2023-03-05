@@ -57,8 +57,8 @@ namespace s21 {
 		}
 
 		static s21::IMLPModel<T> *DeserializeMLPMatrixModel(const std::string &filename) {
-			int rows = 0, cols = 0;
-			bool read_shape = true;
+//			int rows = 0, cols = 0;
+//			bool read_shape = true;
 
 //			TODO: rewrite model creation to import graph and matrix models and activation funcs
 			// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
@@ -69,7 +69,7 @@ namespace s21 {
 			std::vector<std::string> row_values;
 			std::vector<s21::Matrix<float>> weights_matrices;
 			s21::Matrix<float> matrix;
-			int weights_index = 0;
+//			int weights_index = 0;
 
 			std::fstream file;
 			file.open(filename, std::ofstream::in);
