@@ -41,3 +41,23 @@ std::vector<s21::Sample> ReadDataset(std::string filename)
 	std::cerr << "Dataset loaded! " << samples.size() << " samples." << std::endl;
 	return samples;
 }
+
+s21::Sample ReadOneImage(std::string filename)
+{
+
+	std::fstream file;
+	std::string str;
+
+	file.open(filename, std::ofstream::in);
+	while (file >> str) {
+		std::vector<std::string> letter = split(str, ",");
+		std::vector<float> pixels;
+		std::vector<float> answer(26, 0);
+
+		for(auto it = letter.begin() + 1; it < letter.end(); ++it)
+			pixels.push_back(static_cast<float>(std::atoi((*it).data())) / 255);
+		s21::Sample sample(pixels, s21::Matrix<float>(answer));
+
+	}
+
+}

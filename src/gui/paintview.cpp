@@ -8,6 +8,7 @@ PaintView::PaintView(QWidget *parent): QGraphicsView{parent}
     scene = new QGraphicsScene();
     this->setScene(scene);
     this->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
 }
 
 void PaintView::paintEvent(QPaintEvent *event)
@@ -15,29 +16,46 @@ void PaintView::paintEvent(QPaintEvent *event)
     QPainter painter(viewport());
     QPalette pal(palette());
     pal.setColor(QPalette::Window , Qt::white);
-    setBackgroundRole(QPalette::Light);
+    setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
-    painter.setRenderHint(QPainter::RenderHint::Antialiasing, true);
-    painter.setPen(QPen(Qt::white, 10, Qt::SolidLine));
+    painter.setRenderHint(QPainter::RenderHint::SmoothPixmapTransform, true);
+    painter.setPen(QPen(Qt::white, 18, Qt::SolidLine));
     setPalette(pal);
     if (pixmap) {
-        painter.drawPixmap(0, 0, pixmap->scaled(this->width(), this->height()));
+//		qDebug() << "belive me";
+		if (new_pixmap) {
+			vv.clear();
+			new_pixmap = false;
+		}
+//		TODO: pixmap.data may be not pixmap
+		painter.drawPixmap(-1, -1, pixmap->scaled(this->width(), this->height()));
+//		pixmap = nullptr;
     }
-    for (int i = 1; i < vv.size(); ++i)
-        painter.drawEllipse(vv[i - 1], 7, 7);
-    QWidget::paintEvent(event);
+	for (auto & line : vv) {
+		painter.drawEllipse(line.first(), 2, 2);
+		for (int i = 0; i < line.size() - 1; ++i) {
+			painter.drawLine(line[i], line[i + 1]);
+		}
+		painter.drawEllipse(line.back(), 2, 2);
+	}
+//    for (auto & i : vv)
+//        painter.drawEllipse(i, 5, 7);
+//	painter.drawPoints(vv.data(), vv.size());
+//    QWidget::paintEvent(event);
     hide();
     show();
 }
 
 void PaintView::mousePressEvent(QMouseEvent *event) {
     draw = true;
-    QGraphicsView::mousePressEvent(event);
+	vv.push_back(QVector<QPoint>());
+	vv.back().push_back(event->pos());
+	QGraphicsView::mousePressEvent(event);
 }
 
 void PaintView::mouseMoveEvent(QMouseEvent *event) {
     if (draw) {
-        vv.push_back(event->pos());
+        vv.back().push_back(event->pos());
     }
     update();
     QGraphicsView::mouseMoveEvent(event);
@@ -46,7 +64,9 @@ void PaintView::mouseMoveEvent(QMouseEvent *event) {
 void PaintView::mouseReleaseEvent(QMouseEvent *event) {
     draw = false;
     QPixmap scr = this->grab();
-    scr.save("/Users/landreas/SimpleMLP/my_letter.bmp");
+    scr.save("my_letter.bmp");
+	emit file_saved();
+	qDebug() << "file_saved emited";
     QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -75,6 +95,8 @@ void PaintView::dropEvent(QDropEvent *event)
         QMessageBox::information(this,"Image Viewer","Error Displaying image");
         return;
     }
+    this->pixmap->save("my_letter.bmp");
+	new_pixmap = true;
 }
 
 void PaintView::dragEnterEvent(QDragEnterEvent *event) {

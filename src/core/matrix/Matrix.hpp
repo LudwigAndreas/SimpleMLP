@@ -61,14 +61,19 @@ namespace s21 {
 
 		void set_cols(size_t cols) {
 			Matrix::cols = cols;
+			std::get<1>(shape) = cols;
 		}
 
 		void set_rows(size_t rows) {
 			Matrix::rows = rows;
+			std::get<0>(shape) = rows;
 		}
 
 		void set_shape(const std::tuple<size_t, size_t> &shape) {
 			Matrix::shape = shape;
+			rows = std::get<0>(shape);
+			cols = std::get<1>(shape);
+
 		}
 
 		void set_data(const std::vector<Type> &data) {
