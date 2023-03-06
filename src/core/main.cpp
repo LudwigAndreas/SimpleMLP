@@ -63,8 +63,9 @@ int main() {
 	s21::IMLPModel<float>		*model = builder
 			->HiddenLayers(2)
 			->ActivationFunc(s21::ActivationFunction::Sigmoid)
-			->LearningRate(0.1f, false)
-			->HiddenUnitsPerLayer(100)
+			->LearningRate(0.3f, true)
+			// ->LearningRate(0.1f, false)
+			->HiddenUnitsPerLayer(200)
 			->GetResult();
 	std::vector<s21::Sample>	samples;
 	// std::chrono::time_point<std::chrono::system_clock> start, end;
