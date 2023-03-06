@@ -17,6 +17,7 @@ namespace s21 {
 		std::vector<Matrix<float>> bias;
 		std::vector<Matrix<float>> weight_matrices;
 		std::vector<Matrix<float>> neuron_values;
+		std::vector<Matrix<float>> incorrect_values;
 		std::vector<Matrix<float>> error;
 		std::vector<Matrix<float>> raw;
 		bool auto_decrease;
@@ -45,10 +46,11 @@ namespace s21 {
 												 out_channels);
 				bias.push_back(b);
 			}
-			for (unsigned long & i : units_per_layer) {
-				neuron_values.emplace_back(1, i);
-				raw.emplace_back(1, i);
-				error.emplace_back(1, i);
+			for (unsigned long i : units_per_layer) {
+				neuron_values	.emplace_back(1, i);
+				incorrect_values.emplace_back(1, i);
+				raw				.emplace_back(1, i);
+				error			.emplace_back(1, i);
 			}
 			// dedt.resize(units_per_layer.size() - 1);
 			// dedw.resize(units_per_layer.size() - 1);
@@ -162,34 +164,49 @@ namespace s21 {
 				y = y.apply_function(af->getFunction());
 				neuron_values[i + 1] = y;
 			}
-			return neuron_values.back().ToVector();
+			return softmax(neuron_values.back()).ToVector();
 		}
 		
-		void Backward(Matrix<float> target, Matrix<float> y) override {
-			assert(std::get<1>(target.get_shape()) == std::get<1>(y.get_shape()));
+		// void Backward(Matrix<float> target, Matrix<float> y) override {
+		// 	assert(std::get<1>(target.get_shape()) == std::get<1>(y.get_shape()));
 
-			error[units_per_layer.size() - 1] = (y - target);
-			for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {
-					error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
-			}
-			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
-				weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
-				bias[i] = bias[i] - error[i + 1] * lr;
+		// 	error[units_per_layer.size() - 1] = (y - target);
+		// 	for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {
+		// 		error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
+		// 	}
+		// 	for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
+		// 		weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
+		// 		bias[i] = bias[i] - error[i + 1] * lr;
+		// 	}
+		// }
+
+		void AppendError() {
+			if (neuron_values[0](0, 0) != neuron_values[0](0, 0))
+				std::raise(SIGTRAP);
+			for (int i = 0; i < neuron_values.size(); ++i)
+				incorrect_values[i] = incorrect_values[i] + neuron_values[i];
+		}
+
+		void	ClearError() {
+			for (int i = 0; i < units_per_layer.size(); ++i) {
+				incorrect_values[i] = Matrix<float>(1, units_per_layer[i]);
 			}
 		}
 		
 		void Backward(Matrix<float> target) override {
-			Backward(target, neuron_values.back());
-			// assert(std::get<1>(target.get_shape()) == units_per_layer.back());
+			// Backward(target, neuron_values.back());
+			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 
+			error[units_per_layer.size() - 1] = (incorrect_values.back() - target);
 			// error[units_per_layer.size() - 1] = (neuron_values.back() - target);
-			// for (int i = (int) units_per_layer.size() - 2; i >= 0; --i) {
-			// 		error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
-			// }
-			// for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
-			// 	weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
-			// 	bias[i] = bias[i] - error[i + 1] * lr;
-			// }
+			for (int i = (int) units_per_layer.size() - 2; i > 0; --i) {
+				error[i] = (error[i + 1] * weight_matrices[i].T()) & raw[i].apply_function(af->getDerivative());
+			}
+			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
+				weight_matrices[i] = weight_matrices[i] - (incorrect_values[i].T() * error[i + 1] * lr);
+				// weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
+				bias[i] = bias[i] - error[i + 1] * lr;
+			}
 		}
 
 		float Train(DatasetGroup samples, bool silent_mode = false) override {
@@ -202,19 +219,22 @@ namespace s21 {
 			int					correct_index;
 
 			for (int i = 0; i < (int) samples.size(); i += mini_batch_size) {
-				guesses = std::vector<float> (units_per_layer.back(), 0.f);
 				correct = std::vector<float> (units_per_layer.back(), 0.f);
-				for (int j = 0; j < mini_batch_size; ++j) {
-					prediction    = Forward                  (samples[i * mini_batch_size + j].x);
-					correct_index = getMostProbablePrediction(samples[i * mini_batch_size + j].y.ToVector());
+				for (int j = 0; j < mini_batch_size && i + j < samples.size(); ++j) {
+					prediction    = Forward                  (samples[i + j].x);
+					correct_index = getMostProbablePrediction(samples[i + j].y.ToVector());
 					if (getMostProbablePrediction(prediction) == correct_index)
 						++correct_guesses;
 					else {
-						std::transform(guesses.begin(), guesses.end(), prediction.begin(), guesses.begin(), std::plus<float>());
-						++correct[correct_index];
+						AppendError();
+						// std::transform(guesses.begin(), guesses.end(), prediction.begin(), guesses.begin(), std::plus<float>());
+						correct[correct_index] += 1.f;
 					}
+					// std::cerr << i << ' ' << j << std::endl; 
 				}
-				Backward(correct, guesses);
+				if (std::accumulate(correct.begin(), correct.end(), 0.f) > .5)
+					Backward(correct);
+				ClearError();
 			}
 			float accuracy = ((float)correct_guesses / (float)samples.size());
 			if (!silent_mode)
@@ -227,6 +247,27 @@ namespace s21 {
 			}
 			return accuracy;
 		}
+
+// 		float Train(DatasetGroup samples, bool silent_mode = false) override {
+// 			static float lower_bound = 0;
+// 			int correct_guesses = 0;
+// 			for (int i = 0; i < (int) samples.size(); ++i) {
+// 				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
+// 					++correct_guesses;
+// 				else
+// 					Backward(samples[i].y);
+// 			}
+// 			float accuracy = ((float) correct_guesses / (float) samples.size());
+// 			if (!silent_mode)
+// 				std::cerr << "Train: " << accuracy * 100 << "% accuracy" << std::endl;
+// 			if (auto_decrease) {
+// //				lr *= (1.f - bsigmoid((accuracy - lower_bound) / (1 - lower_bound)));
+// //				lower_bound = accuracy;
+// //				std::cerr << lr << std::endl;
+// 				lr = start_lr * std::max(1 - accuracy, .01f);
+// 			}
+// 			return accuracy;
+		// }
 
 		float CrossValidation(Dataset dataset, bool silent_mode = false) override {
 			float training_accuracy;
