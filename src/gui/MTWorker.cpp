@@ -1,6 +1,6 @@
 #include <QDebug>
 
-#include "DatasetReading.hpp"
+#include "../core/DatasetReading.hpp"
 
 #include "MTWorker.hpp"
 
@@ -24,7 +24,7 @@ void MTWorker::setDatasetFileName(std::string file_name) {
 
 void MTWorker::process() {
 	try {
-		s21::Dataset dataset(ReadDataset(dataset_file_name), 32);
+		s21::Dataset dataset(ReadDataset(dataset_file_name), 5);
 //TODO kdancy promised to fix it
 		for (int i = 0; i < dataset.size(); ++i) {
 			float training_accuracy = 0;

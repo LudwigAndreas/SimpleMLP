@@ -37,7 +37,7 @@ namespace s21 {
 			groups.reserve(k);
 			for (const auto& it : samples) {
 				group.push_back(it);
-				if (group.size() >= group_size) {
+				if (group.size() >= (size_t) group_size) {
 					groups.emplace_back(group);
 					group.resize(0);
 					group.reserve(group_size);
@@ -49,7 +49,7 @@ namespace s21 {
 		const DatasetGroup &operator[](int index) const	{ return groups[index]; }
 		
 		size_t size()		{ return groups.size(); }
-		bool isUsedUp() 	{ return current_iteration >= groups.size(); }
+		bool isUsedUp() 	{ return (size_t) current_iteration >= groups.size(); }
 		void resetDataset()	{ current_iteration = 0; } 
 	};
 }

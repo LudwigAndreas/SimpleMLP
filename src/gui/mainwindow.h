@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QGraphicsScene>
 
+#include "../core/utils/BMPReader.hpp"
 #include "../core/utils/IMLPModel.hpp"
 
 QT_BEGIN_NAMESPACE
@@ -56,6 +57,8 @@ private slots:
     void on_back_to_configure_push_button_2_pressed();
 
     void on_testing_size_horizontalSlider_valueChanged(int value);
+
+	void on_file_was_drawn();
 
 private:
     Ui::MainWindow *ui;

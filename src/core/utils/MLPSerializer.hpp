@@ -41,24 +41,37 @@ namespace s21 {
 			}
 			file << model->get_lr();
 			file << '\n';
-			for (auto weights: model->get_weight_matrices()) {
+			for (auto weights: model->get_weight_matrices())
 				file << weights;
-			}
-			for (auto bias: model->get_bias_vectors()) {
+			for (auto bias: model->get_bias_vectors())
 				file << bias;
-			}
-			for (auto neuron_values: model->get_neuron_values()) {
+			for (auto neuron_values: model->get_neuron_values())
 				file << neuron_values;
-			}
-			for (auto error: model->get_error()) {
+			for (auto error: model->get_error())
 				file << error;
-			}
+			for (auto incorrect_values: model->get_incorrect_values())
+				file << incorrect_values;
+			for (auto raw: model->get_raw())
+				file << raw;
 			file.close();
 		}
 
+		static std::vector< s21::Matrix<T> > readVectorMatrix(std::istream &input, size_t size) {
+			std::vector<s21::Matrix<T>>	result;
+			s21::Matrix<T>				matrix;
+
+			result.reserve(size);
+			for (int i = 0; i < size; ++i) {
+				input >> matrix;
+				result.push_back(matrix);
+			}
+			return (std::move(result));
+			// model->set_weight_martices(weights_matrices);
+		}
+
 		static s21::IMLPModel<T> *DeserializeMLPMatrixModel(const std::string &filename) {
-			int rows = 0, cols = 0;
-			bool read_shape = true;
+//			int rows = 0, cols = 0;
+//			bool read_shape = true;
 
 //			TODO: rewrite model creation to import graph and matrix models and activation funcs
 			// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
@@ -69,7 +82,7 @@ namespace s21 {
 			std::vector<std::string> row_values;
 			std::vector<s21::Matrix<float>> weights_matrices;
 			s21::Matrix<float> matrix;
-			int weights_index = 0;
+//			int weights_index = 0;
 
 			std::fstream file;
 			file.open(filename, std::ofstream::in);
@@ -85,154 +98,24 @@ namespace s21 {
 			model->set_units_per_layer(units_per_layer);
 			model->set_lr(std::atof(upls.rbegin()->data()));
 
-			weights_matrices.reserve(units_per_layer.size());
-			for (int i = 0; i < model->get_units_per_layer().size() - 1; ++i) {
-				file >> matrix;
-				weights_matrices.push_back(matrix);
-			}
-			model->set_weight_martices(weights_matrices);
+			model->set_weight_martices (readVectorMatrix(file, units_per_layer.size() - 1));
+			model->set_bias			   (readVectorMatrix(file, units_per_layer.size() - 1));
+			model->set_neuron_values   (readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_error		   (readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_incorrect_values(readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_error		   (readVectorMatrix(file, units_per_layer.size()	 ));
 
-			weights_matrices.resize(0);
-			weights_matrices.reserve(units_per_layer.size());
-			for (int i = 0; i < model->get_units_per_layer().size() - 1; ++i) {
-				file >> matrix;
-				weights_matrices.push_back(matrix);
-			}
-			model->set_bias(weights_matrices);
 
-			weights_matrices.resize(0);
-			weights_matrices.reserve(units_per_layer.size());
-			for (int i = 0; i < model->get_units_per_layer().size(); ++i) {
-				file >> matrix;
-				weights_matrices.push_back(matrix);
-			}
-			model->set_neuron_values(weights_matrices);
 
-			weights_matrices.resize(0);
-			weights_matrices.reserve(units_per_layer.size());
-			for (int i = 0; i < model->get_units_per_layer().size(); ++i) {
-				file >> matrix;
-				weights_matrices.push_back(matrix);
-			}
-			model->set_error(weights_matrices);
+			// for (unsigned long i : units_per_layer) {
+			// 	neuron_values	.emplace_back(1, i);
+			// 	incorrect_values.emplace_back(1, i);
+			// 	raw				.emplace_back(1, i);
+			// 	error			.emplace_back(1, i);
+			// }
 			return (IMLPModel<float> *)model;
-
-			// while (std::getline(file, line)) {
-			// 	if (line.empty()) {
-			// 		s21::Matrix<float> weights;
-			// 		weights.set_data(matrix_values);
-
-			// 		weights.set_cols(cols);
-			// 		weights.set_rows(rows);
-			// 		weights.set_shape(std::tuple<size_t, size_t> (rows, cols));
-			// 		// weights.set_cols(units_per_layer[weights_index]);
-			// 		// weights.set_rows(units_per_layer[++weights_index]);
-			// 		// weights.set_shape(std::tuple<size_t, size_t> (units_per_layer[weights_index], units_per_layer[weights_index - 1]));
-			// 		weights_matrices.push_back(weights);
-			// 		matrix_values.resize(0);
-			// 		read_shape = true;
-			// 		if (++weights_index >= units_per_layer.size() - 1)
-			// 			break;
-			// 	} else if (read_shape) {
-			// 		upls = split(line, " ");
-			// 		rows = std::atoi(upls[0].data());
-			// 		cols = std::atoi(upls[1].data());
-			// 		read_shape = false;
-			// 	} else {
-			// 		row_values = split(line, " ");
-			// 		matrix_values.reserve(matrix_values.size() + row_values.size());
-			// 		std::transform(row_values.begin(), row_values.end(),
-			// 					   std::back_inserter(matrix_values),
-			// 					   [](std::string &val) { return std::atof(val.data()); });
-			// 	}
-			// }
-			// model->set_weight_martices(weights_matrices);
-
-			// weights_matrices.resize(0);
-			// weights_index = 0;
-			// while (std::getline(file, line)) {
-			// 	if (line.empty()) {
-			// 		s21::Matrix<float> weights;
-			// 		weights.set_data(matrix_values);
-			// 		weights.set_cols(1);
-			// 		weights.set_rows(units_per_layer[++weights_index]);
-			// 		weights.set_shape(std::tuple<size_t, size_t> (units_per_layer[weights_index], 1));
-			// 		weights_matrices.push_back(weights);
-			// 		matrix_values.resize(0);
-			// 		read_shape = true;
-			// 		if (++weights_index >= units_per_layer.size() - 1)
-			// 			break;
-			// 	} else if (read_shape) {
-			// 		upls = split(line, " ");
-			// 		rows = std::atoi(upls[0].data());
-			// 		cols = std::atoi(upls[1].data());
-			// 		read_shape = false;
-			// 	}
-			// 	else
-			// 		matrix_values.push_back(std::atof(line.data()));
-			// }
-			// model->set_bias(weights_matrices);
-
-			// weights_matrices.resize(0);
-			// weights_index = 0;
-			// while (std::getline(file, line)) {
-			// 	if (line.empty()) {
-			// 		s21::Matrix<float> weights;
-			// 		weights.set_data(matrix_values);
-			// 		weights.set_cols(units_per_layer[weights_index]);
-			// 		weights.set_rows(units_per_layer[++weights_index]);
-			// 		weights.set_shape(std::tuple<size_t, size_t> (units_per_layer[weights_index], units_per_layer[weights_index - 1]));
-			// 		weights_matrices.push_back(weights);
-			// 		matrix_values.resize(0);
-			// 		read_shape = true;
-			// 		if (++weights_index >= units_per_layer.size())
-			// 			break;
-			// 	} else if (read_shape) {
-			// 		upls = split(line, " ");
-			// 		rows = std::atoi(upls[0].data());
-			// 		cols = std::atoi(upls[1].data());
-			// 		read_shape = false;
-			// 	} else {
-			// 		row_values = split(line, " ");
-			// 		matrix_values.reserve(matrix_values.size() + row_values.size());
-			// 		std::transform(row_values.begin(), row_values.end(),
-			// 					   std::back_inserter(matrix_values),
-			// 					   [](std::string &val) { return std::atof(val.data()); });
-			// 	}
-			// }
-			// model->set_neuron_values(weights_matrices);
-
-			// weights_matrices.resize(0);
-			// weights_index = 0;
-			// while (std::getline(file, line)) {
-			// 	if (line.empty()) {
-			// 		s21::Matrix<float> weights;
-			// 		weights.set_data(matrix_values);
-			// 		weights.set_cols(units_per_layer[weights_index]);
-			// 		weights.set_rows(units_per_layer[++weights_index]);
-			// 		weights.set_shape(std::tuple<size_t, size_t> (units_per_layer[weights_index], units_per_layer[weights_index - 1]));
-			// 		weights_matrices.push_back(weights);
-			// 		matrix_values.resize(0);
-			// 		read_shape = true;
-			// 		if (++weights_index >= units_per_layer.size())
-			// 			break;
-			// 	} else if (read_shape) {
-			// 		upls = split(line, " ");
-			// 		rows = std::atoi(upls[0].data());
-			// 		cols = std::atoi(upls[1].data());
-			// 		read_shape = false;
-			// 	} else {
-			// 		row_values = split(line, " ");
-			// 		matrix_values.reserve(matrix_values.size() + row_values.size());
-			// 		std::transform(row_values.begin(), row_values.end(),
-			// 					   std::back_inserter(matrix_values),
-			// 					   [](std::string &val) { return std::atof(val.data()); });
-			// 	}
-			// }
-			// model->set_error(weights_matrices);
-			// file.close();
 		}
-	};
+	};	
 }
 
 #endif //SIMPLEMLP_MLPSERIALIZER_HPP

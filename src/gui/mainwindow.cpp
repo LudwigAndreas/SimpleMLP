@@ -8,22 +8,25 @@
 #include "testdatainfodialog.h"
 #include "../core/LetterRecognitionMlpModelBuilder.hpp"
 #include "../core/utils/MLPSerializer.hpp"
-#include "../core/MTWorker.hpp"
+#include "MTWorker.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+	this->current_model = nullptr;
     ui->setupUi(this);
     ui->training_progress_bar->setValue(0);
     ui->training_progress_bar->hide();
-
+	ui->paint_view->setBackgroundBrush(QColor("midnightblue"));
     connect(ui->import_model_config_label, &ImportFileItem::fileWasUploaded,
 			this, &MainWindow::on_model_config_was_uploaded);
     connect(ui->import_train_dataset_label, &ImportFileItem::fileWasUploaded,
 			this, &MainWindow::on_training_dataset_was_uploaded);
     connect(ui->import_test_dataset_label, &ImportFileItem::fileWasUploaded,
 			this, &MainWindow::on_testing_dataset_was_uploaded);
+    connect(ui->paint_view, &PaintView::file_saved,
+			this, &MainWindow::on_file_was_drawn);
 }
 
 MainWindow::~MainWindow()
@@ -111,6 +114,7 @@ void MainWindow::modelConfigFileWasUploaded(QFile *file)
     ui->file_path_label->setText(file->fileName());
     ui->test_model_push_button->setEnabled(true);
     ui->import_model_config_label->setPixmap(QPixmap(":/img/empty_file.png").scaled(150, 150));
+	this->current_model = s21::MLPSerializer<float>::DeserializeMLPMatrixModel(file->fileName().toStdString());
 }
 
 void MainWindow::trainDatasetFileWasUploaded(QFile *file)
@@ -231,5 +235,36 @@ void MainWindow::on_testing_size_horizontalSlider_valueChanged(int value)
         ui->testing_size_label->setText(QString::number((float) (value + 1) / 100));
     else
         ui->testing_size_label->setText(QString::number(0));
+}
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "src/lib/stb_image_write.h"
+#include "sstream"
+
+void MainWindow::on_file_was_drawn() {
+	static const int new_width = 28;
+	static const int new_height = 28;
+
+	auto image = readAndResizeBMP("my_letter.bmp", 28, 28);
+	auto grayscale = bmp_to_grayscale(image, new_width, new_height, 3);
+	if (current_model) {
+		auto matrix_image = s21::Matrix<float>(grayscale);
+		matrix_image = matrix_image.T();
+		matrix_image.set_cols(28 * 28);
+		matrix_image.set_rows(1);
+//		stbi_write_bmp("gray_letter.bmp", 28, 28, 3, grayscale);
+//		auto test = readAndResizeBMP("gray_letter.bmp", 271, 271);
+//		stbi_write_bmp("imported.bmp", 271, 271, 3, image);
+//		ui->prediction_result_label->setPixmap(QPixmap("imported.bmp"));
+		qDebug() << (char) ('a' + current_model->Predict(matrix_image));
+		std::stringstream ss;
+		ss << "<html><head/><body><p><span style=\" font-size:288pt;\">" <<
+		(char) ('A' + current_model->Predict(matrix_image))
+		<< "</span></p></body></html>";
+		ui->prediction_result_label->setText(QString(ss.str().data()));
+	} else {
+		QMessageBox::information(this, tr("There is no loaded model"), "Can't create prediction without model");
+	}
+	delete[] image;
 }
 

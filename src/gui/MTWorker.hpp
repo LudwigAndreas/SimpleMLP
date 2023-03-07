@@ -2,7 +2,7 @@
 #define SIMPLEMLP_MTWORKER_HPP
 
 #include "QObject"
-#include "utils/IMLPModel.hpp"
+#include "../core/utils/IMLPModel.hpp"
 
 
 class MTWorker: public QObject {

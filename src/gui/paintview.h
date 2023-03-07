@@ -19,7 +19,9 @@ class PaintView : public QGraphicsView
     Q_OBJECT
 
     bool draw;
-    QVector<QPoint> vv;
+	bool new_pixmap = false;
+//	QVector<QPoint> vv;
+	QVector< QVector<QPoint> > vv;
     QImage pic;
     QGraphicsScene *scene;
 
@@ -43,7 +45,7 @@ protected:
 public slots:
 
 signals:
-
+	void file_saved();
 };
 
 #endif // PAINTVIEW_H
