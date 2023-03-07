@@ -1,6 +1,5 @@
 #include "importfileitem.h"
 
-
 ImportFileItem::ImportFileItem(): QLabel()
 {
     this->setAcceptDrops(true);

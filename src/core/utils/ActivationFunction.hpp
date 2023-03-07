@@ -3,6 +3,7 @@
 #include <functional>
 #include <string>
 #include <cmath>
+#include <iostream>
 
 namespace s21 {
 	
@@ -61,6 +62,7 @@ namespace s21 {
 			ReLU = 4,
 			BoundedLinear = 8
 		};
+		int	type;
 
 		static ActivationFunction* getFunctionByName(std::string name)
 		{
@@ -88,4 +90,7 @@ namespace s21 {
 			return (nullptr);
 		}
 	};
+
+	std::istream &operator>>(std::istream &is, ActivationFunction *af);
+	std::ostream &operator<<(std::ostream &os, const ActivationFunction &af); 
 }

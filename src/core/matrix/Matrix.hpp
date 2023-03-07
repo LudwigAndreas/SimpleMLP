@@ -10,6 +10,7 @@
 #include <random>
 #include <exception>
 #include <csignal>
+#include <algorithm>
 
 namespace s21 {
 	template<typename Type>
@@ -33,22 +34,19 @@ namespace s21 {
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
 
-		Matrix(std::vector<Type> vector) : cols(vector.size()), rows(1) {
-			data = vector;
-			shape = (std::tuple<size_t, size_t>) {rows, cols};
-		}
+        Matrix(std::vector<Type> vector) : cols(vector.size()), rows(1), data(std::move(vector)) {
+            shape = (std::tuple<size_t, size_t>) {rows, cols};
+        }
+
+        Matrix(std::vector<Type> vector, size_t rows, size_t cols) : cols(cols), rows(rows), data(std::move(vector)) {
+            shape = (std::tuple<size_t, size_t>) {rows, cols};
+        }
 
 		Matrix &operator=(const Matrix<Type> matrix) {
 			this->rows = matrix.get_rows();
 			this->cols = matrix.get_cols();
 			this->shape = (std::tuple<size_t, size_t>) {rows, cols};
-			data.clear();
-			data.resize(cols * rows);
-			for (int c = 0; c < cols; ++c) {
-				for (int r = 0; r < rows; ++r) {
-					(*this)(r, c) = matrix(r, c);
-				}
-			}
+            data = matrix.ToVector();
 			return (*this);
 		}
 
@@ -63,14 +61,19 @@ namespace s21 {
 
 		void set_cols(size_t cols) {
 			Matrix::cols = cols;
+			std::get<1>(shape) = cols;
 		}
 
 		void set_rows(size_t rows) {
 			Matrix::rows = rows;
+			std::get<0>(shape) = rows;
 		}
 
 		void set_shape(const std::tuple<size_t, size_t> &shape) {
 			Matrix::shape = shape;
+			rows = std::get<0>(shape);
+			cols = std::get<1>(shape);
+
 		}
 
 		void set_data(const std::vector<Type> &data) {
@@ -86,9 +89,17 @@ namespace s21 {
 			return data[row * cols + col];
 		}
 
+        Type &operator[](size_t index) {
+            return data[index];
+        }
+
 		const Type &operator()(size_t row, size_t col) const {
 			return data[row * cols + col];
 		}
+
+        const Type &operator[](size_t index) const {
+            return data[index];
+        }
 
 		/*  linear algebra methods */
 
@@ -97,6 +108,7 @@ namespace s21 {
 		Matrix multiply_elementwise(Matrix &target) {
 			assert(shape == target.get_shape());
 			Matrix output((*this));
+            // #pragma omp parallel for
 			for (size_t r = 0; r < output.get_rows(); ++r) {
 				for (size_t c = 0; c < output.get_cols(); ++c) {
 					output(r, c) = target(r, c) * (*this)(r, c);
@@ -105,21 +117,53 @@ namespace s21 {
 			return output;
 		}
 
-		Matrix matmul(Matrix &target) {
-			if (cols != target.get_rows())
-				std::raise(SIGTRAP);
-			Matrix output(rows, target.get_cols());
+        Matrix matmul(Matrix &target) {
+            if (cols != target.get_rows())
+                std::raise(SIGTRAP);
 
-			for (size_t r = 0; r < output.get_rows(); ++r) {
-				for (size_t c = 0; c < output.get_cols(); ++c) {
-					output(r, c) = 0;
-					for (size_t k = 0; k < target.get_rows(); ++k) {
-						output(r, c) += (*this)(r, k) * target(k, c);
-					}
-				}
-			}
-			return output;
-		}
+            Matrix output(rows, target.get_cols());
+            std::vector<Type> transposed = target.T().ToVector();
+            typename std::vector<Type>::iterator begin, end, tbegin;
+
+            // #pragma omp parallel for
+            begin = data.begin();
+            end = data.begin() + cols;
+            for (size_t r = 0; r < output.get_rows(); ++r) {
+                tbegin = transposed.begin();
+                for (size_t c = 0; c < output.get_cols(); ++c) {
+                    output(r, c) = std::inner_product(begin, end,
+                                                      tbegin, 0.f);
+                    tbegin += cols;
+                }
+                begin = end;
+                end += cols;
+            }
+            return output;
+        }
+
+        Matrix matmulTransposed(Matrix &target) {
+            if (cols != target.get_cols())
+                std::raise(SIGTRAP);
+
+            Matrix output(rows, target.get_rows());
+            std::vector<Type> transposed = target.ToVector();
+            typename std::vector<Type>::iterator begin, end, tbegin;
+
+            // #pragma omp parallel for
+            begin = data.begin();
+            end = data.begin() + cols;
+            for (size_t r = 0; r < output.get_rows(); ++r) {
+                tbegin = transposed.begin();
+                for (size_t c = 0; c < output.get_cols(); ++c) {
+                    output(r, c) = std::inner_product(begin, end,
+                                                      tbegin, 0.f);
+                    tbegin += cols;
+                }
+                begin = end;
+                end += cols;
+            }
+            return output;
+        }
 
 		Matrix operator&(const Matrix &target) const	{ return multiply_elementwise(target); }
 		Matrix operator&(Matrix target)					{ return multiply_elementwise(target); }
@@ -135,6 +179,7 @@ namespace s21 {
 
 		Matrix multiply_scalar(Type scalar) {
 			Matrix output((*this));
+            // #pragma omp parallel for
 			for (size_t r = 0; r < output.get_rows(); ++r) {
 				for (size_t c = 0; c < output.get_cols(); ++c) {
 					output(r, c) = scalar * (*this)(r, c);
@@ -148,7 +193,7 @@ namespace s21 {
 			if (shape != target.get_shape())
 				std::raise(SIGTRAP);
 			Matrix output(rows, cols);
-
+            // #pragma omp parallel for
 			for (size_t r = 0; r < output.get_rows(); ++r) {
 				for (size_t c = 0; c < output.get_cols(); ++c) {
 					output(r, c) = (*this)(r, c) + target(r, c);
@@ -156,12 +201,11 @@ namespace s21 {
 			}
 			return output;
 		}
-		
 		Matrix add(Matrix target) {
 			if (shape != target.get_shape())
 				std::raise(SIGTRAP);
 			Matrix output(rows, cols);
-
+            // #pragma omp parallel for
 			for (size_t r = 0; r < output.get_rows(); ++r) {
 				for (size_t c = 0; c < output.get_cols(); ++c) {
 					output(r, c) = (*this)(r, c) + target(r, c);
@@ -181,6 +225,7 @@ namespace s21 {
 		/* Matrix subtraction */
 		Matrix operator-() {
 			Matrix output(rows, cols);
+            // #pragma omp parallel for
 			for (size_t r = 0; r < rows; ++r) {
 				for (size_t c = 0; c < cols; ++c) {
 					output(r, c) = -(*this)(r, c);
@@ -208,18 +253,33 @@ namespace s21 {
 			return sub(target);
 		}
 
-		/* Matrix trasnposing */
-		Matrix transpose() {
-			size_t new_rows{cols}, new_cols{rows};
-			Matrix transposed(new_rows, new_cols);
+//        void transpose(double *dst, const double *src, size_t n, size_t p) noexcept {
+//            size_t block = 32;
+//            for (size_t i = 0; i < n; i += block) {
+//                for (size_t j = 0; j < p; ++j) {
+//                    for (size_t b = 0; b < block && i + b < n; ++b) {
+//                        dst[j*n + i + b] = src[(i + b)*p + j];
+//                    }
+//                }
+//            }
+//        }
 
-			for (size_t r = 0; r < new_rows; ++r) {
-				for (size_t c = 0; c < new_cols; ++c) {
-					transposed(r, c) = (*this)(c, r);  // swap row and col
-				}
-			}
-			return transposed;
-		}
+		/* Matrix transposing */
+        Matrix transpose() noexcept {
+            // new rows = cols;
+            // new cols = rows;
+            Matrix transposed(cols, rows);//(cols, rows);
+            const size_t block = 16;
+            // #pragma omp parallel for
+            for (size_t i = 0; i < rows; i += block) {
+                for (size_t j = 0; j < cols; ++j) {
+                    for (size_t b = 0; b < block && i + b < rows; ++b)
+                        transposed[j * rows + i + b] = data[(i + b) * cols + j];  // swap row and col
+//                    transposed(r, c) = (*this)(c, r);  // swap row and col
+                }
+            }
+            return transposed;
+        }
 
 		Matrix T() { // Similar to numpy, etc.
 			return transpose();
@@ -228,6 +288,7 @@ namespace s21 {
 		Matrix
 		apply_function(const std::function<Type(const Type &)> &function) {
 			Matrix output(rows, cols);
+            // #pragma omp parallel for
 			for (size_t r = 0; r < rows; ++r) {
 				for (size_t c = 0; c < cols; ++c) {
 					output(r, c) = function((*this)(r, c));
@@ -236,9 +297,13 @@ namespace s21 {
 			return output;
 		}
 
-		std::vector<Type> ToVector() const {
-			return data;
-		}
+        const std::vector<Type>& ToVector() const {
+            return data;
+        }
+
+        std::vector<Type> &ToVector() {
+            return data;
+        }
 	};
 
 	/* print methods [or move it to another class] */

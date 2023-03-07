@@ -60,7 +60,7 @@
      <bool>false</bool>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="set_model_page">
      <widget class="QLabel" name="label_2">
@@ -133,10 +133,22 @@
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
-            <item row="2" column="1">
-             <widget class="QLabel" name="label_5">
+            <item row="2" column="0">
+             <widget class="QComboBox" name="activation_func_comboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Sigmoid</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>Activation function</string>
+               <string>Number of hidden layers</string>
               </property>
              </widget>
             </item>
@@ -184,18 +196,6 @@
               </item>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QComboBox" name="activation_func_comboBox">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <item>
-               <property name="text">
-                <string>Sigmoid</string>
-               </property>
-              </item>
-             </widget>
-            </item>
             <item row="1" column="1">
              <widget class="QLabel" name="label_4">
               <property name="text">
@@ -203,10 +203,10 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_3">
+            <item row="2" column="1">
+             <widget class="QLabel" name="label_5">
               <property name="text">
-               <string>Number of hidden layers</string>
+               <string>Activation function</string>
               </property>
              </widget>
             </item>
@@ -687,7 +687,7 @@ It consists of a single node or neuron that takes a row of data as input and pre
        <item>
         <widget class="QTabWidget" name="tabWidget_2">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab_3">
           <attribute name="title">
@@ -733,6 +733,37 @@ It consists of a single node or neuron that takes a row of data as input and pre
            <property name="title">
             <string/>
            </property>
+           <widget class="QLabel" name="prediction_result_label">
+            <property name="geometry">
+             <rect>
+              <x>7</x>
+              <y>5</y>
+              <width>261</width>
+              <height>261</height>
+             </rect>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:288pt;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::AutoText</enum>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="margin">
+             <number>-116</number>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+           </widget>
           </widget>
           <widget class="QPushButton" name="pushButton">
            <property name="geometry">

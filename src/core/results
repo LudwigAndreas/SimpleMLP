@@ -1,0 +1,5 @@
+DO NOT use -O3, it causes weights to become nan, rather use -Ofast (kinda weird, because -Ofast uses all optimization flags as -O3 and more)
+
+4 epochs, lr .3, decrement on, 100 upl = 78.9% on test
+4 epochs, lr .3, decrement on, 200 upl = 80.5% on test
+4 epochs, lr .3, decrement on, 392 upl = 83.4% on test
