@@ -11,5 +11,10 @@ namespace s21 {
 	public:
 		s21::MLPGraphNode		&operator[](int index);
 		const s21::MLPGraphNode &operator[](int index) const;
+
+		void	SetInputLayer (MLPGraphLayer *input);
+		void	SetOutputLayer(MLPGraphLayer *output);
+
+		void	CalculateLayer();
 	};
 }
