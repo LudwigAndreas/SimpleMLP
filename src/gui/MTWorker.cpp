@@ -1,7 +1,8 @@
 #include <QDebug>
+#include "sstream"
 
 #include "../core/DatasetReading.hpp"
-
+#include "../core/utils/MLPSerializer.hpp"
 #include "MTWorker.hpp"
 
 
@@ -20,6 +21,13 @@ void MTWorker::setModel(s21::IMLPModel<float> *model) {
 
 void MTWorker::setDatasetFileName(std::string file_name) {
 	this->dataset_file_name = file_name;
+}
+
+void	SaveModel(s21::IMLPModel<float> *model, int iteration) {
+	std::stringstream	ss;
+
+	ss << "testmodel" << iteration << ".mlpmodel";
+	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), ss.str());
 }
 
 void MTWorker::process() {
@@ -43,6 +51,7 @@ void MTWorker::process() {
 								   / (dataset.size() * dataset.size()) * 100,
 								   testing_accuracy);
 			}
+			SaveModel(model, i);
 			std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
 			std::cerr << "Train: " << (training_accuracy * 100) / (trained_on) << "% accuracy" << std::endl;
 			testing_accuracy = model->Test(dataset[dataset.current_iteration], true);

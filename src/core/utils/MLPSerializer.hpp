@@ -98,12 +98,12 @@ namespace s21 {
 			model->set_units_per_layer(units_per_layer);
 			model->set_lr(std::atof(upls.rbegin()->data()));
 
-			model->set_weight_martices (readVectorMatrix(file, units_per_layer.size() - 1));
-			model->set_bias			   (readVectorMatrix(file, units_per_layer.size() - 1));
-			model->set_neuron_values   (readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_error		   (readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_incorrect_values(readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_error		   (readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_weight_martices	(readVectorMatrix(file, units_per_layer.size() - 1));
+			model->set_bias				(readVectorMatrix(file, units_per_layer.size() - 1));
+			model->set_neuron_values	(readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_error			(readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_incorrect_values	(readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_raw				(readVectorMatrix(file, units_per_layer.size()	 ));
 
 
 
