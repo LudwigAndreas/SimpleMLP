@@ -11,6 +11,9 @@
 #include <exception>
 #include <csignal>
 #include <algorithm>
+#include <stdexcept>
+
+#include "src/core/exceptions/MatrixException.hpp"
 
 namespace s21 {
 	template<typename Type>
@@ -43,9 +46,9 @@ namespace s21 {
         }
 
 		Matrix &operator=(const Matrix<Type> matrix) {
-			this->rows = matrix.get_rows();
-			this->cols = matrix.get_cols();
-			this->shape = (std::tuple<size_t, size_t>) {rows, cols};
+			Matrix::rows = matrix.get_rows();
+			Matrix::cols = matrix.get_cols();
+			Matrix::shape = (std::tuple<size_t, size_t>) {rows, cols};
             data = matrix.ToVector();
 			return (*this);
 		}
@@ -58,6 +61,16 @@ namespace s21 {
 		size_t get_rows() const { return rows; }
 
 		std::tuple<size_t, size_t> get_shape() const { return shape; }
+		
+		size_t size() const { data.size(); }
+
+		std::vector<Type> get_data() {
+			return Matrix::data;
+		}
+
+		std::vector<Type> get_data() const{
+			return Matrix::data;
+		}
 
 		void set_cols(size_t cols) {
 			Matrix::cols = cols;
@@ -73,23 +86,21 @@ namespace s21 {
 			Matrix::shape = shape;
 			rows = std::get<0>(shape);
 			cols = std::get<1>(shape);
-
 		}
 
 		void set_data(const std::vector<Type> &data) {
 			Matrix::data = data;
 		}
 
-		void update_shape() {
-			std::get<0>(Matrix::shape) = get_rows();
-			std::get<1>(Matrix::shape) = get_cols();
-		}
-
 		Type &operator()(size_t row, size_t col) {
+			if (row * cols + col >= data.size())
+				throw std::out_of_range("Matrix out of bounds::operator()(size_t, size_t)");
 			return data[row * cols + col];
 		}
 
         Type &operator[](size_t index) {
+			if (index >= data.size())
+				throw std::out_of_range("Matrix out of bounds::operator[](size_t)");
             return data[index];
         }
 
@@ -101,14 +112,24 @@ namespace s21 {
             return data[index];
         }
 
-		/*  linear algebra methods */
+		/* Equality operators */
+
+		bool operator==(const Matrix &other) const {
+			return this->data == other.get_data() && this->shape == other.get_shape();
+		}
+
+		bool operator!=(const Matrix &other) const {
+			return this->data != other.get_data() && this->shape != other.get_shape();
+		}
+
+		/*  Linear algebra methods */
 
 		/* Matrix multiplication */
 
 		Matrix multiply_elementwise(Matrix &target) {
-			assert(shape == target.get_shape());
+			if (shape != target.get_shape())
+				throw MatrixCalculationsException("Matrix Multiplication Exception: multiply_elementwise(Matrix &). Shape is not valid");
 			Matrix output((*this));
-            // #pragma omp parallel for
 			for (size_t r = 0; r < output.get_rows(); ++r) {
 				for (size_t c = 0; c < output.get_cols(); ++c) {
 					output(r, c) = target(r, c) * (*this)(r, c);
@@ -118,8 +139,8 @@ namespace s21 {
 		}
 
         Matrix matmul(Matrix &target) {
-            if (cols != target.get_rows())
-                std::raise(SIGTRAP);
+			if (cols != target.get_rows())
+				throw MatrixCalculationsException("Matrix Multiplication Exception: matmul(Matrix &). Matrix dimensions not match");
 
             Matrix output(rows, target.get_cols());
             std::vector<Type> transposed = target.T().ToVector();
@@ -142,8 +163,8 @@ namespace s21 {
         }
 
         Matrix matmulTransposed(Matrix &target) {
-            if (cols != target.get_cols())
-                std::raise(SIGTRAP);
+			if (cols != target.get_cols())
+				throw MatrixCalculationsException("Matrix Multiplication Exception: matmulTransposed(Matrix). Matrix dimensions not match");
 
             Matrix output(rows, target.get_rows());
             std::vector<Type> transposed = target.ToVector();
@@ -191,7 +212,7 @@ namespace s21 {
 		/* Matrix addition */
 		Matrix add(const Matrix &target) const {
 			if (shape != target.get_shape())
-				std::raise(SIGTRAP);
+				throw MatrixCalculationsException("Matrix Addition Exception: add(Matrix &). Matrix dimensions not match");
 			Matrix output(rows, cols);
             // #pragma omp parallel for
 			for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -203,7 +224,7 @@ namespace s21 {
 		}
 		Matrix add(Matrix target) {
 			if (shape != target.get_shape())
-				std::raise(SIGTRAP);
+				throw MatrixCalculationsException("Matrix Addition Exception: add(Matrix). Matrix dimensions not match");
 			Matrix output(rows, cols);
             // #pragma omp parallel for
 			for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -253,35 +274,21 @@ namespace s21 {
 			return sub(target);
 		}
 
-//        void transpose(double *dst, const double *src, size_t n, size_t p) noexcept {
-//            size_t block = 32;
-//            for (size_t i = 0; i < n; i += block) {
-//                for (size_t j = 0; j < p; ++j) {
-//                    for (size_t b = 0; b < block && i + b < n; ++b) {
-//                        dst[j*n + i + b] = src[(i + b)*p + j];
-//                    }
-//                }
-//            }
-//        }
-
 		/* Matrix transposing */
         Matrix transpose() noexcept {
-            // new rows = cols;
-            // new cols = rows;
-            Matrix transposed(cols, rows);//(cols, rows);
+            Matrix transposed(cols, rows);
             const size_t block = 16;
             // #pragma omp parallel for
             for (size_t i = 0; i < rows; i += block) {
                 for (size_t j = 0; j < cols; ++j) {
                     for (size_t b = 0; b < block && i + b < rows; ++b)
                         transposed[j * rows + i + b] = data[(i + b) * cols + j];  // swap row and col
-//                    transposed(r, c) = (*this)(c, r);  // swap row and col
                 }
             }
             return transposed;
         }
 
-		Matrix T() { // Similar to numpy, etc.
+		Matrix T() {
 			return transpose();
 		}
 
@@ -335,7 +342,6 @@ namespace s21 {
 		matrix = Matrix<float>(data);
 		matrix.set_rows(rows);
 		matrix.set_cols(cols);
-		matrix.update_shape();
 		return is;
 	}
 

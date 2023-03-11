@@ -50,7 +50,7 @@ void MainWindow::on_train_model_push_button_pressed()
 		current_model = builder
                 ->HiddenLayers(ui->num_of_hidden_layers_comboBox->currentText().toInt())
                 ->ActivationFunc(ui->activation_func_comboBox->currentText().toStdString())
-				->HiddenUnitsPerLayer(392)
+				->HiddenUnitsPerLayer(200)
                 ->PerceptionBase(ui->perceptron_imp_comboBox->currentText().toStdString())
 				->GetResult();
 		qDebug() << "create model";
@@ -245,18 +245,13 @@ void MainWindow::on_file_was_drawn() {
 	static const int new_width = 28;
 	static const int new_height = 28;
 
-	auto image = readAndResizeBMP("my_letter.bmp", 28, 28);
-	auto grayscale = bmp_to_grayscale(image, new_width, new_height, 3);
+	auto image = ReadAndResizeBMP("my_letter.bmp", new_width, new_height);
+	auto grayscale = BMPDataToGrayscale(image, new_width, new_height, 3);
 	if (current_model) {
-		auto matrix_image = s21::Matrix<float>(grayscale);
-		matrix_image = matrix_image.T();
-		matrix_image.set_cols(28 * 28);
+		auto matrix_image = s21::Matrix<float>(grayscale, new_width, new_height).T();
+		matrix_image.set_cols(new_height * new_width);
 		matrix_image.set_rows(1);
-//		stbi_write_bmp("gray_letter.bmp", 28, 28, 3, grayscale);
-//		auto test = readAndResizeBMP("gray_letter.bmp", 271, 271);
-//		stbi_write_bmp("imported.bmp", 271, 271, 3, image);
-//		ui->prediction_result_label->setPixmap(QPixmap("imported.bmp"));
-		qDebug() << (char) ('a' + current_model->Predict(matrix_image));
+		std::cout << matrix_image << std::endl;
 		std::stringstream ss;
 		ss << "<html><head/><body><p><span style=\" font-size:288pt;\">" <<
 		(char) ('A' + current_model->Predict(matrix_image))
