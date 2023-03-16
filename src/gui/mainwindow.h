@@ -38,11 +38,11 @@ private slots:
 
 	void on_toolButton_pressed();
 
-    void on_model_config_was_uploaded();
+    void OnModelConfigWasUploaded();
 
-    void on_training_dataset_was_uploaded();
+    void onTrainingDatasetWasUploaded();
 
-    void on_testing_dataset_was_uploaded();
+    void onTestingDatasetWasUploaded();
 
     void on_toolButton_3_pressed();
 
@@ -58,7 +58,9 @@ private slots:
 
     void on_testing_size_horizontalSlider_valueChanged(int value);
 
-	void on_file_was_drawn();
+	void onFileWasDrawn();
+
+	void on_export_model_push_button_pressed();
 
 private:
     Ui::MainWindow *ui;
@@ -66,9 +68,9 @@ private:
     QFile *training_dataset_file;
     QFile *testing_dataset_file;
     s21::IMLPModel<float> *current_model;
+	QThread *training_thread;
 
-
-    void modelConfigFileWasUploaded(QFile *file);
+	void modelConfigFileWasUploaded(QFile *file);
     void trainDatasetFileWasUploaded(QFile *file);
     void testDatasetFileWasUploaded(QFile *file);
 };

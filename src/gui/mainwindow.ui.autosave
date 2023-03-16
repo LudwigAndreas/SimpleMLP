@@ -60,7 +60,7 @@
      <bool>false</bool>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="set_model_page">
      <widget class="QLabel" name="label_2">
@@ -580,6 +580,9 @@ It consists of a single node or neuron that takes a row of data as input and pre
           </property>
          </widget>
          <widget class="QProgressBar" name="training_progress_bar">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -758,7 +761,7 @@ It consists of a single node or neuron that takes a row of data as input and pre
        <item>
         <widget class="QTabWidget" name="tabWidget_2">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab_3">
           <attribute name="title">
