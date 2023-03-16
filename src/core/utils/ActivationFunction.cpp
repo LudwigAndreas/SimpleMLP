@@ -9,7 +9,7 @@ namespace s21 {
 	}
 
 	inline float d_sigmoid(float x){
-		return std::exp(x) / std::pow(std::exp(x) + 1, 2);
+		return std::exp(x) / ((std::exp(x) + 1) * (std::exp(x) + 1));
 	}
 
 	inline float bsigmoid(float x) {
@@ -17,15 +17,23 @@ namespace s21 {
 	}
 
 	inline float d_bsigmoid(float x){
-		return (2 * x * (1 - x));
+		return (2 * d_sigmoid(x));
 	}
 
 	inline float relu(float x) {
-		return (x >= 0) ? x : x / 100;
+		if (x >= 0) {
+			return x;
+		} else {
+			return x * 0.01f;
+		}
 	}
 
 	inline float d_relu(float x) {
-		return (x >= 0) ? 1 : 1. / 100;
+		if (x >= 0) {
+			return 1;
+		} else {
+			return 0.01;
+		}
 	}
 
 	inline float bounded_linear(float x) {
@@ -53,13 +61,13 @@ namespace s21 {
 
 	ActivationFunction *
 	ActivationFunction::getFunctionByName(const std::string& name) {
-		if (name == "sigmoid")
+		if (name == "Sigmoid")
 			return new ActivationFunction(sigmoid, d_sigmoid);
-		else if (name == "bipolar sigmoid")
+		else if (name == "Bipolar Sigmoid")
 			return new ActivationFunction(bsigmoid, d_bsigmoid);
 		else if (name == "ReLU")
 			return new ActivationFunction(relu, d_relu);
-		else if (name == "bounded linear")
+		else if (name == "Bounded Linear")
 			return new ActivationFunction(bounded_linear, d_bounded_linear);
 		return (nullptr);
 	}

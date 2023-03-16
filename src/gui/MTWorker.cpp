@@ -8,7 +8,7 @@
 
 
 MTWorker::MTWorker() {
-
+	this->num_of_epochs = 5;
 }
 
 MTWorker::~MTWorker() {
@@ -27,13 +27,17 @@ void	SaveModel(s21::IMLPModel<float> *model, int iteration) {
 	std::stringstream	ss;
 
 	ss << "testmodel" << iteration << ".mlpmodel";
-	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), ss.str());
+	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)(model), ss.str());
+}
+
+void MTWorker::setNumOfEpochs(int num) {
+	this->num_of_epochs = num;
 }
 
 void MTWorker::process() {
 	try {
-		s21::Dataset dataset(ReadDataset(dataset_file_name), 5);
-//TODO kdancy promised to fix it
+		s21::Dataset dataset(ReadDataset(dataset_file_name), num_of_epochs);
+		//TODO confusion matrix
 		for (int i = 0; i < dataset.size(); ++i) {
 			float training_accuracy = 0;
 			float testing_accuracy = 0;
@@ -43,13 +47,16 @@ void MTWorker::process() {
 				std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
 				if (j)
 					std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%';
-				if (j != dataset.current_iteration && ++trained_on)
+				if (j != dataset.current_iteration && ++trained_on) {
 					training_accuracy += model->Train(dataset[j], true);
-
+				}
 				emit statusChanged(i + 1,
 								   ((float) i * dataset.size() + j + 1)
-								   / (dataset.size() * dataset.size()) * 100,
-								   testing_accuracy);
+								   / (dataset.size() * dataset.size()) *
+								   100,
+								   (training_accuracy * 100) /
+								   (trained_on));
+
 			}
 			SaveModel(model, i);
 			std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
@@ -59,6 +66,7 @@ void MTWorker::process() {
 			++dataset.current_iteration;
 		}
 	} catch (std::exception e) {
+//		TODO create exception
 		qDebug() << "cant upload model or dataset";
 	}
 }

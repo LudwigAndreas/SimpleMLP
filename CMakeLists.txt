@@ -35,7 +35,7 @@ add_executable(SimpleMLP
 #        src/core/utils/BMPReader.cpp
 #        src/core/main.cpp
 
-#        src/gui/main.cpp
+        src/gui/main.cpp
         src/gui/MTWorker.cpp
         src/gui/MTWorker.hpp
         src/gui/importfileitem.h
@@ -50,7 +50,8 @@ add_executable(SimpleMLP
         src/gui/testdatainfodialog.ui
         src/gui/resourses.qrc
         src/core/utils/BMPReader.cpp src/core/utils/BMPReader.hpp
-        src/tests/main.cpp src/tests/core/matrix/MatrixTest.cpp src/core/exceptions/MatrixException.hpp
-        src/tests/core/utils/ActivationFunctionTest.cpp src/tests/core/utils/BMPReaderTest.cpp)
+#        src/tests/main.cpp src/tests/core/matrix/MatrixTest.cpp src/core/exceptions/MatrixException.hpp
+#        src/tests/core/utils/ActivationFunctionTest.cpp src/tests/core/utils/BMPReaderTest.cpp
+        )
 target_link_libraries(SimpleMLP Qt6::Widgets)
 target_link_libraries(SimpleMLP ${GTEST_BOTH_LIBRARIES})

@@ -9,7 +9,7 @@ std::vector<float> BMPDataToGrayscale(const unsigned char* bmp_data,
 									  int width, int height, int channels) {
 
 	std::vector<float> grayscale_data(width * height);
-	int min = 255, max = 0;
+	float min = 255, max = 0;
 	for (int i = 0; i < width * height; i++) {
 		int r = bmp_data[i * channels];
 		int g = bmp_data[i * channels + 1];
@@ -23,7 +23,7 @@ std::vector<float> BMPDataToGrayscale(const unsigned char* bmp_data,
 	max = max - (max - min) / 20;
 	min = min + (max - min) / 20;
 	for (auto &i : grayscale_data)
-		i = std::min(255., std::max(0., (i - min) * (255. / (max - min))));
+		i = std::min(255., std::max(0., (i - min) * (1. / (max - min))));
 	return grayscale_data;
 }
 

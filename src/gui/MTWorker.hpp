@@ -11,7 +11,7 @@ class MTWorker: public QObject {
 private:
 	s21::IMLPModel<float> *model;
 	std::string dataset_file_name;
-
+	int num_of_epochs;
 
 public:
 	MTWorker();
@@ -19,6 +19,7 @@ public:
 
 	void setModel(s21::IMLPModel<float> *model);
 	void setDatasetFileName(std::string file_name);
+	void setNumOfEpochs(int num);
 
 public slots:
 	void process();

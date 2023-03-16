@@ -2,6 +2,11 @@
 #include <QMessageBox>
 #include <QThread>
 
+#include <sstream>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "src/lib/stb_image_write.h"
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "importfileitem.h"
@@ -15,18 +20,19 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
 	this->current_model = nullptr;
-    ui->setupUi(this);
+	this->training_thread = new QThread();
+	ui->setupUi(this);
     ui->training_progress_bar->setValue(0);
     ui->training_progress_bar->hide();
 	ui->paint_view->setBackgroundBrush(QColor("midnightblue"));
     connect(ui->import_model_config_label, &ImportFileItem::fileWasUploaded,
-			this, &MainWindow::on_model_config_was_uploaded);
+			this, &MainWindow::OnModelConfigWasUploaded);
     connect(ui->import_train_dataset_label, &ImportFileItem::fileWasUploaded,
-			this, &MainWindow::on_training_dataset_was_uploaded);
+			this, &MainWindow::onTrainingDatasetWasUploaded);
     connect(ui->import_test_dataset_label, &ImportFileItem::fileWasUploaded,
-			this, &MainWindow::on_testing_dataset_was_uploaded);
+			this, &MainWindow::onTestingDatasetWasUploaded);
     connect(ui->paint_view, &PaintView::file_saved,
-			this, &MainWindow::on_file_was_drawn);
+			this, &MainWindow::onFileWasDrawn);
 }
 
 MainWindow::~MainWindow()
@@ -50,14 +56,12 @@ void MainWindow::on_train_model_push_button_pressed()
 		current_model = builder
                 ->HiddenLayers(ui->num_of_hidden_layers_comboBox->currentText().toInt())
                 ->ActivationFunc(ui->activation_func_comboBox->currentText().toStdString())
-				->HiddenUnitsPerLayer(200)
+				->HiddenUnitsPerLayer(ui->hidden_utf_spin_box->value())
                 ->PerceptionBase(ui->perceptron_imp_comboBox->currentText().toStdString())
+				->LearningRate((float) ui->lr_double_spin_box->value(), true)
 				->GetResult();
-		qDebug() << "create model";
     } else if (ui->tabWidget->currentIndex() == 1 && !ui->file_path_label->text().isEmpty()){
 		current_model = s21::MLPSerializer<float>::DeserializeMLPMatrixModel(ui->file_path_label->text().toStdString());
-        qDebug() << "import model";
-//		TODO import model in another thread
     } else {
 		QMessageBox::information(this, tr("Unable to create model"), "There is an error in creating model");
 	}
@@ -70,6 +74,7 @@ void MainWindow::on_test_model_push_button_pressed()
     ui->training_progress_bar->hide();
     ui->start_training_push_button->show();
     ui->stackedWidget->setCurrentIndex(2);
+	ui->train_info_text_label->setDisabled(true);
 }
 
 void MainWindow::on_test_model_push_button_2_pressed()
@@ -78,18 +83,32 @@ void MainWindow::on_test_model_push_button_2_pressed()
     ui->start_training_push_button->show();
     ui->stackedWidget->setCurrentIndex(2);
 }
-
+//TODO add message boxes for every button that can break app
 void MainWindow::on_back_to_configure_push_button_pressed()
 {
+	if (this->training_thread->isRunning()) {
+		QMessageBox training_is_running_message;
+		training_is_running_message.setText("The training is already running"); //TODO finish message box
+		training_is_running_message.setWindowTitle(tr("The training is already running"));
+//		training_is_running_message.set
+		training_is_running_message.setStandardButtons(QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
+		training_is_running_message.setDefaultButton(QMessageBox::Cancel);
+		int ret = training_is_running_message.exec();
+//				msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+//		msgBox.setDefaultButton(QMessageBox::Save);
+	}
     ui->training_progress_bar->hide();
+	ui->training_progress_bar->setValue(0);
     ui->start_training_push_button->show();
     ui->stackedWidget->setCurrentIndex(0);
+	ui->train_info_text_label->setDisabled(true);
 }
 
 void MainWindow::on_back_to_configure_push_button_2_pressed()
 {
-//    ui->training_progress_bar->hide();
-//    ui->start_training_push_button->show();
+    ui->training_progress_bar->hide();
+	ui->training_progress_bar->setValue(0);
+    ui->start_training_push_button->show();
     ui->stackedWidget->setCurrentIndex(0);
 }
 
@@ -119,6 +138,7 @@ void MainWindow::modelConfigFileWasUploaded(QFile *file)
 
 void MainWindow::trainDatasetFileWasUploaded(QFile *file)
 {
+	ui->start_training_push_button->setEnabled(true);
     ui->file_path_label_2->setText(file->fileName());
     ui->import_train_dataset_label->setPixmap(QPixmap(":/img/empty_file.png").scaled(150, 150));
 }
@@ -129,20 +149,20 @@ void MainWindow::testDatasetFileWasUploaded(QFile *file)
     ui->import_test_dataset_label->setPixmap(QPixmap(":/img/empty_file.png").scaled(150, 150));
 }
 
-void MainWindow::on_model_config_was_uploaded()
+void MainWindow::OnModelConfigWasUploaded()
 {
     this->model_config_file = ui->import_model_config_label->getUploadedFile();
     modelConfigFileWasUploaded(ui->import_model_config_label->getUploadedFile());
 }
 
-void MainWindow::on_training_dataset_was_uploaded()
+void MainWindow::onTrainingDatasetWasUploaded()
 {
     this->training_dataset_file = ui->import_train_dataset_label->getUploadedFile();
     trainDatasetFileWasUploaded(ui->import_train_dataset_label->getUploadedFile());
     ui->start_training_push_button->setEnabled(true);
 }
 
-void MainWindow::on_testing_dataset_was_uploaded()
+void MainWindow::onTestingDatasetWasUploaded()
 {
     this->testing_dataset_file = ui->import_test_dataset_label->getUploadedFile();
     testDatasetFileWasUploaded(ui->import_test_dataset_label->getUploadedFile());
@@ -166,27 +186,41 @@ void MainWindow::on_toolButton_pressed()
 
 void MainWindow::on_start_training_push_button_pressed()
 {
-//    TODO: in new QThead start training with updating progress_bar value;
-//    ui->training_progress_bar->setValue(ui->training_progress_bar->value() + 25);
-    ui->training_progress_bar->show();
-    ui->start_training_push_button->hide();
-	QThread *thread = new QThread();
-	MTWorker *worker = new MTWorker();
+
+	if (this->training_thread->isRunning()) {
+		QMessageBox::information(this, tr("The training is already running"),
+								 "Can't start training twice");
+		return;
+	}
+	ui->training_progress_bar->show();
+	ui->start_training_push_button->hide();
+	ui->test_model_push_button->hide();
+	auto *worker = new MTWorker();
 	worker->setModel(current_model);
+	worker->setNumOfEpochs(ui->num_of_epochs_spin_box->value());
 	worker->setDatasetFileName((ui->file_path_label_2->text().toStdString()));
-	worker->moveToThread(thread);
-	connect(thread, SIGNAL(started()), worker, SLOT(process()));
-	connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+	worker->moveToThread(this->training_thread);
+	connect(this->training_thread, SIGNAL(started()), worker, SLOT(process()));
+	connect(worker, SIGNAL(finished()), this->training_thread, SLOT(quit()));
 	connect(worker, SIGNAL(statusChanged(int, int, float)), this, SLOT(update_training_status(int, int, float)));
 	connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-	thread->start();
-
-
+	connect(this->training_thread, SIGNAL(finished()), this->training_thread, SLOT(deleteLater()));
+	this->training_thread->start();
 }
 
 void MainWindow::update_training_status(int epoch, int completion, float accuracy) {
+	ui->train_info_text_label->setEnabled(true);
+	std::stringstream ss;
+	ss << "<html><head/><body><p><span style=\" font-size:18pt; font-weight:700;\">Epoch: </span><span style=\" font-size:18pt;\">"
+	<< epoch
+	<< "</span></p><p><span style=\" font-size:18pt; font-weight:700;\">Current accuracy: </span><span style=\" font-size:18pt;\">"
+	<< std::setprecision(3) << (std::isnan(accuracy) ? 0 : accuracy) << "%"
+	<< "</span></p><p><span style=\" font-size:18pt; font-weight:700;\">Completion: </span><span style=\" font-size:18pt;\">"
+	<< completion << "%"
+	<< "</span></p></body></html>";
+	ui->train_info_text_label->setText(ss.str().data());
 	ui->training_progress_bar->setValue(completion);
+
 	if (ui->training_progress_bar->value() == 100) {
 		ui->test_model_push_button_2->setEnabled(true);
 	}
@@ -237,11 +271,7 @@ void MainWindow::on_testing_size_horizontalSlider_valueChanged(int value)
         ui->testing_size_label->setText(QString::number(0));
 }
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "src/lib/stb_image_write.h"
-#include "sstream"
-
-void MainWindow::on_file_was_drawn() {
+void MainWindow::onFileWasDrawn() {
 	static const int new_width = 28;
 	static const int new_height = 28;
 
@@ -261,5 +291,15 @@ void MainWindow::on_file_was_drawn() {
 		QMessageBox::information(this, tr("There is no loaded model"), "Can't create prediction without model");
 	}
 	delete[] image;
+
+}
+
+
+void MainWindow::on_export_model_push_button_pressed()
+{
+	QString file_path = QFileDialog::getSaveFileName(this, "Save config file");
+//	QDir d = QFileInfo(file_path).absoluteFilePath();
+	// TODO rewrite for not matrix model (made in universal)
+	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)current_model, file_path.toStdString());
 }
 

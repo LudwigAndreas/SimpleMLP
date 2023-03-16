@@ -1,5 +1,5 @@
 #include "LetterRecognitionMlpModelBuilder.hpp"
-#include "matrix/MLPMatrixModelv2.hpp"
+#include "matrix/MLPMatrixModel.hpp"
 
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::PerceptionBase(
@@ -78,7 +78,7 @@ s21::LetterRecognitionMLPModelBuilder::GetResult() {
 				);
 	}
 	if (base == PerceptronBase::Matrix) {
-		return MLPMatrixModelv2::MakeModel(
+		return MLPMatrixModel::MakeModel(
 				in_channels,
 				out_channels,
 				hidden_units_per_layer,
