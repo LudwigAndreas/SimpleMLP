@@ -60,7 +60,7 @@
      <bool>false</bool>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="set_model_page">
      <widget class="QLabel" name="label_2">
@@ -114,7 +114,7 @@
           <bool>true</bool>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -557,7 +557,7 @@ It consists of a single node or neuron that takes a row of data as input and pre
           <property name="geometry">
            <rect>
             <x>20</x>
-            <y>280</y>
+            <y>250</y>
             <width>341</width>
             <height>20</height>
            </rect>
@@ -580,6 +580,9 @@ It consists of a single node or neuron that takes a row of data as input and pre
           </property>
          </widget>
          <widget class="QProgressBar" name="training_progress_bar">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -692,7 +695,7 @@ It consists of a single node or neuron that takes a row of data as input and pre
        <string>Test model</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="back_to_configure_push_button">
+     <widget class="QPushButton" name="to_configure_push_button">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -916,8 +919,8 @@ It consists of a single node or neuron that takes a row of data as input and pre
            </property>
            <property name="geometry">
             <rect>
-             <x>310</x>
-             <y>290</y>
+             <x>300</x>
+             <y>280</y>
              <width>131</width>
              <height>32</height>
             </rect>
@@ -946,8 +949,8 @@ It consists of a single node or neuron that takes a row of data as input and pre
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>250</y>
-             <width>611</width>
+             <y>240</y>
+             <width>351</width>
              <height>20</height>
             </rect>
            </property>
@@ -1031,7 +1034,7 @@ It consists of a single node or neuron that takes a row of data as input and pre
        </item>
       </layout>
      </widget>
-     <widget class="QPushButton" name="back_to_configure_push_button_2">
+     <widget class="QPushButton" name="to_configure_push_button_2">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -1047,7 +1050,7 @@ It consists of a single node or neuron that takes a row of data as input and pre
        <string>Config model</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="back_to_configure_push_button_3">
+     <widget class="QPushButton" name="to_train_push_button">
       <property name="enabled">
        <bool>true</bool>
       </property>
