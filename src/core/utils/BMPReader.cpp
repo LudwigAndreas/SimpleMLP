@@ -23,7 +23,7 @@ std::vector<float> BMPDataToGrayscale(const unsigned char* bmp_data,
 	max = max - (max - min) / 20;
 	min = min + (max - min) / 20;
 	for (auto &i : grayscale_data)
-		i = std::min(255., std::max(0., (i - min) * (1. / (max - min))));
+		i = (float) std::min(255., std::max(0., (i - min) * (1. / (max - min))));
 	return grayscale_data;
 }
 

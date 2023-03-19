@@ -4,9 +4,22 @@
 #include <QMainWindow>
 #include <QFile>
 #include <QGraphicsScene>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QThread>
 
-#include "../core/utils/BMPReader.hpp"
-#include "../core/utils/IMLPModel.hpp"
+#include <sstream>
+
+#include "src/core/utils/MLPSerializer.hpp"
+#include "src/core/LetterRecognitionMlpModelBuilder.hpp"
+
+#include "src/core/utils/BMPReader.hpp"
+#include "src/core/utils/IMLPModel.hpp"
+#include "src/gui/utils/importfileitem.h"
+#include "src/gui/utils/paintview.h"
+#include "src/gui/utils/MTWorker.hpp"
+#include "ui_mainwindow.h"
+#include "src/gui/view/testdatainfodialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,13 +35,13 @@ public:
 
 private slots:
 
-    void on_start_model_button_clicked();
-
     void on_train_model_push_button_pressed();
 
     void on_test_model_push_button_pressed();
 
     void on_tabWidget_currentChanged(int index);
+
+	void on_to_train_push_button_pressed();
 
     void on_predict_push_button_pressed();
 
@@ -52,9 +65,9 @@ private slots:
 
     void on_toolButton_4_pressed();
 
-    void on_back_to_configure_push_button_pressed();
+    void on_to_configure_push_button_pressed();
 
-    void on_back_to_configure_push_button_2_pressed();
+    void on_to_configure_push_button_2_pressed();
 
     void on_testing_size_horizontalSlider_valueChanged(int value);
 
@@ -69,7 +82,11 @@ private:
     QFile *testing_dataset_file;
     s21::IMLPModel<float> *current_model;
 	QThread *training_thread;
+	MTWorker *training_worker;
+	s21::LetterRecognitionMLPModelBuilder *builder;
 
+	bool exitFromTrainPage();
+	bool exitFromConfigPage();
 	void modelConfigFileWasUploaded(QFile *file);
     void trainDatasetFileWasUploaded(QFile *file);
     void testDatasetFileWasUploaded(QFile *file);

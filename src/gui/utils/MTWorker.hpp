@@ -2,7 +2,7 @@
 #define SIMPLEMLP_MTWORKER_HPP
 
 #include "QObject"
-#include "../core/utils/IMLPModel.hpp"
+#include "src/core/utils/IMLPModel.hpp"
 
 
 class MTWorker: public QObject {
@@ -12,6 +12,7 @@ private:
 	s21::IMLPModel<float> *model;
 	std::string dataset_file_name;
 	int num_of_epochs;
+	bool stop;
 
 public:
 	MTWorker();
@@ -20,6 +21,7 @@ public:
 	void setModel(s21::IMLPModel<float> *model);
 	void setDatasetFileName(std::string file_name);
 	void setNumOfEpochs(int num);
+	void stopTraining();
 
 public slots:
 	void process();

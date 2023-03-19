@@ -1,14 +1,15 @@
 #include <QDebug>
 #include "sstream"
 
-#include "../core/DatasetReading.hpp"
-#include "../core/utils/MLPSerializer.hpp"
+#include "src/core/DatasetReading.hpp"
+#include "src/core/utils/MLPSerializer.hpp"
 #include "MTWorker.hpp"
 
 
 
 MTWorker::MTWorker() {
 	this->num_of_epochs = 5;
+	this->stop = false;
 }
 
 MTWorker::~MTWorker() {
@@ -34,20 +35,27 @@ void MTWorker::setNumOfEpochs(int num) {
 	this->num_of_epochs = num;
 }
 
+void MTWorker::stopTraining() {
+	stop = true;
+}
+
+
 void MTWorker::process() {
 	try {
 		s21::Dataset dataset(ReadDataset(dataset_file_name), num_of_epochs);
 		//TODO confusion matrix
-		for (int i = 0; i < dataset.size(); ++i) {
+		for (size_t i = 0; i < dataset.size(); ++i) {
 			float training_accuracy = 0;
 			float testing_accuracy = 0;
 			int trained_on = 0;
 
-			for (int j = 0; j < dataset.size(); ++j) {
+			for (size_t j = 0; j < dataset.size(); ++j) {
+				if (this->stop)
+					return;
 				std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
 				if (j)
-					std::cerr << "Current accuracy: " << (training_accuracy * 100) / (trained_on) << '%';
-				if (j != dataset.current_iteration && ++trained_on) {
+					std::cerr << "Current accuracy: " << (training_accuracy * 100) / trained_on << '%';
+				if (j != (size_t) dataset.current_iteration && ++trained_on) {
 					training_accuracy += model->Train(dataset[j], true);
 				}
 				emit statusChanged(i + 1,
@@ -70,4 +78,8 @@ void MTWorker::process() {
 		qDebug() << "cant upload model or dataset";
 	}
 }
+
+//void MTWorker::stop() {
+//	return;
+//}
 

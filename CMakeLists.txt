@@ -22,35 +22,36 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 add_executable(SimpleMLP
+        src/core/graph/MLPGraphLayer.hpp
+        src/core/graph/MLPGraphModel.hpp
+        src/core/graph/MLPGraphNode.hpp
+        src/core/matrix/Matrix.hpp
+        src/core/matrix/MLPMatrixModel.hpp
         src/core/utils/ActivationFunction.cpp
-#        src/core/ActivationFunction.hpp
-#        src/core/IMLPModel.hpp
+        src/core/utils/BMPReader.cpp
+        src/core/utils/BMPReader.hpp
+        src/core/exceptions/MatrixException.hpp
         src/core/DatasetReading.cpp
         src/core/LetterRecognitionMlpModelBuilder.cpp
-        #        src/core/matrix/Matrix.hpp
-        #        src/core/MLPMatrixModel.hpp
-        #        src/core/MLPMatrixModelv2.hpp
-        #        src/core/MLPSerializer.hpp
-        #        src/core/Sample.hpp
-#        src/core/utils/BMPReader.cpp
-#        src/core/main.cpp
 
         src/gui/main.cpp
-        src/gui/MTWorker.cpp
-        src/gui/MTWorker.hpp
-        src/gui/importfileitem.h
-        src/gui/importfileitem.cpp
-        src/gui/mainwindow.cpp
-        src/gui/mainwindow.h
-        src/gui/paintview.cpp
-        src/gui/paintview.h
-        src/gui/testdatainfodialog.cpp
-        src/gui/testdatainfodialog.h
-        src/gui/mainwindow.ui
-        src/gui/testdatainfodialog.ui
+        src/gui/utils/MTWorker.cpp
+        src/gui/utils/MTWorker.hpp
+        src/gui/view/ConfigureModulePage.cpp
+        src/gui/view/TrainModelPage.cpp
+        src/gui/view/TestModelPage.cpp
+        src/gui/utils/importfileitem.h
+        src/gui/utils/importfileitem.cpp
+        src/gui/view/mainwindow.cpp
+        src/gui/view/mainwindow.h
+        src/gui/utils/paintview.cpp
+        src/gui/utils/paintview.h
+        src/gui/view/testdatainfodialog.cpp
+        src/gui/view/testdatainfodialog.h
+        src/gui/view/mainwindow.ui
+        src/gui/view/testdatainfodialog.ui
         src/gui/resourses.qrc
-        src/core/utils/BMPReader.cpp src/core/utils/BMPReader.hpp
-#        src/tests/main.cpp src/tests/core/matrix/MatrixTest.cpp src/core/exceptions/MatrixException.hpp
+#        src/tests/main.cpp src/tests/core/matrix/MatrixTest.cpp
 #        src/tests/core/utils/ActivationFunctionTest.cpp src/tests/core/utils/BMPReaderTest.cpp
         )
 target_link_libraries(SimpleMLP Qt6::Widgets)
