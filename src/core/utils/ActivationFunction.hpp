@@ -4,8 +4,23 @@
 #include <string>
 #include <cmath>
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
 
 namespace s21 {
+	
+	std::vector<float> softmax(std::vector<float> matrix) {
+		std::vector<float>	values;
+		float				sum;
+
+		for (auto val : matrix)
+			values.push_back(std::exp(val));
+		sum = std::accumulate(values.begin(), values.end(), 0);
+		std::transform(values.begin(), values.end(),
+						values.begin(), [sum](float x){ return x / sum; });
+		return values;
+	}
 	
 	inline float sigmoid(float x) {
 		return 1.0f / (1 + std::exp(-x));
@@ -56,11 +71,13 @@ namespace s21 {
 		std::function<float (float)> getDerivative();
 		float applyFunction(float);
 		float applyDerivative(float);
-		enum ActivationFunctionFlags {
+		// static int Sigmoid = 1;
+		enum Flags {
 			Sigmoid = 1,
 			BipolarSigmoid = 2,
 			ReLU = 4,
-			BoundedLinear = 8
+			BoundedLinear = 8,
+			Softmax = 16
 		};
 		int	type;
 
@@ -77,7 +94,7 @@ namespace s21 {
 			return (nullptr);
 		}
 
-		static ActivationFunction* getFunctionByFlag(ActivationFunctionFlags flag)
+		static ActivationFunction* getFunctionByFlag(Flags flag)
 		{
 			if (flag == Sigmoid)
 				return new ActivationFunction(sigmoid, d_sigmoid);

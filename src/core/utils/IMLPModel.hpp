@@ -5,6 +5,7 @@
 #include "Sample.hpp"
 
 namespace s21 {
+
 	template <typename T>
 	class IMLPModel {
 	public:
