@@ -11,7 +11,7 @@
 #include <string>
 
 #include "LetterRecognitionMlpModelBuilder.hpp"
-#include "matrix/MLPMatrixModelv2.hpp"
+#include "matrix/MLPMatrixModel.hpp"
 #include "utils/MLPSerializer.hpp"
 // void log(std::fstream &file, const float &x, const s21::Matrix<float> &y, const std::vector<float> &y_hat){
 // 	auto correct_guess = SearchMaxIndex(y.ToVector());

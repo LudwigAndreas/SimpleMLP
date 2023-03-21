@@ -14,13 +14,12 @@ void ImportFileItem::dropEvent(QDropEvent *event) {
     event->acceptProposedAction();
     const QMimeData* data = event->mimeData();
     QString file_path = data->urls()[0].path();
-    QFile file(file_path);
-    qDebug() << file_path;
-    if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+    QFile *file_try = new QFile(file_path);
+    if (!file_try->open(QIODevice::ReadOnly)) {
+        QMessageBox::information(this, tr("Unable to open file"), file_try->errorString());
         return;
     } else {
-        this->file = &file;
+        this->file = file_try;
         emit fileWasUploaded();
     }
 }
