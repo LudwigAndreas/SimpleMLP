@@ -5,22 +5,30 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "../../lib/stb_image_resize.h"
 
-std::vector<float> bmp_to_grayscale(const unsigned char* bmp_data,
-								int width, int height, int channels) {
+std::vector<float> BMPDataToGrayscale(const unsigned char* bmp_data,
+									  int width, int height, int channels) {
 
 	std::vector<float> grayscale_data(width * height);
+	float min = 255, max = 0;
 	for (int i = 0; i < width * height; i++) {
 		int r = bmp_data[i * channels];
 		int g = bmp_data[i * channels + 1];
 		int b = bmp_data[i * channels + 2];
 		grayscale_data[i] = static_cast<float>(0.2126 * r + 0.7152 * g + 0.0722 * b);
+		if (grayscale_data[i] > max)
+			max = grayscale_data[i];
+		if (grayscale_data[i] < min)
+			min = grayscale_data[i];
 	}
-
+	max = max - (max - min) / 20;
+	min = min + (max - min) / 20;
+	for (auto &i : grayscale_data)
+		i = (float) std::min(255., std::max(0., (i - min) * (1. / (max - min))));
 	return grayscale_data;
 }
 
-unsigned char *readAndResizeBMP(const char* filename,
-											int new_width, int new_height) {
+unsigned char *ReadAndResizeBMP(const char* filename,
+								int new_width, int new_height) {
 	int channels_in_file;
 	int width_in_file;
 	int height_in_file;
@@ -46,7 +54,7 @@ unsigned char *readAndResizeBMP(const char* filename,
 }
 
 // Функция для конвертации вектора обратно в BMP изображение
-void vectorToBMP(const std::vector<float>& vec, const std::string& filename,
+void VectorToBMP(const std::vector<float>& vec, const std::string& filename,
 				 int width, int height) {
 //	stbi_write_bmp("result.bmp", 271, 271, 3, result.data());
 }

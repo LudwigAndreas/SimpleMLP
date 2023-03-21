@@ -13,13 +13,13 @@ struct BMPHeader {
 	uint32_t offset;
 };
 
-unsigned char *readAndResizeBMP(const char* filename,
-											int new_width, int new_height);
+unsigned char *ReadAndResizeBMP(const char* filename,
+								int new_width, int new_height);
 
-std::vector<float> bmp_to_grayscale(const unsigned char* bmp_data,
-									int width, int height, int channels);
+std::vector<float> BMPDataToGrayscale(const unsigned char* bmp_data,
+									  int width, int height, int channels);
 
-void vectorToBMP(const std::vector<float>& vec, const std::string& filename,
+void VectorToBMP(const std::vector<float>& vec, const std::string& filename,
 				 int width, int height);
 
 #endif //SIMPLEMLP_BMPREADER_HPP

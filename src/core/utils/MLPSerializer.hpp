@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "../matrix/Matrix.hpp"
-#include "../matrix/MLPMatrixModelv2.hpp"
+#include "../matrix/MLPMatrixModel.hpp"
 
 namespace s21 {
 	template<typename T>
@@ -31,7 +31,7 @@ namespace s21 {
 		}
 
 	public:
-		static void SerializeMLPMatrixModel(s21::MLPMatrixModelv2 *model,
+		static void SerializeMLPMatrixModel(s21::MLPMatrixModel *model,
 											const std::string &filename) {
 			std::fstream file;
 			file.open(filename, std::ofstream::out | std::ofstream::trunc);
@@ -76,7 +76,7 @@ namespace s21 {
 //			TODO: rewrite model creation to import graph and matrix models and activation funcs
 			// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
 
-			s21::MLPMatrixModelv2 *model = (s21::MLPMatrixModelv2 *) s21::MLPMatrixModelv2::MakeModel(
+			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
 					0, 0, 0, 0, 0, ActivationFunction::getFunctionByFlag(ActivationFunction::Sigmoid));
 			std::vector<float> matrix_values;
 			std::vector<std::string> row_values;
@@ -98,12 +98,12 @@ namespace s21 {
 			model->set_units_per_layer(units_per_layer);
 			model->set_lr(std::atof(upls.rbegin()->data()));
 
-			model->set_weight_martices (readVectorMatrix(file, units_per_layer.size() - 1));
-			model->set_bias			   (readVectorMatrix(file, units_per_layer.size() - 1));
-			model->set_neuron_values   (readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_error		   (readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_incorrect_values(readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_error		   (readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_weight_martices	(readVectorMatrix(file, units_per_layer.size() - 1));
+			model->set_bias				(readVectorMatrix(file, units_per_layer.size() - 1));
+			model->set_neuron_values	(readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_error			(readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_incorrect_values	(readVectorMatrix(file, units_per_layer.size()	 ));
+			model->set_raw				(readVectorMatrix(file, units_per_layer.size()	 ));
 
 
 
