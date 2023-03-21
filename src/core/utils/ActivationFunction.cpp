@@ -17,7 +17,7 @@ namespace s21 {
 		
 		is >> type;
 		af = ActivationFunction::getFunctionByFlag(
-			static_cast<ActivationFunction::ActivationFunctionFlags>(type));
+			static_cast<ActivationFunction::Flags>(type));
 		return is;
 	}
 

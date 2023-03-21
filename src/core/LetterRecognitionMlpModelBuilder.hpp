@@ -32,7 +32,7 @@ namespace s21 {
 		LetterRecognitionMLPModelBuilder *HiddenLayers(int hidden_layers) override;
 
 		LetterRecognitionMLPModelBuilder *ActivationFunc(
-				ActivationFunction::ActivationFunctionFlags flag) override;
+				ActivationFunction::Flags flag) override;
 
 		LetterRecognitionMLPModelBuilder *ActivationFunc(
 				const std::string func_name);

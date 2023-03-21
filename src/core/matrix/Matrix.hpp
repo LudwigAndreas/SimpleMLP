@@ -57,6 +57,8 @@ namespace s21 {
 
 		size_t get_rows() const { return rows; }
 
+		size_t size() const { return cols * rows; }
+
 		std::tuple<size_t, size_t> get_shape() const { return shape; }
 
 		void set_cols(size_t cols) {

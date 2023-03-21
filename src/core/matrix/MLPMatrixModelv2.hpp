@@ -150,18 +150,6 @@ namespace s21 {
 			MLPMatrixModelv2::lr = lr;
 		}
 
-		Matrix<float> softmax(Matrix<float> matrix) {
-			std::vector<float>	values;
-			float	sum;
-
-			for (auto val : matrix.ToVector())
-				values.push_back(std::exp(val));
-			sum = std::accumulate(values.begin(), values.end(), 0);
-			std::transform(values.begin(), values.end(),
-						   values.begin(), [sum](float x){ return x / sum; });
-			return s21::Matrix<float>(values);
-		}
-
 		std::vector<float> Forward(Matrix<float> matrix) override {
 			assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
 
@@ -174,7 +162,7 @@ namespace s21 {
 				y = y.apply_function(af->getFunction());
 				neuron_values[i + 1] = y;
 			}
-			return softmax(neuron_values.back()).ToVector();
+			return softmax(neuron_values.back().ToVector());
 		}
 		
 		// void Backward(Matrix<float> target, Matrix<float> y) override {
