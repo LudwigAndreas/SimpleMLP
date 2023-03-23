@@ -6,10 +6,18 @@
 
 #include "ModelWorker.hpp"
 
-class ModelTrainWorker: ModelWorker {
+class ModelTrainWorker : public ModelWorker {
+
+Q_OBJECT
 
 public slots:
 	void process() override;
+
+signals:
+	void statusChanged(int epoch, int completion, float accuracy);
+
+	void finished();
+
 };
 
 #endif //SIMPLEMLP_MODELTRAINWORKER_HPP
