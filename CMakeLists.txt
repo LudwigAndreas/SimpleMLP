@@ -33,8 +33,13 @@ add_executable(SimpleMLP
         src/core/exceptions/MatrixException.hpp
         src/core/DatasetReading.cpp
         src/core/LetterRecognitionMlpModelBuilder.cpp
+        src/core/graph/MLPGraphLayer.cpp
+        src/core/graph/MLPGraphModel.cpp
+        src/core/graph/MLPGraphNode.cpp
+        src/core/main.cpp
 
-        src/gui/main.cpp
+
+#        src/gui/main.cpp
         src/gui/utils/MTWorker.cpp
         src/gui/utils/MTWorker.hpp
         src/gui/view/ConfigureModulePage.cpp
