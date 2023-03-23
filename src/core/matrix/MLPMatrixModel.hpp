@@ -180,26 +180,20 @@ namespace s21 {
 
 		std::vector<float> Forward(Matrix<float> matrix) override {
 			assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
-//			matrix = NormalizedInput(matrix);
 			neuron_values[0] = matrix;
 			raw[0] = matrix;
 			for (int i = 0; i < units_per_layer.size() - 1; ++i) {
 				Matrix<float> y = neuron_values[i] * weight_matrices[i];
 				y = y + bias[i];
 				raw[i + 1] = y;
-//				if (y(0, 0) != y(0, 0))
-//					std::raise(SIGTRAP);
 				y = y.apply_function(af->getFunction());
 				neuron_values[i + 1] = y;
-//				if (neuron_values[i + 1](0, 0) != neuron_values[i + 1](0, 0))
-//					std::raise(SIGTRAP);
+
 			}
 			return softmax(neuron_values.back()).ToVector();
 		}
 
 		void AppendError() {
-//			if (weight_matrices[0](0, 0) != weight_matrices[0](0, 0))
-//				std::raise(SIGTRAP);
 			for (int i = 0; i < neuron_values.size(); ++i)
 				incorrect_values[i] = incorrect_values[i] + neuron_values[i];
 		}
@@ -214,14 +208,10 @@ namespace s21 {
 			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 			error[units_per_layer.size() - 1] = (neuron_values.back() - target);
 			for (int i = (int) units_per_layer.size() - 2; i > 0; --i) {
-//				if (error[i](0, 0) != error[i](0, 0))
-//					std::raise(SIGTRAP);
 				error[i] = (error[i + 1].matmulTransposed(weight_matrices[i])) & raw[i].apply_function(af->getDerivative());
 			}
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 				weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
-//				if (weight_matrices[i](0, 0) != weight_matrices[i](0, 0))
-//					std::raise(SIGTRAP);
 				bias[i] = bias[i] - error[i + 1] * lr;
 			}
 		}

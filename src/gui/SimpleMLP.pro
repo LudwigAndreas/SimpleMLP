@@ -9,21 +9,21 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    utils/importfileitem.cpp \
-    main.cpp \
-    view/mainwindow.cpp \
-    utils/paintview.cpp \
-    view/testdatainfodialog.cpp
+    src/gui/utils/importfileitem.cpp \
+    src/gui/main.cpp \
+    src/gui/view/mainwindow.cpp \
+    src/gui/utils/paintview.cpp \
+    src/gui/view/testdatainfodialog.cpp
 
 HEADERS += \
-    utils/importfileitem.h \
-    view/mainwindow.h \
-    utils/paintview.h \
-    view/testdatainfodialog.h
+    src/gui/utils/importfileitem.h \
+    src/gui/view/mainwindow.h \
+    src/gui/utils/paintview.h \
+    src/gui/view/testdatainfodialog.h
 
 FORMS += \
-    view/mainwindow.ui \
-    view/testdatainfodialog.ui
+    src/gui/view/mainwindow.ui \
+    src/gui/view/testdatainfodialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
