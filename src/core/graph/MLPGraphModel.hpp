@@ -28,6 +28,30 @@ namespace s21 {
 								
 		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 
+		const std::vector<size_t> &getUnitsPerLayer() const;
+
+		void setUnitsPerLayer(const std::vector<size_t> &unitsPerLayer);
+
+		const std::vector<MLPGraphLayer *> &getLayers() const;
+
+		void setLayers(const std::vector<MLPGraphLayer *> &layers);
+
+		ActivationFunction *getAf() const;
+
+		void setAf(ActivationFunction *af);
+
+		float getStartLr() const;
+
+		void setStartLr(float startLr);
+
+		float getLr() const;
+
+		void setLr(float lr);
+
+		bool isAutoDecrease() const;
+
+		void setAutoDecrease(bool autoDecrease);
+
 		virtual std::vector<T> Forward(Matrix<T>);
 		virtual void Backward(Matrix<T>);
 		virtual float Train(DatasetGroup samples, bool b = false);

@@ -52,17 +52,14 @@ namespace s21 {
 			raw_value[i] = 0;
 			for (int j = 0; j < weight[i].size(); ++j)
 				raw_value[i] += weight[i][j] * (*input)[j];
-				
-			std::cerr << raw_value[i] << ' ';
-			std::cerr << std::endl;
-			if (!output) {
+
+			if (output) {
 				if (af)
 					value[i] = af->applyFunction(raw_value[i]);
 				else
 				 	value[i] = raw_value[i];
 			}
 		}
-		std::cerr << std::endl;
 		if (!output)
 			value = softmax(raw_value);
 	}
