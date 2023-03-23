@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 #include "../utils/IMLPModel.hpp"
 #include "../utils/ActivationFunction.hpp"
 #include "../graph/MLPGraphLayer.hpp"
@@ -9,12 +11,22 @@ namespace s21 {
 
 	class MLPGraphModel : public IMLPModel<T> {
 	private:
-		std::vector<size_t>				upl;
+		std::vector<size_t>				units_per_layer;
 		std::vector<MLPGraphLayer *>	layers;
 		ActivationFunction				*af;
+		float							start_lr;
+		float							lr;
+		
+		bool							auto_decrease;
+		
 	
 	public:
-		MLPGraphModel *AddLayer(MLPGraphLayer *layer);
+		explicit MLPGraphModel(std::vector<size_t> units_per_layer,
+								ActivationFunction *func,
+								bool use_auto_decrease = true,
+								float lr = .05f);
+								
+		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 
 		virtual std::vector<T> Forward(Matrix<T>);
 		virtual void Backward(Matrix<T>);
@@ -24,4 +36,6 @@ namespace s21 {
 		virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "");
 	};
 
+	std::istream &operator>>(std::istream &is, MLPGraphModel &model);
+	std::ostream &operator<<(std::ostream &os, MLPGraphModel &model);
 }

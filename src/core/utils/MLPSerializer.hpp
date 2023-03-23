@@ -74,7 +74,7 @@ namespace s21 {
 //			bool read_shape = true;
 
 //			TODO: rewrite model creation to import graph and matrix models and activation funcs
-			// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
+			// auto model = s21::MLPMatrixModel::MakeModel(0, 0, 0, 0, 0);
 
 			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
 					0, 0, 0, 0, 0, ActivationFunction::getFunctionByFlag(ActivationFunction::Sigmoid));
