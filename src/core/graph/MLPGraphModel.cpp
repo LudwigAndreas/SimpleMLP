@@ -14,6 +14,7 @@ namespace s21 {
 				input_layer = AddLayer(new MLPGraphLayer(size, af, input_layer));
 			for (auto layer : layers)
 				layer->GenerateLayer();
+
 			// dedt.resize(units_per_layer.size() - 1);
 			// dedw.resize(units_per_layer.size() - 1);
 			// dedb.resize(units_per_layer.size() - 1);
@@ -44,8 +45,9 @@ namespace s21 {
 			layers.back()->CalculateError(&(target.ToVector()));
 			for (int i = (int) layers.size() - 2; i > 0; --i) {
 				layers[i]->CalculateError();
-				layers[i]->UpdateWeights(lr);
 			}
+			for (int i = (int)layers.size() - 1; i > 0; --i)
+				layers[i]->UpdateWeights(lr);
 		}
 
 		float			MLPGraphModel::Train(DatasetGroup samples, bool silent_mode) {
@@ -106,4 +108,59 @@ namespace s21 {
 			// return accuracy;
 			return 1;
 		}
+
+	const std::vector<size_t> &MLPGraphModel::getUnitsPerLayer() const {
+		return units_per_layer;
+	}
+
+	void MLPGraphModel::setUnitsPerLayer(const std::vector<size_t> &unitsPerLayer) {
+		units_per_layer = unitsPerLayer;
+	}
+
+	const std::vector<MLPGraphLayer *> &MLPGraphModel::getLayers() const {
+		return layers;
+	}
+
+	void MLPGraphModel::setLayers(const std::vector<MLPGraphLayer *> &layers) {
+		MLPGraphModel::layers = layers;
+	}
+
+	ActivationFunction *MLPGraphModel::getAf() const {
+		return af;
+	}
+
+	void MLPGraphModel::setAf(ActivationFunction *af) {
+		MLPGraphModel::af = af;
+	}
+
+	float MLPGraphModel::getStartLr() const {
+		return start_lr;
+	}
+
+	void MLPGraphModel::setStartLr(float startLr) {
+		start_lr = startLr;
+	}
+
+	float MLPGraphModel::getLr() const {
+		return lr;
+	}
+
+	void MLPGraphModel::setLr(float lr) {
+		MLPGraphModel::lr = lr;
+	}
+
+	bool MLPGraphModel::isAutoDecrease() const {
+		return auto_decrease;
+	}
+
+	void MLPGraphModel::setAutoDecrease(bool autoDecrease) {
+		auto_decrease = autoDecrease;
+	}
+
+
+	std::istream &operator>>(std::istream &is, MLPGraphModel &model);
+
+//	std::ostream &operator<<(std::ostream &os, MLPGraphModel &model) {
+//		for (auto & layer : model)
+//	}
 }
