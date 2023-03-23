@@ -45,8 +45,8 @@ namespace s21 {
 			}
 		}
 
-		DatasetGroup &operator[](int index)				{ return groups[index]; }
-		const DatasetGroup &operator[](int index) const	{ return groups[index]; }
+		DatasetGroup &operator[](size_t index)				{ return groups[index]; }
+		const DatasetGroup &operator[](size_t index) const	{ return groups[index]; }
 		
 		size_t size()		{ return groups.size(); }
 		bool isUsedUp() 	{ return (size_t) current_iteration >= groups.size(); }

@@ -1,7 +1,8 @@
 #ifndef SIMPLEMLP_MODELWORKER_HPP
 #define SIMPLEMLP_MODELWORKER_HPP
 
-#include "QObject"
+#include <QObject>
+
 #include "src/core/utils/IMLPModel.hpp"
 
 class ModelWorker: public QObject {
@@ -26,10 +27,6 @@ public:
 public slots:
 	virtual void process() = 0;
 
-signals:
-	void statusChanged(int epoch, int completion, float accuracy);
-
-	void finished();
 };
 
 
