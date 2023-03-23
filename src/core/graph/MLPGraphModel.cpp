@@ -14,7 +14,7 @@ namespace s21 {
 				input_layer = AddLayer(new MLPGraphLayer(size, af, input_layer));
 			for (auto layer : layers)
 				layer->GenerateLayer();
-
+			std::cout << "cock";
 			// dedt.resize(units_per_layer.size() - 1);
 			// dedw.resize(units_per_layer.size() - 1);
 			// dedb.resize(units_per_layer.size() - 1);

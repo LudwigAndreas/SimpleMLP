@@ -71,7 +71,7 @@ namespace s21 {
 						   std::minus<float>());
 		else if (output) {
 			const std::vector<float>& output_error = output->get_error();
-			for (int i = 0; i < value.size(); ++i) {
+			for (int i = 0; i < error.size(); ++i) {
 				error[i] = 0;
 				for (int j = 0; j < weight.size(); ++j) {
 					error[i] += output_error[j] * weight[j][i];
