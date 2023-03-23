@@ -12,6 +12,7 @@
 
 #include "LetterRecognitionMlpModelBuilder.hpp"
 #include "matrix/MLPMatrixModel.hpp"
+#include "graph/MLPGraphModel.hpp"
 #include "utils/MLPSerializer.hpp"
 // void log(std::fstream &file, const float &x, const s21::Matrix<float> &y, const std::vector<float> &y_hat){
 // 	auto correct_guess = SearchMaxIndex(y.ToVector());
@@ -30,7 +31,7 @@ void	SaveModel(s21::IMLPModel<float> *model, int iteration) {
 	std::stringstream	ss;
 
 	ss << "testmodel" << iteration << ".mlpmodel";
-	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), ss.str());
+	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)(model), ss.str());
 }
 
 float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool silent_mode = false) {
@@ -38,7 +39,7 @@ float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool s
 	float testing_accuracy;
 	int trained_on;
 	for (int i = 0; i < (int) dataset.size(); ++i) {
-		SaveModel(model, i);
+		// SaveModel(model, i);
 		training_accuracy = 0;
 		trained_on = 0;
 		for (int j = 0; j < (int) dataset.size(); ++j) {
@@ -76,27 +77,29 @@ float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool s
 // }
 
 int main() {
-	s21::LetterRecognitionMLPModelBuilder *builder = new s21::LetterRecognitionMLPModelBuilder();
-	s21::IMLPModel<float>		*model = builder
-			->HiddenLayers(2)
-			->ActivationFunc(s21::ActivationFunction::Sigmoid)
-			->LearningRate(0.1f, false)
-			->HiddenUnitsPerLayer(100)
-			->GetResult();
+	// s21::LetterRecognitionMLPModelBuilder *builder = new s21::LetterRecognitionMLPModelBuilder();
+	// s21::IMLPModel<float>		*model = builder
+	// 		->HiddenLayers(2)
+	// 		->ActivationFunc(s21::ActivationFunction::Sigmoid)
+	// 		->LearningRate(0.1f, false)
+	// 		->HiddenUnitsPerLayer(400)
+	// 		->GetResult();
 	std::vector<s21::Sample>	samples;
 	// std::chrono::time_point<std::chrono::system_clock> start, end;
-	// auto model = s21::MLPMatrixModelv2::MakeModel(0, 0, 0, 0, 0);
-	// s21::MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModelv2 *)model, "testmodel.mlpmodel");
+	auto model = new s21::MLPGraphModel({784, 100, 100, 26},
+				s21::ActivationFunction::getFunctionByFlag(s21::ActivationFunction::Flags::Sigmoid),
+				true, 0.1);
+	// s21::MLPSerializer<float>::DeserializeMLPMatrixModel((s21::MLPMatrixModel *)model, "testmodel.mlpmodel");
 
 
 	// s21::Dataset dataset(ReadDataset("datasets/emnist-letters-test.csv"), 16);
-	s21::Dataset dataset(ReadDataset("../../datasets/emnist-letters/emnist-letters-train.csv"), 4);
+	s21::Dataset dataset(ReadDataset("../../datasets/emnist-letters-train.csv"), 4);
 	// s21::Dataset dataset(samples, 32);
 	// std::cerr << "Dataset split on " << dataset.size() << " with " << dataset[0].size() << " samples in each." << std::endl;
 	CrossValidation(model, dataset);
 
-	model->TestOutput(ReadDataset("../../datasets/emnist-letters/emnist-letters-test.csv"), false, "test.output");
+	model->TestOutput(ReadDataset("../../datasets/emnist-letters-test.csv"), false, "test.output");
 	// CrossValidation(model, dataset);
-	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModelv2 *)(model), "testmodel.mlpmodel");
+	// s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)(model), "testmodel.mlpmodel");
 	// std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;
 }

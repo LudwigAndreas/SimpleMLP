@@ -56,27 +56,13 @@ namespace s21 {
 			// dedb.resize(units_per_layer.size() - 1);
 			// dedh.resize(units_per_layer.size() - 2);
 		}
-
-		static int getMostProbablePrediction(std::vector<float> value) {
-			double max = value[0];
-			int prediction = 0;
-			double tmp;
-			for (int j = 1; j < (int) value.size(); ++j) {
-				tmp = value[j];
-				if (tmp > max) {
-					prediction = j;
-					max = tmp;
-				}
-			}
-			return prediction; // +1 for dataset (who tf thought that it would be a good idea to numerate dataset choices from 1 and not from 0)
-		}
-
+		
 	public:
-		// MLPMatrixModelv2() = delete;
+		// MLPMatrixModel() = delete;
 
-		// MLPMatrixModelv2 &operator=(const MLPMatrixModelv2 matrix) = delete;
+		// MLPMatrixModel &operator=(const MLPMatrixModel matrix) = delete;
 
-		// MLPMatrixModelv2(MLPMatrixModelv2 const &) = delete;
+		// MLPMatrixModel(MLPMatrixModel const &) = delete;
 
 		const std::vector<size_t> &get_units_per_layer() const {
 			return units_per_layer;

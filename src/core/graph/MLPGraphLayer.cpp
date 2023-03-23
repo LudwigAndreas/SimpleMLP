@@ -2,11 +2,13 @@
 
 namespace s21 {
 	MLPGraphLayer::MLPGraphLayer(size_t size,
-								 ActivationFunction::Flags flag,
-								 MLPGraphLayer *input) {
+								 ActivationFunction *af,
+								 MLPGraphLayer *input,
+								 MLPGraphLayer *output) {
 		this->size = size;
-		this->af = ActivationFunction::getFunctionByFlag(flag);
+		this->af = af;
 		this->SetInputLayer(input);
+		this->SetOutputLayer(output);
 	}
 
 	void	MLPGraphLayer::GenerateLayer() {
@@ -34,7 +36,6 @@ namespace s21 {
 
 	void	MLPGraphLayer::SetInputLayer(MLPGraphLayer *input) {
 		this->input = input;
-		GenerateLayer();
 	}
 
 	void	MLPGraphLayer::SetOutputLayer(MLPGraphLayer *output) {
@@ -51,7 +52,9 @@ namespace s21 {
 			raw_value[i] = 0;
 			for (int j = 0; j < weight[i].size(); ++j)
 				raw_value[i] += weight[i][j] * (*input)[j];
-			
+				
+			std::cerr << raw_value[i] << ' ';
+			std::cerr << std::endl;
 			if (!output) {
 				if (af)
 					value[i] = af->applyFunction(raw_value[i]);
@@ -59,11 +62,12 @@ namespace s21 {
 				 	value[i] = raw_value[i];
 			}
 		}
+		std::cerr << std::endl;
 		if (!output)
 			value = softmax(raw_value);
 	}
 
-	void	MLPGraphLayer::CalculateError(std::vector<float> *target = nullptr) {
+	void	MLPGraphLayer::CalculateError(std::vector<float> *target) {
 		if (target)
 			std::transform(value.begin(), value.end(),
 						   target->begin(), error.begin(),
@@ -93,5 +97,9 @@ namespace s21 {
 					   error.begin(), bias.begin(),
 					   [lr](float lhs, float rhs) { return lhs - lr * rhs; }
 		);
+	}
+
+	size_t MLPGraphLayer::Size() {
+		return size;
 	}
 }

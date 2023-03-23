@@ -62,7 +62,7 @@ namespace s21 {
 
 		std::tuple<size_t, size_t> get_shape() const { return shape; }
 		
-		size_t size() const { data.size(); }
+		size_t size() const { return data.size(); }
 
 		std::vector<Type> get_data() {
 			return Matrix::data;
