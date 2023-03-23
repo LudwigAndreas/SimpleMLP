@@ -1,22 +1,22 @@
-#ifndef SIMPLEMLP_MTWORKER_HPP
-#define SIMPLEMLP_MTWORKER_HPP
+#ifndef SIMPLEMLP_MODELWORKER_HPP
+#define SIMPLEMLP_MODELWORKER_HPP
 
 #include "QObject"
 #include "src/core/utils/IMLPModel.hpp"
 
-
-class MTWorker: public QObject {
+class ModelWorker: public QObject {
 	Q_OBJECT
 
-private:
+protected:
 	s21::IMLPModel<float> *model;
 	std::string dataset_file_name;
 	int num_of_epochs;
 	bool stop;
 
+	void SaveModel(s21::IMLPModel<float> *model, int iteration);
 public:
-	MTWorker();
-	~MTWorker();
+	ModelWorker();
+	virtual ~ModelWorker();
 
 	void setModel(s21::IMLPModel<float> *model);
 	void setDatasetFileName(std::string file_name);
@@ -24,8 +24,7 @@ public:
 	void stopTraining();
 
 public slots:
-	void process();
-//	void stop();
+	virtual void process() = 0;
 
 signals:
 	void statusChanged(int epoch, int completion, float accuracy);
@@ -33,4 +32,5 @@ signals:
 	void finished();
 };
 
-#endif //SIMPLEMLP_MTWORKER_HPP
+
+#endif //SIMPLEMLP_MODELWORKER_HPP

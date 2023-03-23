@@ -60,7 +60,7 @@
      <bool>false</bool>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="set_model_page">
      <widget class="QLabel" name="label_2">
@@ -1143,12 +1143,12 @@ It consists of a single node or neuron that takes a row of data as input and pre
   <customwidget>
    <class>ImportFileItem</class>
    <extends>QLabel</extends>
-   <header>importfileitem.h</header>
+   <header>src/gui/utils/importfileitem.h</header>
   </customwidget>
   <customwidget>
    <class>PaintView</class>
    <extends>QGraphicsView</extends>
-   <header>paintview.h</header>
+   <header>src/gui/utils/paintview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

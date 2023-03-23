@@ -1,5 +1,9 @@
 #include "src/gui/view/mainwindow.h"
 
+#include <iomanip>
+
+#include "ui_mainwindow.h"
+
 bool MainWindow::exitFromTrainPage() {
 	if (this->training_thread != nullptr && this->training_thread->isRunning()) {
 		QMessageBox training_is_running_message;
@@ -104,7 +108,7 @@ void MainWindow::on_start_training_push_button_pressed()
 	ui->training_progress_bar->show();
 	ui->start_training_push_button->hide();
 	this->training_thread = new QThread();
-	this->training_worker = new MTWorker();
+	this->training_worker = new ModelTrainWorker();
 	training_worker->setModel(current_model);
 	training_worker->setNumOfEpochs(ui->num_of_epochs_spin_box->value());
 	training_worker->setDatasetFileName(
