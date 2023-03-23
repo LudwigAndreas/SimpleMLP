@@ -13,6 +13,7 @@ namespace s21 {
 
 	void	MLPGraphLayer::GenerateLayer() {
 		if (input) {
+			neurons   = std::vector<MLPGraphNode>(size);
 			raw_value = std::vector<float>(size);
 			value	  = std::vector<float>(size);
 			error	  = std::vector<float>(size);
@@ -71,13 +72,28 @@ namespace s21 {
 						   std::minus<float>());
 		else if (output) {
 			const std::vector<float>& output_error = output->get_error();
+			const std::vector<std::vector<float>>& 
+									  output_weight = output->get_weight_matrices();
 			for (int i = 0; i < error.size(); ++i) {
 				error[i] = 0;
-				for (int j = 0; j < weight.size(); ++j) {
-					error[i] += output_error[j] * weight[j][i];
+				for (int j = 0; j < output_weight.size(); ++j) {
+					error[i] += output_error[j] * output_weight[j][i];
 				}
 				error[i] *= af->applyDerivative(raw_value[i]);
 			}
+			// Matrix<float> weight_matrix = Matrix<float>(weight, value.size(), weight.size() / value.size());
+			// Matrix<float> temp = Matrix<float>(output_error, output_error.size(), 1);
+			// temp = temp.matmulTransposed(weight_matrix);
+			// temp = temp & Matrix<float>(raw_value, value.size(), 1);
+			// error = temp.ToVector();
+			// for (int i = 0; i < error.size(); ++i) {
+			// 	error[i] = 0;
+			// 	for (int j = 0; j < weight.size(); ++j) {
+			// 		error[i] += output_error[j] * weight[j][i];
+			// 	}
+			// 	error[i] *= af->applyDerivative(raw_value[i]);
+			// }
+
 		}
 	}
 

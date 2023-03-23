@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MLPGraphNode.hpp"
 #include "../matrix/Matrix.hpp"
 #include "../utils/ActivationFunction.hpp"
 
@@ -13,6 +14,7 @@ namespace s21 {
 		size_t				size;
 		ActivationFunction	*af;
 		
+		std::vector<MLPGraphNode>		neurons;
 		std::vector<float>				raw_value;
 		std::vector<float>				value;
 		std::vector<float>				error;

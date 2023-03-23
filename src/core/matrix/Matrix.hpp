@@ -164,7 +164,8 @@ namespace s21 {
 
         Matrix matmulTransposed(Matrix &target) {
 			if (cols != target.get_cols())
-				throw MatrixCalculationsException("Matrix Multiplication Exception: matmulTransposed(Matrix). Matrix dimensions not match");
+				raise(SIGTRAP);
+				// throw MatrixCalculationsException("Matrix Multiplication Exception: matmulTransposed(Matrix). Matrix dimensions not match");
 
             Matrix output(rows, target.get_rows());
             std::vector<Type> transposed = target.ToVector();
