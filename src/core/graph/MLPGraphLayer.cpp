@@ -21,8 +21,6 @@ namespace s21 {
 				neurons[i].weight = std::vector<float>(ndvector.begin() + input->Size() * i,
 													   ndvector.begin() + input->Size() * (i + 1));
 			}
-			// for (auto it = ndvector.begin(); it < ndvector.end(); it += input->Size())
-				// weight.push_back(std::vector<float>(it, it + input->Size()));
 		}
 	}
 
@@ -36,7 +34,6 @@ namespace s21 {
 		for (int i = 0; i < size; ++i) {
 			neurons[i].value = values[i];
 		}
-		// value = values.ToVector();
 	}
 
 	void	MLPGraphLayer::SetInputLayer(MLPGraphLayer *input) {
@@ -85,9 +82,6 @@ namespace s21 {
 			}
 		}
 		else if (output) {
-			// const std::vector<float>& output_error = output->get_error();
-			// const std::vector<std::vector<float>>& 
-			// 						  output_weight = output->get_weight_matrices();
 			for (int i = 0; i < neurons.size(); ++i) {
 				neurons[i].error = 0;
 				for (int j = 0; j < output->Size(); ++j) {
@@ -95,26 +89,10 @@ namespace s21 {
 				}
 				neurons[i].error *= af->applyDerivative(neurons[i].raw_value);
 			}
-			// Matrix<float> weight_matrix = Matrix<float>(weight, value.size(), weight.size() / value.size());
-			// Matrix<float> temp = Matrix<float>(output_error, output_error.size(), 1);
-			// temp = temp.matmulTransposed(weight_matrix);
-			// temp = temp & Matrix<float>(raw_value, value.size(), 1);
-			// error = temp.ToVector();
-			// for (int i = 0; i < error.size(); ++i) {
-			// 	error[i] = 0;
-			// 	for (int j = 0; j < weight.size(); ++j) {
-			// 		error[i] += output_error[j] * weight[j][i];
-			// 	}
-			// 	error[i] *= af->applyDerivative(raw_value[i]);
-			// }
-
 		}
 	}
 
 	void	MLPGraphLayer::UpdateWeights(float lr) {
-		// const std::vector<float>& output_error = output->get_error();
-		// const std::vector<float>& input_values = input->get_neuron_values();
-		
 		for (int i = 0; i < neurons.size(); ++i) {
 			for (int j = 0; j < neurons[i].weight.size(); ++j) {
 				neurons[i].weight[j] -= (*input)[j].value * neurons[i].error * lr;
