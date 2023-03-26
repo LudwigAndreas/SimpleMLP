@@ -10,16 +10,11 @@
 
 #include <sstream>
 
-#include "src/core/utils/MLPSerializer.hpp"
 #include "src/core/LetterRecognitionMlpModelBuilder.hpp"
 
-#include "src/core/utils/BMPReader.hpp"
 #include "src/core/utils/IMLPModel.hpp"
-#include "src/gui/utils/importfileitem.h"
-#include "src/gui/utils/paintview.h"
-#include "src/gui/utils/MTWorker.hpp"
-#include "ui_mainwindow.h"
-#include "src/gui/view/testdatainfodialog.h"
+#include "src/gui/utils/ModelTrainWorker.hpp"
+#include "src/gui/utils/ModelTestWorker.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -75,6 +70,10 @@ private slots:
 
 	void on_export_model_push_button_pressed();
 
+	void show_predict_window(std::vector<s21::ConfusionMatrix> *result);
+
+	void update_testing_status(int completion);
+
 private:
     Ui::MainWindow *ui;
     QFile *model_config_file;
@@ -82,7 +81,9 @@ private:
     QFile *testing_dataset_file;
     s21::IMLPModel<float> *current_model;
 	QThread *training_thread;
-	MTWorker *training_worker;
+	ModelTrainWorker *training_worker;
+	ModelTestWorker *testing_worker;
+	QThread *testing_thread;
 	s21::LetterRecognitionMLPModelBuilder *builder;
 
 	bool exitFromTrainPage();

@@ -22,6 +22,12 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+set(CMAKE_PREFIX_PATH "~/Qt/6.4.2/macos/lib/cmake/")
+find_package(Qt6Widgets REQUIRED)
+# find_package(Qt6 REQUIRED COMPONENTS Widgets)
+# qt_standard_project_setup()
+
+
 add_executable(SimpleMLP
 #        src/core/graph/MLPGraphLayer.hpp
 #        src/core/graph/MLPGraphModel.hpp
@@ -59,6 +65,10 @@ add_executable(SimpleMLP
         src/gui/resourses.qrc
 #        src/tests/main.cpp src/tests/core/matrix/MatrixTest.cpp
 #        src/tests/core/utils/ActivationFunctionTest.cpp src/tests/core/utils/BMPReaderTest.cpp
+        src/gui/utils/ModelTestWorker.cpp
+        src/gui/utils/ModelTestWorker.hpp
+        src/gui/utils/ModelWorker.cpp
+        src/gui/utils/ModelWorker.hpp
         )
 target_link_libraries(SimpleMLP Qt6::Widgets)
 #target_link_libraries(SimpleMLP ${GTEST_BOTH_LIBRARIES})
