@@ -1,5 +1,8 @@
 #include "src/gui/view/mainwindow.h"
 
+#include "ui_mainwindow.h"
+#include "src/core/utils/MLPSerializer.hpp"
+
 bool MainWindow::exitFromConfigPage() {
 	ui->file_path_label->clear();
 	ui->import_model_config_label->clear();

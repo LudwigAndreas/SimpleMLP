@@ -3,29 +3,82 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "src/lib/stb_image_write.h"
 
+#include "ui_mainwindow.h"
+#include "testdatainfodialog.h"
+#include "src/core/utils/BMPReader.hpp"
+#include "src/core/utils/MLPSerializer.hpp"
+
 void MainWindow::on_to_configure_push_button_2_pressed()
 {
 	ui->stackedWidget->setCurrentIndex(0);
+	ui->predict_push_button->setDisabled(true);
 	ui->prediction_result_label->clear();
 }
 
 void MainWindow::on_to_train_push_button_pressed()
 {
 	ui->stackedWidget->setCurrentIndex(1);
+	ui->predict_push_button->setDisabled(true);
 	ui->prediction_result_label->clear();
 }
 
 void MainWindow::on_predict_push_button_pressed()
 {
-	QWidget *predict_window = new TestDataInfoDialog();
-	predict_window->show();
+	ui->predict_push_button->hide();
+	ui->testing_progress_bar->show();
+	this->testing_thread = new QThread();
+	this->testing_worker = new ModelTestWorker();
+	testing_worker->setModel(current_model);
+	testing_worker->setDatasetFileName(
+			this->testing_dataset_file->fileName().toStdString());
+	testing_worker->moveToThread(this->testing_thread);
+
+	connect(this->testing_thread, SIGNAL(started()),
+			testing_worker, SLOT(process()));
+	connect(testing_worker, SIGNAL(finished()),
+			this->testing_thread, SLOT(quit()));
+	connect(testing_worker, SIGNAL(statusChanged(int)),
+			this, SLOT(update_testing_status(int)));
+	connect(testing_worker, SIGNAL(finishedResult(std::vector<s21::ConfusionMatrix> *)),
+			this, SLOT(show_predict_window(std::vector<s21::ConfusionMatrix> *)));
+	connect(testing_worker, SIGNAL(finished()),
+			testing_worker, SLOT(deleteLater()));
+	connect(this->testing_thread, SIGNAL(finished()),
+			this->testing_thread, SLOT(deleteLater()));
+	testing_thread->start();
 }
+
+void MainWindow::update_testing_status(int completion) {
+	ui->testing_progress_bar->setValue(completion);
+}
+
+
+void MainWindow::show_predict_window(std::vector<s21::ConfusionMatrix> *result) {
+	auto *predict_window = new TestDataInfoDialog();
+	predict_window->setConfusionMatrix(result);
+	predict_window->show();
+	ui->testing_progress_bar->setValue(0);
+	ui->testing_progress_bar->hide();
+	ui->predict_push_button->show();
+	ui->predict_push_button->setEnabled(true);
+}
+
 
 void MainWindow::testDatasetFileWasUploaded(QFile *file)
 {
-	ui->file_path_label_3->setText(file->fileName());
-	ui->import_test_dataset_label->setPixmap(QPixmap(":/img/empty_file.png").scaled(150, 150));
-	ui->predict_push_button->setEnabled(true);
+	if (!file->fileName().endsWith(".csv")) {
+		QMessageBox::information(this, tr("Wrong file format"),
+								 "Incorrect file format. The file must have the .csv extension ");
+	} else {
+		if (this->testing_dataset_file != nullptr) {
+			delete this->testing_dataset_file;
+			this->testing_dataset_file = nullptr;
+		}
+		this->testing_dataset_file = file;
+		ui->file_path_label_3->setText(file->fileName());
+		ui->import_test_dataset_label->setPixmap(QPixmap(":/img/empty_file.png").scaled(150, 150));
+		ui->predict_push_button->setEnabled(true);
+	}
 }
 
 void MainWindow::onTestingDatasetWasUploaded()
@@ -38,13 +91,12 @@ void MainWindow::on_toolButton_4_pressed()
 {
 	QString file_path = QFileDialog::getOpenFileName(this, "Get Any File");
 	QDir d = QFileInfo(file_path).absoluteFilePath();
-	QFile file(d.absolutePath());
-	if (!file.open(QIODevice::ReadOnly)) {
-		QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+	QFile *file = new QFile(d.absolutePath());
+	if (!file->open(QIODevice::ReadOnly)) {
+		QMessageBox::information(this, tr("Unable to open file"), file->errorString());
 		return;
 	} else {
-		this->model_config_file = &file;
-		testDatasetFileWasUploaded(&file);
+		testDatasetFileWasUploaded(file);
 	}
 }
 
@@ -78,10 +130,7 @@ void MainWindow::on_pushButton_pressed()
 
 void MainWindow::on_testing_size_horizontalSlider_valueChanged(int value)
 {
-	if (value > 0)
-		ui->testing_size_label->setText(QString::number((float) (value + 1) / 100));
-	else
-		ui->testing_size_label->setText(QString::number(0));
+	ui->testing_size_label->setText(QString::number((float) value / 100));
 }
 
 void MainWindow::on_export_model_push_button_pressed()

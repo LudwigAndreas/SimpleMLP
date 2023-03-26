@@ -18,7 +18,7 @@ void PaintView::paintEvent(QPaintEvent *event)
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     painter.setRenderHint(QPainter::RenderHint::SmoothPixmapTransform, true);
-    painter.setPen(QPen(Qt::white, 18, Qt::SolidLine));
+    painter.setPen(QPen(Qt::white, 24, Qt::SolidLine));
     setPalette(pal);
     if (pixmap) {
 //		qDebug() << "belive me";
@@ -31,11 +31,11 @@ void PaintView::paintEvent(QPaintEvent *event)
 //		pixmap = nullptr;
     }
 	for (auto & line : vv) {
-		painter.drawEllipse(line.first(), 2, 2);
+		painter.drawEllipse(line.first(), 3, 3);
 		for (int i = 0; i < line.size() - 1; ++i) {
 			painter.drawLine(line[i], line[i + 1]);
 		}
-		painter.drawEllipse(line.back(), 2, 2);
+		painter.drawEllipse(line.back(), 3, 3);
 	}
 //    for (auto & i : vv)
 //        painter.drawEllipse(i, 5, 7);
