@@ -5,6 +5,8 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "../../lib/stb_image_resize.h"
 
+#include "../exceptions/UploadFileException.h"
+
 std::vector<float> BMPDataToGrayscale(const unsigned char* bmp_data,
 									  int width, int height, int channels) {
 
@@ -36,11 +38,8 @@ unsigned char *ReadAndResizeBMP(const char* filename,
 	// Load the BMP file using stb_image library
 	unsigned char* data = stbi_load(filename, &width_in_file, &height_in_file, &channels_in_file, 0);
 
-	if (!data) {
-//		TODO throw an error
-		std::cerr << "Error loading file " << filename << std::endl;
-		return {};
-	}
+	if (!data)
+        throw UploadFileException::UploadFileException("Error loading BPM file");
 
 	// Resize the image using stb_image_resize library
 	int channels = 3;  // convert to RGB format
@@ -51,10 +50,4 @@ unsigned char *ReadAndResizeBMP(const char* filename,
 	stbi_image_free(data);
 
 	return resized_data;
-}
-
-// Функция для конвертации вектора обратно в BMP изображение
-void VectorToBMP(const std::vector<float>& vec, const std::string& filename,
-				 int width, int height) {
-//	stbi_write_bmp("result.bmp", 271, 271, 3, result.data());
 }
