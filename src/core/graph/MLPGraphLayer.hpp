@@ -15,13 +15,7 @@ namespace s21 {
 		size_t				size;
 		ActivationFunction	*af;
 		
-		std::vector<MLPGraphNode>		neurons;
-		// std::vector<float>				raw_value;
-		// std::vector<float>				value;
-		// std::vector<float>				error;
-		// std::vector<std::vector<float>>	weight;
-		// std::vector<float>				bias;
-		// std::vector<s21::MLPGraphNode>	nodes;
+		std::vector<MLPGraphNode>	neurons;
 	
 	public:
 		MLPGraphLayer(size_t size, ActivationFunction *af,
