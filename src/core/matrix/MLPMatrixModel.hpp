@@ -6,6 +6,7 @@
 
 #include "../utils/IMLPModel.hpp"
 #include "Matrix.hpp"
+#include "MLPMatrixLayer.hpp"
 #include "../utils/ActivationFunction.hpp"
 
 namespace s21 {
@@ -13,12 +14,7 @@ namespace s21 {
 	class MLPMatrixModel : s21::IMLPModel {
 	private:
 		std::vector<size_t> units_per_layer;
-		std::vector<Matrix<float>> bias;
-		std::vector<Matrix<float>> weight_matrices;
-		std::vector<Matrix<float>> neuron_values;
-		std::vector<Matrix<float>> incorrect_values;
-		std::vector<Matrix<float>> error;
-		std::vector<Matrix<float>> raw;
+		std::vector<MLPMatrixLayer *> layers;
 		bool auto_decrease;
 
 		ActivationFunction			*af;
@@ -33,23 +29,21 @@ namespace s21 {
 								auto_decrease(use_auto_decrease), lr(lr) {
 			af = func;
 			start_lr = lr;
-			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
+			
+			for (size_t i = 0; i < units_per_layer.size(); ++i) {
+				auto layer = new MLPMatrixLayer();
 				size_t in_channels = units_per_layer[i];
-				size_t out_channels = units_per_layer[i + 1];
-
-				auto W = GenerateNDMatrix<float>(in_channels,
-												 out_channels);
-				weight_matrices.push_back(W);
-
-				auto b = GenerateNDMatrix<float>(1,
-												 out_channels);
-				bias.push_back(b);
-			}
-			for (unsigned long i : units_per_layer) {
-				neuron_values	.emplace_back(1, i);
-				incorrect_values.emplace_back(1, i);
-				raw				.emplace_back(1, i);
-				error			.emplace_back(1, i);
+				if (i != units_per_layer.size() - 1) {
+					size_t out_channels = units_per_layer[i + 1];
+					layer->weight_matrices 	= GenerateNDMatrix<float>
+											(in_channels, out_channels);
+					layer->bias 			= GenerateNDMatrix<float>
+											(1, out_channels);
+					layer->error			= Matrix<float>(1, out_channels);
+				}
+				layer->neuron_values	= Matrix<float>(1, in_channels);
+				layer->incorrect_values = Matrix<float>(1, in_channels);
+				layer->raw				= Matrix<float>(1, in_channels);
 			}
 			// dedt.resize(units_per_layer.size() - 1);
 			// dedw.resize(units_per_layer.size() - 1);
@@ -68,29 +62,29 @@ namespace s21 {
 			return units_per_layer;
 		}
 
-		const std::vector<Matrix<float>> &get_bias_vectors() const {
-			return bias;
+		const std::vector<MLPMatrixLayer *> &GetLayers() const {
+			return layers;
 		}
 
-		const std::vector<Matrix<float>> &get_weight_matrices() const {
-			return weight_matrices;
-		}
+		// const std::vector<Matrix<float>> &get_weight_matrices() const {
+		// 	return weight_matrices;
+		// }
 
-		const std::vector<Matrix<float>> &get_neuron_values() const {
-			return neuron_values;
-		}
+		// const std::vector<Matrix<float>> &get_neuron_values() const {
+		// 	return neuron_values;
+		// }
 
-		const std::vector<Matrix<float>> &get_error() const {
-			return error;
-		}
+		// const std::vector<Matrix<float>> &get_error() const {
+		// 	return error;
+		// }
 
-		const std::vector<Matrix<float>> &get_incorrect_values() const {
-			return incorrect_values;
-		}
+		// const std::vector<Matrix<float>> &get_incorrect_values() const {
+		// 	return incorrect_values;
+		// }
 
-		const std::vector<Matrix<float>> &get_raw() const {
-			return raw;
-		}
+		// const std::vector<Matrix<float>> &get_raw() const {
+		// 	return raw;
+		// }
 
 		float get_lr() const {
 			return lr;
@@ -101,36 +95,36 @@ namespace s21 {
 			//TODO: add check for setter logic
 		}
 
-		void set_bias(std::vector<Matrix<float>> b) {
-			this->bias = b;
+		void SetLayers(std::vector<MLPMatrixLayer *> l) {
+			this->layers = l;
 			//TODO: add check for setter logic
 		}
 
-		void set_weight_martices(std::vector<Matrix<float>> W) {
-			this->weight_matrices = W;
+		// void set_weight_martices(std::vector<Matrix<float>> W) {
+		// 	this->weight_matrices = W;
 
-			//TODO: add check for setter logic
-		}
+		// 	//TODO: add check for setter logic
+		// }
 
-		void set_neuron_values(std::vector<Matrix<float>> h) {
-			this->neuron_values = h;
-			//TODO: add check for setter logic
-		}
+		// void set_neuron_values(std::vector<Matrix<float>> h) {
+		// 	this->neuron_values = h;
+		// 	//TODO: add check for setter logic
+		// }
 
-		void set_error(std::vector<Matrix<float>> error) {
-			this->error = error;
-			//TODO: add check for setter logic
-		}
+		// void set_error(std::vector<Matrix<float>> error) {
+		// 	this->error = error;
+		// 	//TODO: add check for setter logic
+		// }
 
-		void set_incorrect_values(std::vector<Matrix<float>> incorrect_values) {
-			this->incorrect_values = incorrect_values;
-			//TODO: add check for setter logic
-		}
+		// void set_incorrect_values(std::vector<Matrix<float>> incorrect_values) {
+		// 	this->incorrect_values = incorrect_values;
+		// 	//TODO: add check for setter logic
+		// }
 
-		void set_raw(std::vector<Matrix<float>> raw) {
-			this->raw = raw;
-			//TODO: add check for setter logic
-		}
+		// void set_raw(std::vector<Matrix<float>> raw) {
+		// 	this->raw = raw;
+		// 	//TODO: add check for setter logic
+		// }
 
 		void set_lr(float lr) {
 			MLPMatrixModel::lr = lr;
@@ -150,39 +144,40 @@ namespace s21 {
 
 		std::vector<float> Forward(Matrix<float> matrix) override {
 			assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
-			neuron_values[0] = matrix;
-			raw[0] = matrix;
+			layers[0]->neuron_values = matrix;
+			layers[0]->raw = matrix;
 			for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-				Matrix<float> y = neuron_values[i] * weight_matrices[i];
-				y = y + bias[i];
-				raw[i + 1] = y;
+				Matrix<float> y = layers[i]->neuron_values * layers[i]->weight_matrices;
+				y = y + layers[i]->bias;
+				layers[i + 1]->raw = y;
 				y = y.apply_function(af->getFunction());
-				neuron_values[i + 1] = y;
+				layers[i + 1]->neuron_values = y;
 
 			}
-			return softmax(neuron_values.back().ToVector());
+			return softmax(layers.back()->neuron_values.ToVector());
 		}
 
-		void AppendError() {
-			for (int i = 0; i < neuron_values.size(); ++i)
-				incorrect_values[i] = incorrect_values[i] + neuron_values[i];
-		}
+		// void AppendError() {
+		// 	for (int i = 0; i < neuron_values.size(); ++i)
+		// 		incorrect_values[i] = incorrect_values[i] + neuron_values[i];
+		// }
 
-		void	ClearError() {
-			for (int i = 0; i < units_per_layer.size(); ++i) {
-				incorrect_values[i] = Matrix<float>(1, units_per_layer[i]);
-			}
-		}
+		// void	ClearError() {
+		// 	for (int i = 0; i < units_per_layer.size(); ++i) {
+		// 		incorrect_values[i] = Matrix<float>(1, units_per_layer[i]);
+		// 	}
+		// }
 		
 		void Backward(Matrix<float> target) override {
 			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
-			error[units_per_layer.size() - 1] = (neuron_values.back() - target);
-			for (int i = (int) units_per_layer.size() - 2; i > 0; --i) {
-				error[i] = (error[i + 1].matmulTransposed(weight_matrices[i])) & raw[i].apply_function(af->getDerivative());
+			layers[layers.size() - 2]->error = (layers.back()->neuron_values - target);
+			for (int i = (int) units_per_layer.size() - 3; i >= 0; --i) {
+				layers[i]->error = (layers[i + 1]->error.matmulTransposed(layers[i]->weight_matrices))
+					& layers[i + 1]->raw.apply_function(af->getDerivative());
 			}
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
-				weight_matrices[i] = weight_matrices[i] - (neuron_values[i].T() * error[i + 1] * lr);
-				bias[i] = bias[i] - error[i + 1] * lr;
+				layers[i]->weight_matrices = layers[i]->weight_matrices - (layers[i]->neuron_values.T() * layers[i]->error * lr);
+				layers[i]->bias = layers[i]->bias - layers[i]->error * lr;
 			}
 		}
 
@@ -213,7 +208,7 @@ namespace s21 {
 			return getMostProbablePrediction(Forward(x));
 		}
 
-		static IMLPModel<float> *MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction *func, bool use_auto_decrease = true){
+		static IMLPModel *MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction *func, bool use_auto_decrease = true){
 			std::vector<size_t> units_per_layer;
 			units_per_layer.push_back(in_channels);
 
@@ -261,18 +256,20 @@ namespace s21 {
 			os << unit << " ";
 		}
 		os << model.get_lr() << '\n';
-		for (auto weights: model.get_weight_matrices())
-			os << weights;
-		for (auto bias: model.get_bias_vectors())
-			os << bias;
-		for (auto neuron_values: model.get_neuron_values())
-			os << neuron_values;
-		for (auto error: model.get_error())
-			os << error;
-		for (auto incorrect_values: model.get_incorrect_values())
-			os << incorrect_values;
-		for (auto raw: model.get_raw())
-			os << raw;
+		for (auto layer : model.GetLayers())
+			os << *layer;
+		// for (auto weights: model.get_weight_matrices())
+		// 	os << weights;
+		// for (auto bias: model.get_bias_vectors())
+		// 	os << bias;
+		// for (auto neuron_values: model.get_neuron_values())
+		// 	os << neuron_values;
+		// for (auto error: model.get_error())
+		// 	os << error;
+		// for (auto incorrect_values: model.get_incorrect_values())
+		// 	os << incorrect_values;
+		// for (auto raw: model.get_raw())
+		// 	os << raw;
 		return os;
 	}
 
@@ -293,12 +290,12 @@ namespace s21 {
 		model.set_units_per_layer(units_per_layer);
 		model.set_lr(std::atof(upls.rbegin()->data()));
 
-		model.set_weight_martices	(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-		model.set_bias				(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-		model.set_neuron_values		(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		model.set_error				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		model.set_incorrect_values	(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		model.set_raw				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		// model.set_weight_martices	(readVectorMatrix<float>(is, units_per_layer.size() - 1));
+		// model.set_bias				(readVectorMatrix<float>(is, units_per_layer.size() - 1));
+		// model.set_neuron_values		(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		// model.set_error				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		// model.set_incorrect_values	(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		// model.set_raw				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
 		return is;
 	}
 }

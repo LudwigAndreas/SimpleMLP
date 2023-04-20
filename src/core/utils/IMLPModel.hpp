@@ -4,6 +4,7 @@
 #include <vector>
 #include "Sample.hpp"
 #include "ActivationFunction.hpp"
+#include "IMLPLayer.hpp"
 
 namespace s21 {
     class IMLPModel {
@@ -16,13 +17,13 @@ namespace s21 {
         std::vector<IMLPLayer *> layers;
 
     public:
-		virtual std::vector<float> Forward(Matrix<T>) = 0;
+		virtual std::vector<float> Forward(Matrix<float>) = 0;
 		virtual void Backward(Matrix<float>) = 0;
 		virtual int Predict(Matrix<float>) = 0;
 		// virtual int getMostProbablePrediction(std::vector<float> vector) = 0;
 		virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "") = 0;
 
-		int getMostProbablePrediction(std::vector<T> value) {
+		int getMostProbablePrediction(std::vector<float> value) {
 			double max = value[0];
 			int prediction = 0;
 			double tmp;
