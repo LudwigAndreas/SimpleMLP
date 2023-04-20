@@ -5,115 +5,95 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <exception>
 
 #include "../matrix/Matrix.hpp"
 #include "../matrix/MLPMatrixModel.hpp"
+#include "../graph/MLPGraphModel.hpp"
 
 namespace s21 {
 	template<typename T>
 	class MLPSerializer {
 	private:
-		static std::vector<std::string>
-		split(const std::string &s, const std::string &delimiter) {
-			size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-			std::string token;
-			std::vector<std::string> res;
+		static void CloseStream(std::istream &is) {
+			try {
+				auto &ifs = dynamic_cast<std::ifstream &>(is);
+				ifs.close();
+			} catch (std::bad_cast) {
 
-			while ((pos_end = s.find(delimiter, pos_start)) !=
-				   std::string::npos) {
-				token = s.substr(pos_start, pos_end - pos_start);
-				pos_start = pos_end + delim_len;
-				res.push_back(token);
 			}
+		}
+	public:
+		static void SerializeMLPModel(s21::IMLPModel<T> *model,
+										const std::string &filename) {
+			auto *matrix_model = dynamic_cast<s21::MLPMatrixModel *>(model);
+			auto *graph_model  = dynamic_cast<s21::MLPGraphModel *> (model);
+			// if (matrix_model || graph_model) {
 
-			res.push_back(s.substr(pos_start));
-			return res;
+			// }
+			if (matrix_model)
+				SerializeMLPMatrixModel(matrix_model, filename);
+			else if (graph_model)
+				SerializeMLPGraphModel(graph_model, filename);
+			else
+			 	throw std::runtime_error("Eto chto za pokemon?");
 		}
 
-	public:
 		static void SerializeMLPMatrixModel(s21::MLPMatrixModel *model,
 											const std::string &filename) {
+			const std::string signature = "M";
 			std::fstream file;
 			file.open(filename, std::ofstream::out | std::ofstream::trunc);
-
-			for (auto unit: model->get_units_per_layer()) {
-				file << unit << " ";
-			}
-			file << model->get_lr();
-			file << '\n';
-			for (auto weights: model->get_weight_matrices())
-				file << weights;
-			for (auto bias: model->get_bias_vectors())
-				file << bias;
-			for (auto neuron_values: model->get_neuron_values())
-				file << neuron_values;
-			for (auto error: model->get_error())
-				file << error;
-			for (auto incorrect_values: model->get_incorrect_values())
-				file << incorrect_values;
-			for (auto raw: model->get_raw())
-				file << raw;
+			file << signature << "\n" << *model;
 			file.close();
 		}
 
-		static std::vector< s21::Matrix<T> > readVectorMatrix(std::istream &input, size_t size) {
-			std::vector<s21::Matrix<T>>	result;
-			s21::Matrix<T>				matrix;
-
-			result.reserve(size);
-			for (int i = 0; i < size; ++i) {
-				input >> matrix;
-				result.push_back(matrix);
-			}
-			return (std::move(result));
-			// model->set_weight_martices(weights_matrices);
+		static void SerializeMLPGraphModel(s21::MLPGraphModel *model,
+											const std::string &filename) {
+			const std::string signature = "G";
+			std::fstream file;
+			file.open(filename, std::ofstream::out | std::ofstream::trunc);
+			file << signature << "\n" << *model;
+			file.close();
 		}
 
-		static s21::IMLPModel<T> *DeserializeMLPMatrixModel(const std::string &filename) {
-//			int rows = 0, cols = 0;
-//			bool read_shape = true;
-
-//			TODO: rewrite model creation to import graph and matrix models and activation funcs
-			// auto model = s21::MLPMatrixModel::MakeModel(0, 0, 0, 0, 0);
-
-			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
-					0, 0, 0, 0, 0, ActivationFunction::getFunctionByFlag(ActivationFunction::Sigmoid));
-			std::vector<float> matrix_values;
-			std::vector<std::string> row_values;
-			std::vector<s21::Matrix<float>> weights_matrices;
-			s21::Matrix<float> matrix;
-//			int weights_index = 0;
-
+		static s21::IMLPModel<T> *DeserializeMLPModel(const std::string &filename) {
 			std::fstream file;
+			std::string signature;
 			file.open(filename, std::ofstream::in);
+			if (file << signature) {
+				if (signature == "M")
+					return DeserializeMLPMatrixModel(file);
+				else if (signature == "G")
+					return DeserializeMLPGraphModel(file);
+				file.close();
+			}
+			throw std::runtime_error("Unknown or empty model file signature");
+			return nullptr;
+		}
 
-			std::string units_per_layer_str;
-			std::string line;
-			std::getline(file, units_per_layer_str);
+		static s21::IMLPModel<T> *DeserializeMLPMatrixModel(std::istream &is) {
+			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
+					0, 0, 0, 0, 0,
+					// nullptr
+					new ActivationFunction(ActivationFunction::Sigmoid)
+			);
+			is >> *model;
+			CloseStream(is);
+			return model;
+		}
 
-			auto upls = split(units_per_layer_str, " ");
-			std::vector<size_t> units_per_layer;
-			for (auto i = upls.begin(); i < upls.end() - 1; ++i)
-				units_per_layer.push_back(std::atoi(i->data()));
-			model->set_units_per_layer(units_per_layer);
-			model->set_lr(std::atof(upls.rbegin()->data()));
-
-			model->set_weight_martices	(readVectorMatrix(file, units_per_layer.size() - 1));
-			model->set_bias				(readVectorMatrix(file, units_per_layer.size() - 1));
-			model->set_neuron_values	(readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_error			(readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_incorrect_values	(readVectorMatrix(file, units_per_layer.size()	 ));
-			model->set_raw				(readVectorMatrix(file, units_per_layer.size()	 ));
-
-
-
-			// for (unsigned long i : units_per_layer) {
-			// 	neuron_values	.emplace_back(1, i);
-			// 	incorrect_values.emplace_back(1, i);
-			// 	raw				.emplace_back(1, i);
-			// 	error			.emplace_back(1, i);
-			// }
-			return (IMLPModel<float> *)model;
+		static s21::IMLPModel<T> *DeserializeMLPGraphModel(std::istream &is) {
+			s21::MLPGraphModel *model = new s21::MLPGraphModel();
+			
+			// (
+			// 		0, 0, 0, 0, 0,
+			// 		// nullptr
+			// 		new ActivationFunction(ActivationFunction::Sigmoid)
+			// );
+			is >> *model;
+			CloseStream(is);
+			return model;
 		}
 	};	
 }

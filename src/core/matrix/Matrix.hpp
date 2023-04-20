@@ -12,6 +12,7 @@
 #include <csignal>
 #include <algorithm>
 #include <stdexcept>
+#include <sstream>
 
 #include "../exceptions/MatrixException.hpp"
 
@@ -332,13 +333,21 @@ namespace s21 {
 	std::istream &operator>>(std::istream &is, Matrix<Type> &matrix) {
 		int							rows, cols;
 		std::vector<float>			data;
+		std::vector<float>			line_data;
+		std::string					line;
+		std::stringstream			ss;
 		float						tmp;
 
 		is >> rows >> cols;
 		data.reserve(rows * cols);
-		for (int i = 0; i < rows * cols; ++i) {
-			is >> tmp;
-			data.push_back(tmp);
+		for (int i = 0; i < rows && is >> line; ++i) {
+			ss.str(line);
+			while (ss >> tmp)
+				line_data.push_back(tmp);
+			if (line_data.size() != cols)
+				throw MatrixCalculationsException("Invalid input file: Elements count on matrix line is incorrect");
+			// is >> tmp;
+			data.emplace_back(line_data.begin(), line_data.end());
 		}
 		matrix = Matrix<float>(data);
 		matrix.set_rows(rows);

@@ -53,7 +53,9 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = main.cpp \
-		utils/MTWorker.cpp \
+		utils/ModelTestWorker.cpp \
+		utils/ModelTrainWorker.cpp \
+		utils/ModelWorker.cpp \
 		utils/importfileitem.cpp \
 		utils/paintview.cpp \
 		view/ConfigureModulePage.cpp \
@@ -72,7 +74,9 @@ SOURCES       = main.cpp \
 		moc_paintview.cpp \
 		moc_testdatainfodialog.cpp
 OBJECTS       = main.o \
-		MTWorker.o \
+		ModelTestWorker.o \
+		ModelTrainWorker.o \
+		ModelWorker.o \
 		importfileitem.o \
 		paintview.o \
 		ConfigureModulePage.o \
@@ -373,7 +377,9 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		view/mainwindow.h \
 		utils/paintview.h \
 		view/testdatainfodialog.h main.cpp \
-		utils/MTWorker.cpp \
+		utils/ModelTestWorker.cpp \
+		utils/ModelTrainWorker.cpp \
+		utils/ModelWorker.cpp \
 		utils/importfileitem.cpp \
 		utils/paintview.cpp \
 		view/ConfigureModulePage.cpp \
@@ -982,7 +988,7 @@ distdir: FORCE
 	$(COPY_FILE) --parents resourses.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents utils/importfileitem.h view/mainwindow.h utils/paintview.h view/testdatainfodialog.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp utils/MTWorker.cpp utils/importfileitem.cpp utils/paintview.cpp view/ConfigureModulePage.cpp view/TestModelPage.cpp view/TrainModelPage.cpp view/mainwindow.cpp view/testdatainfodialog.cpp ../core/DatasetReading.cpp ../core/LetterRecognitionMlpModelBuilder.cpp ../core/graph/MLPGraphLayer.cpp ../core/graph/MLPGraphModel.cpp ../core/utils/ActivationFunction.cpp ../core/utils/BMPReader.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp utils/ModelTestWorker.cpp utils/ModelTrainWorker.cpp utils/ModelWorker.cpp utils/importfileitem.cpp utils/paintview.cpp view/ConfigureModulePage.cpp view/TestModelPage.cpp view/TrainModelPage.cpp view/mainwindow.cpp view/testdatainfodialog.cpp ../core/DatasetReading.cpp ../core/LetterRecognitionMlpModelBuilder.cpp ../core/graph/MLPGraphLayer.cpp ../core/graph/MLPGraphModel.cpp ../core/utils/ActivationFunction.cpp ../core/utils/BMPReader.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents view/mainwindow.ui view/testdatainfodialog.ui $(DISTDIR)/
 
 
@@ -1030,22 +1036,18 @@ moc_importfileitem.cpp: utils/importfileitem.h \
 	/usr/lib/qt6/moc $(DEFINES) --include /home/andref/Documents/SimpleMLP/src/gui/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/andref/Documents/SimpleMLP/src/gui -I/home/andref/Documents/SimpleMLP -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/12.2.0 -I/usr/include/c++/12.2.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.2.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include-fixed -I/usr/include utils/importfileitem.h -o moc_importfileitem.cpp
 
 moc_mainwindow.cpp: view/mainwindow.h \
-		../../src/core/utils/MLPSerializer.hpp \
-		../core/matrix/Matrix.hpp \
-		../core/exceptions/MatrixException.hpp \
-		../core/matrix/MLPMatrixModel.hpp \
-		../core/utils/IMLPModel.hpp \
-		../core/utils/Sample.hpp \
-		../core/utils/ActivationFunction.hpp \
 		../../src/core/LetterRecognitionMlpModelBuilder.hpp \
 		../core/IMLPModelBuilder.hpp \
-		../../src/core/utils/BMPReader.hpp \
+		../core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		../core/utils/ActivationFunction.hpp \
 		../../src/core/utils/IMLPModel.hpp \
-		../../src/gui/utils/importfileitem.h \
-		../../src/gui/utils/paintview.h \
-		../../src/gui/utils/MTWorker.hpp \
-		ui_mainwindow.h \
-		../../src/gui/view/testdatainfodialog.h \
+		../../src/gui/utils/ModelTrainWorker.hpp \
+		utils/ModelWorker.hpp \
+		../../src/gui/utils/ModelTestWorker.hpp \
+		../../src/core/utils/ConfusionMatrix.hpp \
 		moc_predefs.h \
 		/usr/lib/qt6/moc
 	/usr/lib/qt6/moc $(DEFINES) --include /home/andref/Documents/SimpleMLP/src/gui/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/andref/Documents/SimpleMLP/src/gui -I/home/andref/Documents/SimpleMLP -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/12.2.0 -I/usr/include/c++/12.2.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.2.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include-fixed -I/usr/include view/mainwindow.h -o moc_mainwindow.cpp
@@ -1056,6 +1058,7 @@ moc_paintview.cpp: utils/paintview.h \
 	/usr/lib/qt6/moc $(DEFINES) --include /home/andref/Documents/SimpleMLP/src/gui/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/andref/Documents/SimpleMLP/src/gui -I/home/andref/Documents/SimpleMLP -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/12.2.0 -I/usr/include/c++/12.2.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.2.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include-fixed -I/usr/include utils/paintview.h -o moc_paintview.cpp
 
 moc_testdatainfodialog.cpp: view/testdatainfodialog.h \
+		../../src/core/utils/ConfusionMatrix.hpp \
 		moc_predefs.h \
 		/usr/lib/qt6/moc
 	/usr/lib/qt6/moc $(DEFINES) --include /home/andref/Documents/SimpleMLP/src/gui/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/andref/Documents/SimpleMLP/src/gui -I/home/andref/Documents/SimpleMLP -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/12.2.0 -I/usr/include/c++/12.2.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.2.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include-fixed -I/usr/include view/testdatainfodialog.h -o moc_testdatainfodialog.cpp
@@ -1068,7 +1071,9 @@ compiler_uic_make_all: ui_mainwindow.h ui_testdatainfodialog.h
 compiler_uic_clean:
 	-$(DEL_FILE) ui_mainwindow.h ui_testdatainfodialog.h
 ui_mainwindow.h: view/mainwindow.ui \
-		/usr/lib/qt6/uic
+		/usr/lib/qt6/uic \
+		utils/importfileitem.h \
+		utils/paintview.h
 	/usr/lib/qt6/uic view/mainwindow.ui -o ui_mainwindow.h
 
 ui_testdatainfodialog.h: view/testdatainfodialog.ui \
@@ -1086,25 +1091,43 @@ compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_heade
 ####### Compile
 
 main.o: main.cpp ../../src/gui/view/mainwindow.h \
-		../../src/core/utils/MLPSerializer.hpp \
-		../core/matrix/Matrix.hpp \
-		../core/exceptions/MatrixException.hpp \
-		../core/matrix/MLPMatrixModel.hpp \
-		../core/utils/IMLPModel.hpp \
-		../core/utils/Sample.hpp \
-		../core/utils/ActivationFunction.hpp \
 		../../src/core/LetterRecognitionMlpModelBuilder.hpp \
 		../core/IMLPModelBuilder.hpp \
-		../../src/core/utils/BMPReader.hpp \
+		../core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		../core/utils/ActivationFunction.hpp \
 		../../src/core/utils/IMLPModel.hpp \
-		../../src/gui/utils/importfileitem.h \
-		../../src/gui/utils/paintview.h \
-		../../src/gui/utils/MTWorker.hpp \
-		ui_mainwindow.h \
-		../../src/gui/view/testdatainfodialog.h
+		../../src/gui/utils/ModelTrainWorker.hpp \
+		utils/ModelWorker.hpp \
+		../../src/gui/utils/ModelTestWorker.hpp \
+		../../src/core/utils/ConfusionMatrix.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
-MTWorker.o: utils/MTWorker.cpp ../../src/core/DatasetReading.hpp \
+ModelTestWorker.o: utils/ModelTestWorker.cpp utils/ModelTestWorker.hpp \
+		utils/ModelWorker.hpp \
+		../../src/core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		../../src/core/utils/ConfusionMatrix.hpp \
+		../../src/core/DatasetReading.hpp \
+		../../src/core/exceptions/ModelProcessingException.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ModelTestWorker.o utils/ModelTestWorker.cpp
+
+ModelTrainWorker.o: utils/ModelTrainWorker.cpp utils/ModelTrainWorker.hpp \
+		../../src/core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		utils/ModelWorker.hpp \
+		../../src/core/DatasetReading.hpp \
+		../../src/core/exceptions/ModelProcessingException.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ModelTrainWorker.o utils/ModelTrainWorker.cpp
+
+ModelWorker.o: utils/ModelWorker.cpp utils/ModelWorker.hpp \
+		../../src/core/utils/IMLPModel.hpp \
 		../core/utils/Sample.hpp \
 		../core/matrix/Matrix.hpp \
 		../core/exceptions/MatrixException.hpp \
@@ -1112,9 +1135,8 @@ MTWorker.o: utils/MTWorker.cpp ../../src/core/DatasetReading.hpp \
 		../core/matrix/MLPMatrixModel.hpp \
 		../core/utils/IMLPModel.hpp \
 		../core/utils/ActivationFunction.hpp \
-		utils/MTWorker.hpp \
-		../../src/core/utils/IMLPModel.hpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MTWorker.o utils/MTWorker.cpp
+		../../src/core/exceptions/ModelProcessingException.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ModelWorker.o utils/ModelWorker.cpp
 
 importfileitem.o: utils/importfileitem.cpp utils/importfileitem.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o importfileitem.o utils/importfileitem.cpp
@@ -1123,83 +1145,80 @@ paintview.o: utils/paintview.cpp utils/paintview.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o paintview.o utils/paintview.cpp
 
 ConfigureModulePage.o: view/ConfigureModulePage.cpp ../../src/gui/view/mainwindow.h \
-		../../src/core/utils/MLPSerializer.hpp \
-		../core/matrix/Matrix.hpp \
-		../core/exceptions/MatrixException.hpp \
-		../core/matrix/MLPMatrixModel.hpp \
-		../core/utils/IMLPModel.hpp \
-		../core/utils/Sample.hpp \
-		../core/utils/ActivationFunction.hpp \
 		../../src/core/LetterRecognitionMlpModelBuilder.hpp \
 		../core/IMLPModelBuilder.hpp \
-		../../src/core/utils/BMPReader.hpp \
+		../core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		../core/utils/ActivationFunction.hpp \
 		../../src/core/utils/IMLPModel.hpp \
-		../../src/gui/utils/importfileitem.h \
-		../../src/gui/utils/paintview.h \
-		../../src/gui/utils/MTWorker.hpp \
+		../../src/gui/utils/ModelTrainWorker.hpp \
+		utils/ModelWorker.hpp \
+		../../src/gui/utils/ModelTestWorker.hpp \
+		../../src/core/utils/ConfusionMatrix.hpp \
 		ui_mainwindow.h \
-		../../src/gui/view/testdatainfodialog.h
+		../../src/core/utils/MLPSerializer.hpp \
+		../core/matrix/MLPMatrixModel.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ConfigureModulePage.o view/ConfigureModulePage.cpp
 
 TestModelPage.o: view/TestModelPage.cpp ../../src/gui/view/mainwindow.h \
-		../../src/core/utils/MLPSerializer.hpp \
-		../core/matrix/Matrix.hpp \
-		../core/exceptions/MatrixException.hpp \
-		../core/matrix/MLPMatrixModel.hpp \
-		../core/utils/IMLPModel.hpp \
-		../core/utils/Sample.hpp \
-		../core/utils/ActivationFunction.hpp \
 		../../src/core/LetterRecognitionMlpModelBuilder.hpp \
 		../core/IMLPModelBuilder.hpp \
-		../../src/core/utils/BMPReader.hpp \
+		../core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		../core/utils/ActivationFunction.hpp \
 		../../src/core/utils/IMLPModel.hpp \
-		../../src/gui/utils/importfileitem.h \
-		../../src/gui/utils/paintview.h \
-		../../src/gui/utils/MTWorker.hpp \
+		../../src/gui/utils/ModelTrainWorker.hpp \
+		utils/ModelWorker.hpp \
+		../../src/gui/utils/ModelTestWorker.hpp \
+		../../src/core/utils/ConfusionMatrix.hpp \
+		../../src/lib/stb_image_write.h \
 		ui_mainwindow.h \
-		../../src/gui/view/testdatainfodialog.h \
-		../../src/lib/stb_image_write.h
+		view/testdatainfodialog.h \
+		../../src/core/utils/BMPReader.hpp \
+		../../src/core/utils/MLPSerializer.hpp \
+		../core/matrix/MLPMatrixModel.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o TestModelPage.o view/TestModelPage.cpp
 
 TrainModelPage.o: view/TrainModelPage.cpp ../../src/gui/view/mainwindow.h \
-		../../src/core/utils/MLPSerializer.hpp \
-		../core/matrix/Matrix.hpp \
-		../core/exceptions/MatrixException.hpp \
-		../core/matrix/MLPMatrixModel.hpp \
-		../core/utils/IMLPModel.hpp \
-		../core/utils/Sample.hpp \
-		../core/utils/ActivationFunction.hpp \
 		../../src/core/LetterRecognitionMlpModelBuilder.hpp \
 		../core/IMLPModelBuilder.hpp \
-		../../src/core/utils/BMPReader.hpp \
+		../core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		../core/utils/ActivationFunction.hpp \
 		../../src/core/utils/IMLPModel.hpp \
-		../../src/gui/utils/importfileitem.h \
-		../../src/gui/utils/paintview.h \
-		../../src/gui/utils/MTWorker.hpp \
-		ui_mainwindow.h \
-		../../src/gui/view/testdatainfodialog.h
+		../../src/gui/utils/ModelTrainWorker.hpp \
+		utils/ModelWorker.hpp \
+		../../src/gui/utils/ModelTestWorker.hpp \
+		../../src/core/utils/ConfusionMatrix.hpp \
+		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o TrainModelPage.o view/TrainModelPage.cpp
 
 mainwindow.o: view/mainwindow.cpp ../../src/gui/view/mainwindow.h \
-		../../src/core/utils/MLPSerializer.hpp \
-		../core/matrix/Matrix.hpp \
-		../core/exceptions/MatrixException.hpp \
-		../core/matrix/MLPMatrixModel.hpp \
-		../core/utils/IMLPModel.hpp \
-		../core/utils/Sample.hpp \
-		../core/utils/ActivationFunction.hpp \
 		../../src/core/LetterRecognitionMlpModelBuilder.hpp \
 		../core/IMLPModelBuilder.hpp \
-		../../src/core/utils/BMPReader.hpp \
+		../core/utils/IMLPModel.hpp \
+		../core/utils/Sample.hpp \
+		../core/matrix/Matrix.hpp \
+		../core/exceptions/MatrixException.hpp \
+		../core/utils/ActivationFunction.hpp \
 		../../src/core/utils/IMLPModel.hpp \
+		../../src/gui/utils/ModelTrainWorker.hpp \
+		utils/ModelWorker.hpp \
+		../../src/gui/utils/ModelTestWorker.hpp \
+		../../src/core/utils/ConfusionMatrix.hpp \
 		../../src/gui/utils/importfileitem.h \
-		../../src/gui/utils/paintview.h \
-		../../src/gui/utils/MTWorker.hpp \
 		ui_mainwindow.h \
 		../../src/gui/view/testdatainfodialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o view/mainwindow.cpp
 
 testdatainfodialog.o: view/testdatainfodialog.cpp view/testdatainfodialog.h \
+		../../src/core/utils/ConfusionMatrix.hpp \
 		ui_testdatainfodialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o testdatainfodialog.o view/testdatainfodialog.cpp
 

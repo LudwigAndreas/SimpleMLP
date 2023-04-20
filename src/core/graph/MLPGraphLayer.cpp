@@ -105,4 +105,12 @@ namespace s21 {
 	size_t MLPGraphLayer::Size() {
 		return size;
 	}
+
+	std::istream &operator>>(std::istream &is, MLPGraphLayer &layer);
+
+	std::ostream &operator<<(std::ostream &os, MLPGraphLayer &layer) {
+		for (auto & node : layer.GetNodes()) {
+			os << node;
+		}
+	}
 }
