@@ -69,7 +69,7 @@ namespace s21 {
 			// model->set_weight_martices(weights_matrices);
 		}
 
-		static s21::IMLPModel<T> *DeserializeMLPMatrixModel(const std::string &filename) {
+		static s21::IMLPModel *DeserializeMLPMatrixModel(const std::string &filename) {
 //			int rows = 0, cols = 0;
 //			bool read_shape = true;
 

@@ -1,5 +1,9 @@
 #include "src/gui/view/mainwindow.h"
 
+#include <QLineSeries>
+#include <QChart>
+#include <QChartView>
+
 #include "ui_mainwindow.h"
 #include "src/core/utils/MLPSerializer.hpp"
 
@@ -17,6 +21,15 @@ bool MainWindow::exitFromConfigPage() {
 void MainWindow::on_train_model_push_button_pressed()
 {
 	if (ui->tabWidget->currentIndex() == 0){
+		if (ui->lr_double_spin_box->value() > 0.1) {
+			auto ms = QMessageBox::warning(this, tr("Critical Message"),
+								  "The value of the learning rate is too "
+								  "high, it is not guaranteed that "
+								  "the learning will go as planned. Do you want to continue?",
+								  QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No);
+			if (ms != QMessageBox::Yes)
+				return;
+		}
 		current_model = builder
 				->HiddenLayers(
 						ui->num_of_hidden_layers_comboBox->currentText().toInt())

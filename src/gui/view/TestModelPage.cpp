@@ -31,6 +31,7 @@ void MainWindow::on_predict_push_button_pressed()
 	testing_worker->setModel(current_model);
 	testing_worker->setDatasetFileName(
 			this->testing_dataset_file->fileName().toStdString());
+	testing_worker->setDatasetFraction(ui->testing_size_horizontal_slider->value());
 	testing_worker->moveToThread(this->testing_thread);
 
 	connect(this->testing_thread, SIGNAL(started()),
@@ -119,7 +120,6 @@ void MainWindow::onFileWasDrawn() {
 		QMessageBox::information(this, tr("There is no loaded model"), "Can't create prediction without model");
 	}
 	delete[] image;
-
 }
 
 void MainWindow::on_pushButton_pressed()
@@ -128,7 +128,7 @@ void MainWindow::on_pushButton_pressed()
 	ui->prediction_result_label->clear();
 }
 
-void MainWindow::on_testing_size_horizontalSlider_valueChanged(int value)
+void MainWindow::on_testing_size_horizontal_slider_valueChanged(int value)
 {
 	ui->testing_size_label->setText(QString::number((float) value / 100));
 }

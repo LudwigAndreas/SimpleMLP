@@ -1,6 +1,7 @@
 #include "src/gui/view/mainwindow.h"
 
 #include <iomanip>
+#include <QValueAxis>
 
 #include "ui_mainwindow.h"
 
@@ -32,14 +33,15 @@ bool MainWindow::exitFromTrainPage() {
 	}
 	ui->training_progress_bar->hide();
 	ui->training_progress_bar->setValue(0);
+	ui->chart_widget->hide();
 	ui->train_info_text_label->setDisabled(true);
 	ui->start_training_push_button->show();
 	ui->start_training_push_button->setDisabled(true);
 	ui->import_train_dataset_label->clear();
 	ui->import_train_dataset_label->setText(
 			"<html><head/><body><p><span style=\" "
-			"font-size:18pt;\">Drag and drop train dataset file"
-			"</span></p><p><span style=\" font-size:18pt;\">"
+			"font-size:14pt;\">Drag and drop train dataset file"
+			"</span></p><p><span style=\" font-size:14pt;\">"
 			" (should be *.csv)</span></p></body></html>");
 	ui->file_path_label_2->clear();
 	return true;
@@ -99,7 +101,7 @@ void MainWindow::on_toolButton_3_pressed()
 
 void MainWindow::on_start_training_push_button_pressed()
 {
-	if (this->training_thread != nullptr) {
+	if (this->training_thread != nullptr && this->training_thread->isRunning()) {
 		QMessageBox::information(this,
 								 tr("The training is already running"),
 								 "Can't start training twice");
@@ -127,32 +129,46 @@ void MainWindow::on_start_training_push_button_pressed()
 			this->training_thread, SLOT(deleteLater()));
 
 	this->training_thread->start();
+
+	if (!ui->chart_widget->chart()->axes(Qt::Horizontal).isEmpty())
+		ui->chart_widget->chart()->removeAxis(ui->chart_widget->chart()->axes(Qt::Horizontal).first());
+	auto *x = new QValueAxis();
+	x->setMax(ui->num_of_epochs_spin_box->value());
+	x->setMin(1);
+	ui->chart_widget->chart()->addAxis(x, Qt::AlignBottom);
+	chart_series->attachAxis(x);
+	this->chart_series->clear();
+	ui->chart_widget->show();
 }
 
 void MainWindow::update_training_status(int epoch, int completion, float accuracy) {
 	ui->train_info_text_label->setEnabled(true);
 	std::stringstream ss;
-	ss << "<html><head/><body><p><span style=\" font-size:18pt;"
-		  " font-weight:700;\">Epoch: </span><span style=\" font-size:18pt;\">"
+	ss << "<html><head/><body><p><span style=\" font-size:14pt;"
+		  " font-weight:700;\">Epoch: </span><span style=\" font-size:14pt;\">"
 	   << epoch
-	   << "</span></p><p><span style=\" font-size:18pt;"
+	   << "</span></p><p><span style=\" font-size:14pt;"
 		  " font-weight:700;\">Current accuracy: </span><span style=\""
-		  " font-size:18pt;\">"
+		  " font-size:14pt;\">"
 	   << std::setprecision(3)
 	   << (std::isnan(accuracy) ? 0 : accuracy) << "%"
-	   << "</span></p><p><span style=\" font-size:18pt;"
+	   << "</span></p><p><span style=\" font-size:14pt;"
 		  " font-weight:700;\">Completion: </span><span style=\""
-		  " font-size:18pt;\">"
+		  " font-size:14pt;\">"
 	   << completion << "%"
 	   << "</span></p></body></html>";
 	ui->train_info_text_label->setText(ss.str().data());
 	ui->training_progress_bar->setValue(completion);
-
+	this->chart_series->append(epoch, accuracy);
+	std::cerr << epoch << " " << accuracy << std::endl;
+	std::cerr << chart_series->chart() << std::endl;
+	setUpdatesEnabled(this->chart_series);
 	if (ui->training_progress_bar->value() == 100) {
 		ui->test_model_push_button_2->setEnabled(true);
 		this->training_thread->quit();
 		this->training_thread->wait();
 		delete training_thread;
+		training_thread = nullptr;
 	}
 }
 

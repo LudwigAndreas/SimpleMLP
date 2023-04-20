@@ -10,7 +10,7 @@
 
 namespace s21 {
 
-	class MLPMatrixModel : s21::IMLPModel<float> {
+	class MLPMatrixModel : s21::IMLPModel {
 	private:
 		std::vector<size_t> units_per_layer;
 		std::vector<Matrix<float>> bias;

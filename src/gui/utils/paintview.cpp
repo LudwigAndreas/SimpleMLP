@@ -96,6 +96,7 @@ void PaintView::dropEvent(QDropEvent *event)
     }
     this->pixmap->save("my_letter.bmp");
 	new_pixmap = true;
+	emit file_saved();
 }
 
 void PaintView::dragEnterEvent(QDragEnterEvent *event) {
