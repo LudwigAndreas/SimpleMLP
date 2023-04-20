@@ -186,57 +186,6 @@ namespace s21 {
 			}
 		}
 
-//		float Train(DatasetGroup samples, bool silent_mode = false) override {
-//			int correct_guesses = 0;
-//			for (int i = 0; i < (int) samples.size(); ++i) {
-//				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
-//					++correct_guesses;
-//				else
-//					Backward(samples[i].y);
-//			}
-//			float accuracy = ((float) correct_guesses / (float) samples.size());
-//			if (!silent_mode)
-//				std::cerr << "Train: " << accuracy * 100 << "% accuracy" << std::endl;
-//			if (auto_decrease) {
-//				lr = start_lr * (1 - std::min(accuracy, 0.99f));
-//			}
-//			return accuracy;
-//		}
-//
-//		float Test(DatasetGroup samples, bool silent_mode = false) override {
-//			int correct_guesses = 0;
-//			float accuracy;
-//			for (size_t i = 0; i < samples.size(); ++i) {
-//				if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
-//					++correct_guesses;
-//			}
-//			accuracy = ((float)correct_guesses / samples.size());
-//			if (!silent_mode)
-//				std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
-//			return accuracy;
-//		}
-
-//		void log(std::fstream &file, int y, int y_hat, float probability) {
-//			file << ((y == y_hat) ? "✅" : "❌") << ' '
-//				<< char('A' + y) << " "
-//				<< char('A' + y_hat) << ' '
-//				<< probability * 100 << "%" << std::endl;
-//		}
-
-		// int getMostProbablePrediction(std::vector<float> value) override {
-		// 	double max = value[0];
-		// 	int prediction = 0;
-		// 	double tmp;
-		// 	for (int j = 1; j < (int) value.size(); ++j) {
-		// 		tmp = value[j];
-		// 		if (tmp > max) {
-		// 			prediction = j;
-		// 			max = tmp;
-		// 		}
-		// 	}
-		// 	return prediction; // +1 for dataset (who tf thought that it would be a good idea to numerate dataset choices from 1 and not from 0)
-		// }
-
 		float TestOutput(std::vector<s21::Sample> samples, bool silent_mode = false, std::string filename = "") override {
 			std::fstream		output;
 			int					correct_guesses = 0;
@@ -352,7 +301,6 @@ namespace s21 {
 		model.set_raw				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
 		return is;
 	}
-
 }
 
 #endif
