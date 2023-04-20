@@ -31,7 +31,7 @@ s21::LetterRecognitionMLPModelBuilder::HiddenLayers(int hidden_layers) {
 
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::ActivationFunc(
-		s21::ActivationFunction::ActivationFunctionFlags flag) {
+		s21::ActivationFunction::Flags flag) {
 	this->func = ActivationFunction::getFunctionByFlag(flag);
 	return this;
 }

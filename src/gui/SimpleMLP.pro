@@ -8,22 +8,36 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += "../../"
+
 SOURCES += \
-    src/gui/utils/importfileitem.cpp \
-    src/gui/main.cpp \
-    src/gui/view/mainwindow.cpp \
-    src/gui/utils/paintview.cpp \
-    src/gui/view/testdatainfodialog.cpp
+    main.cpp \
+    utils/ModelTestWorker.cpp \
+    utils/ModelTrainWorker.cpp \
+    utils/ModelWorker.cpp \
+    utils/importfileitem.cpp \
+    utils/paintview.cpp \
+    view/ConfigureModulePage.cpp \
+    view/TestModelPage.cpp \
+    view/TrainModelPage.cpp \
+    view/mainwindow.cpp \
+    view/testdatainfodialog.cpp \
+    ../core/DatasetReading.cpp \
+    ../core/LetterRecognitionMlpModelBuilder.cpp \
+    ../core/graph/MLPGraphLayer.cpp \
+    ../core/graph/MLPGraphModel.cpp \
+    ../core/utils/ActivationFunction.cpp \
+    ../core/utils/BMPReader.cpp
 
 HEADERS += \
-    src/gui/utils/importfileitem.h \
-    src/gui/view/mainwindow.h \
-    src/gui/utils/paintview.h \
-    src/gui/view/testdatainfodialog.h
+    utils/importfileitem.h \
+    view/mainwindow.h \
+    utils/paintview.h \
+    view/testdatainfodialog.h
 
 FORMS += \
-    src/gui/view/mainwindow.ui \
-    src/gui/view/testdatainfodialog.ui
+    view/mainwindow.ui \
+    view/testdatainfodialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -7,4 +7,10 @@ datasets/emnist-letters
 .vscode
 build
 .idea
+SimpleMLP
+.qt
+CMakeFiles
+SimpleMLP_autogen
+CMakeCache.txt
+cmake_install.cmake
 
