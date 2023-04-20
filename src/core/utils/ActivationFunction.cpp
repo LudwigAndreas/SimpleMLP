@@ -4,6 +4,18 @@
 
 namespace s21 {
 
+	std::vector<float> softmax(std::vector<float> matrix) {
+		std::vector<float>	values;
+		float	sum;
+
+		for (auto val : matrix)
+			values.push_back(std::exp(val));
+		sum = std::accumulate(values.begin(), values.end(), 0.);
+		std::transform(values.begin(), values.end(),
+						values.begin(), [sum](float x){ return x / sum; });
+		return {values};
+	}
+
 	inline float sigmoid(float x) {
 		return 1.0f / (1 + std::exp(-x));
 	}
@@ -50,52 +62,83 @@ namespace s21 {
 		return 1;
 	}
 
-	ActivationFunction::ActivationFunction(
-		std::function<float (float)> func, std::function<float (float)> derivative)
-		: f(std::move(func)), df(std::move(derivative)) {}
+	void ActivationFunction::SetValues(
+		std::function<float (float)> func, std::function<float (float)> derivative, Flags flag) {
+		f = std::move(func);
+		df = std::move(derivative);
+		type = flag;
+	}
+
+	ActivationFunction::ActivationFunction(Flags flag) {
+		if (flag == Sigmoid)
+			SetValues(sigmoid, d_sigmoid, flag);
+		else if (flag == BipolarSigmoid)
+			SetValues(bsigmoid, d_bsigmoid, flag);
+		else if (flag == ReLU)
+			SetValues(relu, d_relu, flag);
+		else if (flag == BoundedLinear)
+			SetValues(bounded_linear, d_bounded_linear, flag);
+		else
+		 	SetValues();
+	}
+
+	ActivationFunction::ActivationFunction(std::string name) {
+		if (name == "Sigmoid")
+			SetValues(sigmoid, d_sigmoid, Flags::Sigmoid);
+		else if (name == "Bipolar Sigmoid")
+			SetValues(bsigmoid, d_bsigmoid, Flags::BipolarSigmoid);
+		else if (name == "ReLU")
+			SetValues(relu, d_relu, Flags::ReLU);
+		else if (name == "Bounded Linear")
+			SetValues(bounded_linear, d_bounded_linear, Flags::BoundedLinear);
+		else
+		 	SetValues();
+	}
 
 	std::function<float (float)> ActivationFunction::getFunction()		{ return f; }
 	std::function<float (float)> ActivationFunction::getDerivative()	{ return df; }
 	float ActivationFunction::applyFunction(float input)				{ return f(input); }
 	float ActivationFunction::applyDerivative(float input)				{ return df(input); }
 
-	ActivationFunction *
-	ActivationFunction::getFunctionByName(const std::string& name) {
-		if (name == "Sigmoid")
-			return new ActivationFunction(sigmoid, d_sigmoid);
-		else if (name == "Bipolar Sigmoid")
-			return new ActivationFunction(bsigmoid, d_bsigmoid);
-		else if (name == "ReLU")
-			return new ActivationFunction(relu, d_relu);
-		else if (name == "Bounded Linear")
-			return new ActivationFunction(bounded_linear, d_bounded_linear);
-		return (nullptr);
-	}
+	// ActivationFunction 
+	// ActivationFunction::getFunctionByName(const std::string& name) {
+	// 	if (name == "Sigmoid")
+	// 		return new ActivationFunction(sigmoid, d_sigmoid, Flags::Sigmoid);
+	// 	else if (name == "Bipolar Sigmoid")
+	// 		return new ActivationFunction(bsigmoid, d_bsigmoid, Flags::BipolarSigmoid);
+	// 	else if (name == "ReLU")
+	// 		return new ActivationFunction(relu, d_relu, Flags::ReLU);
+	// 	else if (name == "Bounded Linear")
+	// 		return new ActivationFunction(bounded_linear, d_bounded_linear, Flags::BoundedLinear);
+	// 	return (nullptr);
+	// }
 
-	ActivationFunction *ActivationFunction::getFunctionByFlag(
-			ActivationFunction::ActivationFunctionFlags flag) {
-		if (flag == Sigmoid)
-			return new ActivationFunction(sigmoid, d_sigmoid);
-		else if (flag == BipolarSigmoid)
-			return new ActivationFunction(bsigmoid, d_bsigmoid);
-		else if (flag == ReLU)
-			return new ActivationFunction(relu, d_relu);
-		else if (flag == BoundedLinear)
-			return new ActivationFunction(bounded_linear, d_bounded_linear);
-		return (nullptr);
+	// ActivationFunction *ActivationFunction::getFunctionByFlag(
+	// 		ActivationFunction::Flags flag);
+
+	ActivationFunction::operator std::string() const {
+		if (type == Sigmoid)
+			return "Sigmoid";
+		if (type == BipolarSigmoid)
+			return "Bipolar Sigmoid";
+		if (type == ReLU)
+			return "ReLU";
+		if (type == BoundedLinear)
+			return "Bounded Linear";
+		return "";
 	}
 
 	std::istream &operator>>(std::istream &is, ActivationFunction *af) {
-		int type;
+		std::string type;
 		
 		is >> type;
-		af = ActivationFunction::getFunctionByFlag(
-			static_cast<ActivationFunction::ActivationFunctionFlags>(type));
+		af = new ActivationFunction(type);
 		return is;
 	}
 
 	std::ostream &operator<<(std::ostream &os, const ActivationFunction &af) {
-		os << af.type;
+		os << std::string(af);
 		return os;
 	}
+
 }

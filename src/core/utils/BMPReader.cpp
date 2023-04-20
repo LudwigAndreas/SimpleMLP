@@ -1,9 +1,9 @@
 #include "BMPReader.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "src/lib/stb_image.h"
+#include "../../lib/stb_image.h"
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include "src/lib/stb_image_resize.h"
+#include "../../lib/stb_image_resize.h"
 
 std::vector<float> BMPDataToGrayscale(const unsigned char* bmp_data,
 									  int width, int height, int channels) {

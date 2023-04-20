@@ -15,7 +15,7 @@ namespace s21 {
 		virtual ~IMLPModelBuilder()= default;
 		virtual IMLPModelBuilder *PerceptionBase(PerceptronBase flag) = 0;
 		virtual IMLPModelBuilder *HiddenLayers(int hidden_layers)  = 0;
-		virtual IMLPModelBuilder *ActivationFunc(ActivationFunction::ActivationFunctionFlags flag)  = 0;
+		virtual IMLPModelBuilder *ActivationFunc(ActivationFunction::Flags flag)  = 0;
 		virtual IMLPModelBuilder *HiddenUnitsPerLayer(int hidden_units_per_layer)  = 0;
 		virtual IMLPModelBuilder *LearningRate(float learning_rate, bool use_auto_decrease)  = 0;
 		virtual void Reset() = 0;
