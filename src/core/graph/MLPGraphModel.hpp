@@ -5,6 +5,7 @@
 #include "../utils/IMLPModel.hpp"
 #include "../utils/ActivationFunction.hpp"
 #include "../graph/MLPGraphLayer.hpp"
+#include "../DatasetReading.hpp"
 
 namespace s21 {
 	typedef float T;
@@ -25,6 +26,8 @@ namespace s21 {
 								ActivationFunction *func,
 								bool use_auto_decrease = true,
 								float lr = .05f);
+
+		MLPGraphModel();
 								
 		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 

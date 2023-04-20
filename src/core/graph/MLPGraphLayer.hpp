@@ -46,4 +46,8 @@ namespace s21 {
 
 		size_t Size();
 	};
+
+	std::istream &operator>>(std::istream &is, MLPGraphLayer &layer);
+
+	std::ostream &operator<<(std::ostream &os, MLPGraphLayer &layer);
 }

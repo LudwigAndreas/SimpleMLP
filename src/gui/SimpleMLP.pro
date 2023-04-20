@@ -12,7 +12,9 @@ INCLUDEPATH += "../../"
 
 SOURCES += \
     main.cpp \
-    utils/MTWorker.cpp \
+    utils/ModelTestWorker.cpp \
+    utils/ModelTrainWorker.cpp \
+    utils/ModelWorker.cpp \
     utils/importfileitem.cpp \
     utils/paintview.cpp \
     view/ConfigureModulePage.cpp \
@@ -28,14 +30,14 @@ SOURCES += \
     ../core/utils/BMPReader.cpp
 
 HEADERS += \
-    src/gui/utils/importfileitem.h \
-    src/gui/view/mainwindow.h \
-    src/gui/utils/paintview.h \
-    src/gui/view/testdatainfodialog.h
+    utils/importfileitem.h \
+    view/mainwindow.h \
+    utils/paintview.h \
+    view/testdatainfodialog.h
 
 FORMS += \
-    src/gui/view/mainwindow.ui \
-    src/gui/view/testdatainfodialog.ui
+    view/mainwindow.ui \
+    view/testdatainfodialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
