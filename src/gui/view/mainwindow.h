@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QThread>
+#include <QLineSeries>
 
 #include <sstream>
 
@@ -64,7 +65,7 @@ private slots:
 
     void on_to_configure_push_button_2_pressed();
 
-    void on_testing_size_horizontalSlider_valueChanged(int value);
+    void on_testing_size_horizontal_slider_valueChanged(int value);
 
 	void onFileWasDrawn();
 
@@ -79,12 +80,13 @@ private:
     QFile *model_config_file;
     QFile *training_dataset_file;
     QFile *testing_dataset_file;
-    s21::IMLPModel<float> *current_model;
+    s21::IMLPModel *current_model;
 	QThread *training_thread;
 	ModelTrainWorker *training_worker;
 	ModelTestWorker *testing_worker;
 	QThread *testing_thread;
 	s21::LetterRecognitionMLPModelBuilder *builder;
+	QLineSeries *chart_series;
 
 	bool exitFromTrainPage();
 	bool exitFromConfigPage();

@@ -50,7 +50,7 @@ float calculate_accuracy(std::vector<s21::ConfusionMatrix> *result, int size) {
 		tp += conf_matrix.tp;
 		tn += conf_matrix.tn;
 	}
-	return ((float) (tp + tn) / (size * result->size())) * 100;
+	return ((float) tp / (size * result->size())) * 100;
 }
 
 int calculate_size(std::vector<s21::ConfusionMatrix> *result) {
