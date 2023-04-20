@@ -14,7 +14,7 @@ void ModelTrainWorker::process() {
 			for (size_t j = 0; j < dataset.size(); ++j) {
 				if (this->stop)
 					return;
-				if (j != (size_t) dataset.current_iteration) {
+				if (j != (size_t) dataset.current_iteration || dataset.size() == 1) {
 					correct_guesses = 0;
 					for (int k = 0; k < (int) dataset[j].size(); ++k) {
 						if (this->stop)
@@ -35,6 +35,7 @@ void ModelTrainWorker::process() {
 			SaveModel(model, i);
 			++dataset.current_iteration;
 		}
+		return;
 	} catch (std::exception &e) {
 		throw ModelProcessingException("Data processing error");
 	}

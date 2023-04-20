@@ -24,7 +24,7 @@ namespace s21 {
 			}
 		}
 	public:
-		static void SerializeMLPModel(s21::IMLPModel<T> *model,
+		static void SerializeMLPModel(s21::IMLPModel *model,
 										const std::string &filename) {
 			auto *matrix_model = dynamic_cast<s21::MLPMatrixModel *>(model);
 			auto *graph_model  = dynamic_cast<s21::MLPGraphModel *> (model);
@@ -57,7 +57,7 @@ namespace s21 {
 			file.close();
 		}
 
-		static s21::IMLPModel<T> *DeserializeMLPModel(const std::string &filename) {
+		static s21::IMLPModel *DeserializeMLPMatrixModel(const std::string &filename) {
 			std::fstream file;
 			std::string signature;
 			file.open(filename, std::ofstream::in);
@@ -72,7 +72,7 @@ namespace s21 {
 			return nullptr;
 		}
 
-		static s21::IMLPModel<T> *DeserializeMLPMatrixModel(std::istream &is) {
+		static s21::IMLPModel *DeserializeMLPMatrixModel(std::istream &is) {
 			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
 					0, 0, 0, 0, 0,
 					// nullptr
@@ -83,7 +83,7 @@ namespace s21 {
 			return model;
 		}
 
-		static s21::IMLPModel<T> *DeserializeMLPGraphModel(std::istream &is) {
+		static s21::IMLPModel *DeserializeMLPGraphModel(std::istream &is) {
 			s21::MLPGraphModel *model = new s21::MLPGraphModel();
 			
 			// (
