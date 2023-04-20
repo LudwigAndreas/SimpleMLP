@@ -5,8 +5,8 @@
 
 #include "ui_mainwindow.h"
 #include "testdatainfodialog.h"
-#include "src/core/utils/BMPReader.hpp"
 #include "src/core/utils/MLPSerializer.hpp"
+#include "lib/libs21/libs21.h"
 
 void MainWindow::on_to_configure_push_button_2_pressed()
 {
@@ -102,11 +102,15 @@ void MainWindow::on_toolButton_4_pressed()
 }
 
 void MainWindow::onFileWasDrawn() {
+    //TODO extract logic from this file
 	static const int new_width = 28;
 	static const int new_height = 28;
+    int channels_in_file;
+    int width_in_file;
+    int height_in_file;
 
-	auto image = ReadAndResizeBMP("my_letter.bmp", new_width, new_height);
-	auto grayscale = BMPDataToGrayscale(image, new_width, new_height, 3);
+	auto image = s21::load_bmp("my_letter.bmp", &width_in_file, &height_in_file, &channels_in_file);
+	auto grayscale = s21::bmp_data_to_grayscale(image, new_width, new_height, 3);
 	if (current_model) {
 		auto matrix_image = s21::Matrix<float>(grayscale, new_width, new_height).T();
 		matrix_image.set_cols(new_height * new_width);
