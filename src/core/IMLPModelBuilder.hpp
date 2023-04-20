@@ -19,7 +19,7 @@ namespace s21 {
 		virtual IMLPModelBuilder *HiddenUnitsPerLayer(int hidden_units_per_layer)  = 0;
 		virtual IMLPModelBuilder *LearningRate(float learning_rate, bool use_auto_decrease)  = 0;
 		virtual void Reset() = 0;
-		virtual IMLPModel<float> *GetResult()  = 0;
+		virtual IMLPModel *GetResult()  = 0;
 	};
 }
 

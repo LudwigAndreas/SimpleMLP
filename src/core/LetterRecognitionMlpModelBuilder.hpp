@@ -8,7 +8,7 @@
 #include "IMLPModelBuilder.hpp"
 
 namespace s21 {
-	class LetterRecognitionMLPModelBuilder : IMLPModelBuilder<float> {
+	class LetterRecognitionMLPModelBuilder : IMLPModelBuilder {
 		PerceptronBase base;
 		int hidden_layers;
 		ActivationFunction *func;
@@ -43,7 +43,7 @@ namespace s21 {
 		LetterRecognitionMLPModelBuilder *LearningRate(float learning_rate,
 						  bool use_auto_decrease) override;
 
-		IMLPModel<float> * GetResult() override;
+		IMLPModel * GetResult() override;
 
 		void Reset() override;
 

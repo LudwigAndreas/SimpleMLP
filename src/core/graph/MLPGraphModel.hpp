@@ -27,7 +27,7 @@ namespace s21 {
 								bool use_auto_decrease = true,
 								float lr = .05f);
 
-		MLPGraphModel();
+		MLPGraphModel() {}
 								
 		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 

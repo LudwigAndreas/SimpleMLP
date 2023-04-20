@@ -39,7 +39,7 @@ unsigned char *ReadAndResizeBMP(const char* filename,
 	unsigned char* data = stbi_load(filename, &width_in_file, &height_in_file, &channels_in_file, 0);
 
 	if (!data)
-        throw UploadFileException::UploadFileException("Error loading BPM file");
+        throw UploadFileException("Error loading BPM file");
 
 	// Resize the image using stb_image_resize library
 	int channels = 3;  // convert to RGB format

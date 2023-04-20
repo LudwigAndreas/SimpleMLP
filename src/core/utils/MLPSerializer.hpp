@@ -7,9 +7,9 @@
 #include <algorithm>
 #include <exception>
 
-#include "../matrix/Matrix.hpp"
 #include "../matrix/MLPMatrixModel.hpp"
 #include "../graph/MLPGraphModel.hpp"
+#include "../exceptions/UploadFileException.h"
 
 namespace s21 {
 	template<typename T>
@@ -44,7 +44,7 @@ namespace s21 {
 			const std::string signature = "M";
 			std::fstream file;
 			file.open(filename, std::ofstream::out | std::ofstream::trunc);
-			file << signature << "\n" << *model;
+//			file << signature << "\n" << *model;
 			file.close();
 		}
 
@@ -53,7 +53,7 @@ namespace s21 {
 			const std::string signature = "G";
 			std::fstream file;
 			file.open(filename, std::ofstream::out | std::ofstream::trunc);
-			file << signature << "\n" << *model;
+//			file << signature << "\n" << *model;
 			file.close();
 		}
 
@@ -68,7 +68,7 @@ namespace s21 {
 					return DeserializeMLPGraphModel(file);
 				file.close();
 			}
-			throw std::runtime_error("Unknown or empty model file signature");
+			throw UploadFileException("Unknown or empty model file signature");
 			return nullptr;
 		}
 
@@ -78,7 +78,7 @@ namespace s21 {
 					// nullptr
 					new ActivationFunction(ActivationFunction::Sigmoid)
 			);
-			is >> *model;
+//			is >> *model;
 			CloseStream(is);
 			return model;
 		}
@@ -91,7 +91,7 @@ namespace s21 {
 			// 		// nullptr
 			// 		new ActivationFunction(ActivationFunction::Sigmoid)
 			// );
-			is >> *model;
+//			is >> *model;
 			CloseStream(is);
 			return model;
 		}

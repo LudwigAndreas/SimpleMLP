@@ -11,10 +11,12 @@ class ModelTestWorker : public ModelWorker {
 Q_OBJECT
 protected:
 	int fraction;
+
 public:
 	ModelTestWorker();
 
 	void setDatasetFraction(int value);
+
 public slots:
 	void process() override;
 
