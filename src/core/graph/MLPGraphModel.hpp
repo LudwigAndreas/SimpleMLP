@@ -10,7 +10,7 @@
 namespace s21 {
 	typedef float T;
 
-	class MLPGraphModel : public IMLPModel<T> {
+	class MLPGraphModel : public IMLPModel {
 	private:
 		std::vector<size_t>				units_per_layer;
 		std::vector<MLPGraphLayer *>	layers;
