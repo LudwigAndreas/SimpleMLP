@@ -62,7 +62,7 @@ void PaintView::mouseMoveEvent(QMouseEvent *event) {
 
 void PaintView::mouseReleaseEvent(QMouseEvent *event) {
     draw = false;
-    QPixmap scr = this->grab();
+    QPixmap scr = this->grab().scaled(28, 28);
     scr.save("my_letter.bmp");
 	emit file_saved();
 	qDebug() << "file_saved emited";

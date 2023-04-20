@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdint>
 #include <cstring>
+#include <vector>
 
 namespace s21 {
 
@@ -49,4 +50,27 @@ namespace s21 {
 
         return data;
     }
+
+    std::vector<float> bmp_data_to_grayscale(const unsigned char* bmp_data,
+                                          int width, int height, int channels) {
+
+        std::vector<float> grayscale_data(width * height);
+        float min = 255, max = 0;
+        for (int i = 0; i < width * height; i++) {
+            int r = bmp_data[i * channels];
+            int g = bmp_data[i * channels + 1];
+            int b = bmp_data[i * channels + 2];
+            grayscale_data[i] = static_cast<float>(0.2126 * r + 0.7152 * g + 0.0722 * b);
+            if (grayscale_data[i] > max)
+                max = grayscale_data[i];
+            if (grayscale_data[i] < min)
+                min = grayscale_data[i];
+        }
+        max = max - (max - min) / 20;
+        min = min + (max - min) / 20;
+        for (auto &i : grayscale_data)
+            i = (float) std::min(255., std::max(0., (i - min) * (1. / (max - min))));
+        return grayscale_data;
+    }
 }
+
