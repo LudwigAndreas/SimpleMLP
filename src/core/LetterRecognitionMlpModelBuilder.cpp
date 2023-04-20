@@ -3,7 +3,7 @@
 
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::PerceptionBase(
-		s21::IMLPModelBuilder<float>::PerceptronBase flag) {
+		s21::IMLPModelBuilder::PerceptronBase flag) {
 	if (flag == PerceptronBase::Matrix) {
 		base = flag;
 	} else if (flag == PerceptronBase::Graph) {
@@ -32,14 +32,14 @@ s21::LetterRecognitionMLPModelBuilder::HiddenLayers(int hidden_layers) {
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::ActivationFunc(
 		s21::ActivationFunction::Flags flag) {
-	this->func = ActivationFunction::getFunctionByFlag(flag);
+	this->func = new ActivationFunction(flag);
 	return this;
 }
 
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::ActivationFunc(
 		const std::string func_name) {
-	this->func = ActivationFunction::getFunctionByName(func_name); //TODO Doesn't work with non-lowercase func name
+	this->func = new ActivationFunction(func_name); //TODO Doesn't work with non-lowercase func name
 	return this;
 }
 
@@ -58,7 +58,7 @@ s21::LetterRecognitionMLPModelBuilder::LearningRate(
 	return this;
 }
 
-s21::IMLPModel<float> *
+s21::IMLPModel *
 s21::LetterRecognitionMLPModelBuilder::GetResult() {
 	if (base == 0) {
 		base = Matrix;
@@ -73,7 +73,7 @@ s21::LetterRecognitionMLPModelBuilder::GetResult() {
 		learning_rate = 0.5f;
 	}
 	if (func == nullptr) {
-		func = ActivationFunction::getFunctionByFlag(
+		func = new ActivationFunction(
 				ActivationFunction::Sigmoid
 				);
 	}
@@ -108,7 +108,7 @@ s21::LetterRecognitionMLPModelBuilder::LetterRecognitionMLPModelBuilder() {
 void s21::LetterRecognitionMLPModelBuilder::Reset() {
 	base = PerceptronBase::Matrix;
 	hidden_layers = 0;
-	func = ActivationFunction::getFunctionByFlag(ActivationFunction::Sigmoid);
+	func = new ActivationFunction(ActivationFunction::Sigmoid);
 	hidden_units_per_layer = 0;
 	learning_rate = 0;
 	use_auto_decrease = true;

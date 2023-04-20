@@ -2,7 +2,7 @@
 #define SIMPLEMLP_UPLOADFILEEXCEPTION_H
 
 
-class UploadFileException {
+class UploadFileException: public std::exception{
 public:
     explicit UploadFileException(const char* message)
             : msg_(message) {}

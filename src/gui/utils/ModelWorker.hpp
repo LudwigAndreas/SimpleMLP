@@ -9,17 +9,17 @@ class ModelWorker: public QObject {
 	Q_OBJECT
 
 protected:
-	s21::IMLPModel<float> *model;
+	s21::IMLPModel *model;
 	std::string dataset_file_name;
 	int num_of_epochs;
 	bool stop;
 
-	void SaveModel(s21::IMLPModel<float> *model, int iteration);
+	void SaveModel(s21::IMLPModel *model, int iteration);
 public:
 	ModelWorker();
 	virtual ~ModelWorker();
 
-	void setModel(s21::IMLPModel<float> *model);
+	void setModel(s21::IMLPModel *model);
 	void setDatasetFileName(std::string file_name);
 	void setNumOfEpochs(int num);
 	void stopTraining();

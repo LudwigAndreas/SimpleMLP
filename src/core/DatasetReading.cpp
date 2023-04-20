@@ -24,7 +24,7 @@ std::vector<s21::Sample> ReadDataset(std::string filename)
 
 	file.open(filename, std::ofstream::in);
     if (!file.is_open()) {
-        throw UploadFileException::UploadFileException("Error opening dataset file");
+        throw UploadFileException("Error opening dataset file");
     }
 	while (file >> str) {
 		std::vector<std::string> letter = split(str, ",");

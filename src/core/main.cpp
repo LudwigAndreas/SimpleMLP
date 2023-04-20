@@ -34,7 +34,7 @@
 //	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)(model), ss.str());
 //}
 
-float CrossValidation(s21::IMLPModel<float> *model, s21::Dataset dataset, bool silent_mode = false) {
+float CrossValidation(s21::IMLPModel *model, s21::Dataset dataset, bool silent_mode = false) {
 	float training_accuracy;
 	float testing_accuracy;
 	int trained_on;

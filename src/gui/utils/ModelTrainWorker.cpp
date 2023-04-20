@@ -5,6 +5,8 @@
 
 #include <list>
 
+ModelTrainWorker::ModelTrainWorker() {}
+
 void ModelTrainWorker::process() {
 	try {
 		s21::Dataset dataset(ReadDataset(dataset_file_name), num_of_epochs);

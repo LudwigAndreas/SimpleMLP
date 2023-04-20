@@ -106,11 +106,12 @@ namespace s21 {
 		return size;
 	}
 
-	std::istream &operator>>(std::istream &is, MLPGraphLayer &layer);
+    std::istream &operator>>(std::istream &is, MLPGraphLayer &layer) {return is;}
 
-	std::ostream &operator<<(std::ostream &os, MLPGraphLayer &layer) {
-		for (auto & node : layer.GetNodes()) {
-			os << node;
-		}
+	std::ostream &operator<<(std::ostream &os, const MLPGraphLayer &layer) {
+//		for (auto & node : layer.GetNodes()) {
+//			os << node;
+//		}
+        return os;
 	}
 }
