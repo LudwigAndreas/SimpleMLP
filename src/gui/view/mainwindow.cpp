@@ -2,6 +2,9 @@
 
 #include <sstream>
 
+#include <QLogValueAxis>
+#include <QValueAxis>
+
 #include "src/core/LetterRecognitionMlpModelBuilder.hpp"
 #include "src/gui/utils/importfileitem.h"
 #include "ui_mainwindow.h"
@@ -21,6 +24,21 @@ MainWindow::MainWindow(QWidget *parent)
 	this->builder = new s21::LetterRecognitionMLPModelBuilder();
 	ui->setupUi(this);
 	ui->stackedWidget->setCurrentIndex(0);
+	ui->chart_widget->hide();
+
+	this->chart_series = new QLineSeries();
+	auto *chart = new QChart();
+	chart->legend()->hide();
+	chart->addSeries(this->chart_series);
+	auto *y = new QValueAxis();
+	y->setMax(100);
+	y->setMin(0.1);
+	chart->addAxis(y, Qt::AlignLeft);
+	chart_series->attachAxis(y);
+	ui->chart_widget->setChart(chart);
+	ui->chart_widget->setRenderHint(QPainter::Antialiasing);
+//		ui->chart_widget->setCurrentWidget(chart);
+
 	ui->testing_progress_bar->setValue(0);
 	ui->testing_progress_bar->hide();
     ui->training_progress_bar->setValue(0);

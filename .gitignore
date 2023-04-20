@@ -1,0 +1,10 @@
+cmake-build-debug
+cmake-build-release
+datasets/emnist-letters
+.DS_Store
+*/*.DS_Store
+*/*/*.DS_Store
+.vscode
+build
+.idea
+

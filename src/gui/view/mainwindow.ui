@@ -60,7 +60,7 @@
      <bool>false</bool>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="set_model_page">
      <widget class="QLabel" name="label_2">
@@ -114,7 +114,7 @@
           <bool>true</bool>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -187,7 +187,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>0.500000000000000</double>
+               <double>0.100000000000000</double>
               </property>
              </widget>
             </item>
@@ -646,14 +646,14 @@ It consists of a single node or neuron that takes a row of data as input and pre
           </property>
           <property name="geometry">
            <rect>
-            <x>410</x>
-            <y>150</y>
+            <x>390</x>
+            <y>230</y>
             <width>311</width>
-            <height>111</height>
+            <height>81</height>
            </rect>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:700;&quot;&gt;Epoch&lt;/span&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;: 0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:700;&quot;&gt;Current accuracy&lt;/span&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;: 0%&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:700;&quot;&gt;Completion&lt;/span&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;: 0%&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:700;&quot;&gt;Epoch&lt;/span&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;: 0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:700;&quot;&gt;Current accuracy&lt;/span&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;: 0%&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:700;&quot;&gt;Completion&lt;/span&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;: 0%&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -673,6 +673,16 @@ It consists of a single node or neuron that takes a row of data as input and pre
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+         <widget class="QChartView" name="chart_widget">
+          <property name="geometry">
+           <rect>
+            <x>385</x>
+            <y>20</y>
+            <width>341</width>
+            <height>201</height>
+           </rect>
           </property>
          </widget>
         </widget>
@@ -985,7 +995,10 @@ It consists of a single node or neuron that takes a row of data as input and pre
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QSlider" name="testing_size_horizontalSlider">
+             <widget class="QSlider" name="testing_size_horizontal_slider">
+              <property name="maximum">
+               <number>100</number>
+              </property>
               <property name="value">
                <number>50</number>
               </property>
@@ -1163,6 +1176,11 @@ It consists of a single node or neuron that takes a row of data as input and pre
    <class>PaintView</class>
    <extends>QGraphicsView</extends>
    <header>src/gui/utils/paintview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">QCharts</header>
   </customwidget>
  </customwidgets>
  <resources/>

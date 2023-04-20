@@ -3,13 +3,21 @@
 
 #include <vector>
 #include "Sample.hpp"
+#include "ActivationFunction.hpp"
 
 namespace s21 {
-	template <typename T>
-	class IMLPModel {
-	public:
-		virtual std::vector<T> Forward(Matrix<T>) = 0;
-		virtual void Backward(Matrix<T>) = 0;
+    class IMLPModel {
+    protected:
+        ActivationFunction *af;
+        std::vector<size_t> units_per_layer;
+        float lr;
+        float start_lr;
+        bool auto_decrease;
+        std::vector<IMLPLayer *> layers;
+
+    public:
+		virtual std::vector<float> Forward(Matrix<T>) = 0;
+		virtual void Backward(Matrix<float>) = 0;
 		virtual int Predict(Matrix<float>) = 0;
 		virtual int getMostProbablePrediction(std::vector<float> vector) = 0;
 		virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "") = 0;

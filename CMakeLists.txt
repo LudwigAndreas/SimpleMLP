@@ -18,10 +18,12 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_PREFIX_PATH "~/Qt/6.4.2/macos/lib/cmake/")
-find_package(Qt6Widgets REQUIRED)
-# find_package(Qt6 REQUIRED COMPONENTS Widgets)
-# qt_standard_project_setup()
+#set(CMAKE_PREFIX_PATH "~/Qt/6.4.2/macos/lib/cmake/")
+#find_package(Qt6Widgets REQUIRED)
+#find_package(Qt6Charts REQUIRED)
+#find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
+find_package(Qt6 ${PROJECT_VERSION} CONFIG OPTIONAL_COMPONENTS Gui Widgets Charts) # special case
+qt_standard_project_setup()
 
 
 add_executable(SimpleMLP
@@ -63,5 +65,4 @@ add_executable(SimpleMLP
         src/gui/utils/ModelWorker.cpp
         src/gui/utils/ModelWorker.hpp
         )
-target_link_libraries(SimpleMLP Qt6::Widgets)
-target_link_libraries(SimpleMLP ${GTEST_BOTH_LIBRARIES})
+target_link_libraries(SimpleMLP Qt6::Widgets Qt6::Charts ${GTEST_BOTH_LIBRARIES})
