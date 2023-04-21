@@ -14,7 +14,7 @@ void ImportFileItem::dropEvent(QDropEvent *event) {
     event->acceptProposedAction();
     const QMimeData* data = event->mimeData();
     QString file_path = data->urls()[0].path();
-    QFile *file_try = new QFile(file_path);
+    auto *file_try = new QFile(file_path);
     if (!file_try->open(QIODevice::ReadOnly)) {
         QMessageBox::information(this, tr("Unable to open file"), file_try->errorString());
         return;

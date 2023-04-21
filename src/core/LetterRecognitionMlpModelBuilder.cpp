@@ -1,6 +1,8 @@
 #include "LetterRecognitionMlpModelBuilder.hpp"
 #include "matrix/MLPMatrixModel.hpp"
 
+#include "../libs21/libs21.h"
+
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::PerceptionBase(
 		s21::IMLPModelBuilder::PerceptronBase flag) {
@@ -39,7 +41,7 @@ s21::LetterRecognitionMLPModelBuilder::ActivationFunc(
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::ActivationFunc(
 		const std::string func_name) {
-	this->func = new ActivationFunction(func_name); //TODO Doesn't work with non-lowercase func name
+	this->func = new ActivationFunction(s21::to_lower_case (func_name));
 	return this;
 }
 

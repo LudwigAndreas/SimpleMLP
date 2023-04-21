@@ -1,8 +1,5 @@
 #include "src/gui/view/mainwindow.h"
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "src/lib/stb_image_write.h"
-
 #include "ui_mainwindow.h"
 #include "testdatainfodialog.h"
 #include "src/core/utils/MLPSerializer.hpp"
@@ -139,9 +136,13 @@ void MainWindow::on_testing_size_horizontal_slider_valueChanged(int value)
 
 void MainWindow::on_export_model_push_button_pressed()
 {
-	QString file_path = QFileDialog::getSaveFileName(this, "Save config file");
+	QString file_path = QFileDialog::getSaveFileName(this, "Save config file", "", "Model config files (*.mlpmodel)");
+    if (file_path.isNull()) {
+        QMessageBox::information(this, tr("File path is empty"),
+                                 "Incorrect file path. Unable to save file");
+        return;
+    }
 	//	QDir d = QFileInfo(file_path).absoluteFilePath();
 	// TODO rewrite for not matrix model (made in universal)
-	file_path.append(".mlpmodel");
 	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)current_model, file_path.toStdString());
 }
