@@ -1,12 +1,9 @@
 #include "src/gui/view/mainwindow.h"
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "src/lib/stb_image_write.h"
-
 #include "ui_mainwindow.h"
 #include "testdatainfodialog.h"
-#include "src/core/utils/BMPReader.hpp"
 #include "src/core/utils/MLPSerializer.hpp"
+#include "lib/libs21/libs21.h"
 
 void MainWindow::on_to_configure_push_button_2_pressed()
 {
@@ -102,11 +99,15 @@ void MainWindow::on_toolButton_4_pressed()
 }
 
 void MainWindow::onFileWasDrawn() {
+    //TODO extract logic from this file
 	static const int new_width = 28;
 	static const int new_height = 28;
+    int channels_in_file;
+    int width_in_file;
+    int height_in_file;
 
-	auto image = ReadAndResizeBMP("my_letter.bmp", new_width, new_height);
-	auto grayscale = BMPDataToGrayscale(image, new_width, new_height, 3);
+	auto image = s21::load_bmp("my_letter.bmp", &width_in_file, &height_in_file, &channels_in_file);
+	auto grayscale = s21::bmp_data_to_grayscale(image, new_width, new_height, 3);
 	if (current_model) {
 		auto matrix_image = s21::Matrix<float>(grayscale, new_width, new_height).T();
 		matrix_image.set_cols(new_height * new_width);
@@ -135,9 +136,13 @@ void MainWindow::on_testing_size_horizontal_slider_valueChanged(int value)
 
 void MainWindow::on_export_model_push_button_pressed()
 {
-	QString file_path = QFileDialog::getSaveFileName(this, "Save config file");
+	QString file_path = QFileDialog::getSaveFileName(this, "Save config file", "", "Model config files (*.mlpmodel)");
+    if (file_path.isNull()) {
+        QMessageBox::information(this, tr("File path is empty"),
+                                 "Incorrect file path. Unable to save file");
+        return;
+    }
 	//	QDir d = QFileInfo(file_path).absoluteFilePath();
 	// TODO rewrite for not matrix model (made in universal)
-	file_path.append(".mlpmodel");
 	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)current_model, file_path.toStdString());
 }

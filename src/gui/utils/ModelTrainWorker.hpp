@@ -9,6 +9,8 @@
 class ModelTrainWorker : public ModelWorker {
 
 Q_OBJECT
+public:
+    ModelTrainWorker();
 
 public slots:
 	void process() override;

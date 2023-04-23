@@ -1,4 +1,5 @@
 #include "DatasetReading.hpp"
+#include "exceptions/UploadFileException.h"
 
 std::vector<std::string> split (std::string s, std::string delimiter) {
 	size_t pos_start = 0, pos_end, delim_len = delimiter.length();
@@ -23,9 +24,7 @@ std::vector<s21::Sample> ReadDataset(std::string filename)
 
 	file.open(filename, std::ofstream::in);
     if (!file.is_open()) {
-        std::cerr << "Error opening dataset file." << std::endl;
-        // TODO: Throw exception
-        return 1;
+        throw UploadFileException("Error opening dataset file");
     }
 	while (file >> str) {
 		std::vector<std::string> letter = split(str, ",");
@@ -46,9 +45,7 @@ std::vector<s21::Sample> ReadDataset(std::string filename)
 std::map<int, char> readSymbolMapping(const std::string &filename) {
     std::ifstream inputFile(filename);
     if (!inputFile.is_open()) {
-        std::cerr << "Error opening mapping file." << std::endl;
-        // TODO: Throw exception
-        return 1;
+        throw UploadFileException("Error opening symbol mapping file");
     }
 
     std::map<int, char> symbolTable;

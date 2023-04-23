@@ -173,9 +173,9 @@ namespace s21 {
 			os << unit << ' ';
 		os << model.getLr() << std::endl;
 		os << *model.getAf();
-		for (auto & layer : model.getLayers()) {
-			os << layer;
-		}
+//		for (auto & layer : model.getLayers()) {
+//			os << layer;
+//		}
 		return os;
 	}
 }

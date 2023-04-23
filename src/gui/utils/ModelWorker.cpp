@@ -17,7 +17,7 @@ ModelWorker::~ModelWorker() {
 	delete model;
 }
 
-void ModelWorker::setModel(s21::IMLPModel<float> *model) {
+void ModelWorker::setModel(s21::IMLPModel *model) {
 	this->model = model;
 }
 
@@ -25,7 +25,7 @@ void ModelWorker::setDatasetFileName(std::string file_name) {
 	this->dataset_file_name = file_name;
 }
 
-void ModelWorker::SaveModel(s21::IMLPModel<float> *model, int iteration) {
+void ModelWorker::SaveModel(s21::IMLPModel *model, int iteration) {
 	std::stringstream	ss;
 
 	if (model != nullptr) {
