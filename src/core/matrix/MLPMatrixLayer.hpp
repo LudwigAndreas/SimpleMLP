@@ -7,7 +7,7 @@
 namespace s21 {
 	struct MLPMatrixLayer : public IMLPLayer {
 		MLPMatrixLayer(Matrix<float> w, Matrix<float> b);
-		MLPMatrixLayer(int in);
+		explicit MLPMatrixLayer(int in);
 
 		Matrix<float> bias;
 		Matrix<float> weight_matrices;

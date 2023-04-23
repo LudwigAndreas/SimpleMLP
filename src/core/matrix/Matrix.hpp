@@ -20,15 +20,15 @@ namespace s21 {
 	template<typename Type>
 	class Matrix {
 	private:
+        size_t rows;
 		size_t cols;
-		size_t rows;
 		std::tuple<size_t, size_t> shape;
 		std::vector<Type> data;
 
 	public:
 
 		/* constructors */
-		Matrix() : cols(0), rows(0) {
+		Matrix() : rows(0), cols(0) {
 			data.resize(0);
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
@@ -38,11 +38,11 @@ namespace s21 {
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
 
-        Matrix(std::vector<Type> vector) : cols(vector.size()), rows(1), data(std::move(vector)) {
+        Matrix(std::vector<Type> vector) : rows(1), cols(vector.size()), data(std::move(vector)) {
             shape = (std::tuple<size_t, size_t>) {rows, cols};
         }
 
-        Matrix(std::vector<Type> vector, size_t rows, size_t cols) : cols(cols), rows(rows), data(std::move(vector)) {
+        Matrix(std::vector<Type> vector, size_t rows, size_t cols) : rows(rows), cols(cols), data(std::move(vector)) {
             shape = (std::tuple<size_t, size_t>) {rows, cols};
         }
 

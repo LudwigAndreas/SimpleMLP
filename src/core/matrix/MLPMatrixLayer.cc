@@ -2,13 +2,11 @@
 
 namespace s21 {
 
-	MLPMatrixLayer::MLPMatrixLayer(Matrix<float> w, Matrix<float> b) : is_output_layer(false) {
-		weight_matrices = std::move(w);
-		bias 			= std::move(b);
+	MLPMatrixLayer::MLPMatrixLayer(Matrix<float> w, Matrix<float> b) : bias(b), weight_matrices(w), is_output_layer(false) {
 
-		// error			= Matrix<float>(1, w.get_cols());
-		// neuron_values	= Matrix<float>(1, w.get_rows());
-		// raw				= Matrix<float>(1, w.get_rows());
+		// error			= Matrix<float>(1, weight_matrices.get_cols());
+		// neuron_values	= Matrix<float>(1, weight_matrices.get_rows());
+		// raw				= Matrix<float>(1, weight_matrices.get_rows());
 	}
 
 	MLPMatrixLayer::MLPMatrixLayer(int in) : is_output_layer(true) {
