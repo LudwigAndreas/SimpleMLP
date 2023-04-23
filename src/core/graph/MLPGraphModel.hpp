@@ -35,9 +35,9 @@ namespace s21 {
 
 		void setUnitsPerLayer(const std::vector<size_t> &unitsPerLayer);
 
-		const std::vector<MLPGraphLayer *> &getLayers() const;
+		const std::vector<MLPGraphLayer *> &get_layers() const;
 
-		void setLayers(const std::vector<MLPGraphLayer *> &layers);
+		void set_layers(const std::vector<MLPGraphLayer *> &layers);
 
 		ActivationFunction *getAf() const;
 

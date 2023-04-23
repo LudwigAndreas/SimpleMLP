@@ -112,11 +112,11 @@ namespace s21 {
 		units_per_layer = unitsPerLayer;
 	}
 
-	const std::vector<MLPGraphLayer *> &MLPGraphModel::getLayers() const {
+	const std::vector<MLPGraphLayer *> &MLPGraphModel::get_layers() const {
 		return layers;
 	}
 
-	void MLPGraphModel::setLayers(const std::vector<MLPGraphLayer *> &layers) {
+	void MLPGraphModel::set_layers(const std::vector<MLPGraphLayer *> &layers) {
 		MLPGraphModel::layers = layers;
 	}
 
@@ -173,7 +173,7 @@ namespace s21 {
 			os << unit << ' ';
 		os << model.getLr() << std::endl;
 		os << *model.getAf();
-//		for (auto & layer : model.getLayers()) {
+//		for (auto & layer : model.get_layers()) {
 //			os << layer;
 //		}
 		return os;

@@ -9,6 +9,7 @@ s21::LetterRecognitionMLPModelBuilder::PerceptionBase(
 	if (flag == PerceptronBase::Matrix) {
 		base = flag;
 	} else if (flag == PerceptronBase::Graph) {
+		base = flag;
 		std::cerr << "there is no implementation for graph model";
 	}
 	return this;
@@ -20,6 +21,7 @@ s21::LetterRecognitionMLPModelBuilder::PerceptionBase(
 	if (base == "Matrix") {
 		this->base = LetterRecognitionMLPModelBuilder::Matrix;
 	} else if (base == "Graph") {
+		this->base = LetterRecognitionMLPModelBuilder::Graph;
 		std::cerr << "there is no implementation for graph model";
 	}
 	return this;
@@ -90,6 +92,15 @@ s21::LetterRecognitionMLPModelBuilder::GetResult() {
 				use_auto_decrease
 				);
 	} else if (base == PerceptronBase::Graph) {
+		return MLPGraphModel::MakeModel(
+				in_channels,
+				out_channels,
+				hidden_units_per_layer,
+				hidden_layers,
+				learning_rate,
+				func,
+				use_auto_decrease
+				);
 		return nullptr;
 	}
 	return nullptr;
