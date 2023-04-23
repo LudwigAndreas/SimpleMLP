@@ -2,7 +2,7 @@
 
 namespace s21 {
 
-	MLPMatrixLayer::MLPMatrixLayer(Matrix<float> w, Matrix<float> b) {
+	MLPMatrixLayer::MLPMatrixLayer(Matrix<float> w, Matrix<float> b) : is_output_layer(false) {
 		weight_matrices = std::move(w);
 		bias 			= std::move(b);
 
@@ -11,15 +11,14 @@ namespace s21 {
 		raw				= Matrix<float>(1, w.get_rows());
 	}
 
-	MLPMatrixLayer::MLPMatrixLayer(int in) {
-		is_output_layer = true;
+	MLPMatrixLayer::MLPMatrixLayer(int in) : is_output_layer(true) {
 		neuron_values	= Matrix<float>(1, in);
 		raw				= Matrix<float>(1, in);
 	}
 
 	std::istream &operator>>(std::istream &is, MLPMatrixLayer &layer) {
-//		is >> layer.weight_matrices;
-//		is >> layer.bias;
+		is >> layer.weight_matrices;
+		is >> layer.bias;
 		return is;
 	}
 

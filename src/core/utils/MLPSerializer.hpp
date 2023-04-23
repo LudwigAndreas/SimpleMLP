@@ -44,7 +44,9 @@ namespace s21 {
 			const std::string signature = "M";
 			std::fstream file;
 			file.open(filename, std::ofstream::out | std::ofstream::trunc);
-//			file << signature << "\n" << *model;
+			file 
+			<< signature << "\n" 
+			<< *model;
 			file.close();
 		}
 
@@ -53,7 +55,9 @@ namespace s21 {
 			const std::string signature = "G";
 			std::fstream file;
 			file.open(filename, std::ofstream::out | std::ofstream::trunc);
-//			file << signature << "\n" << *model;
+			file 
+			<< signature << "\n"
+			<< *model;
 			file.close();
 		}
 
@@ -61,13 +65,14 @@ namespace s21 {
 			std::fstream file;
 			std::string signature;
 			file.open(filename, std::ofstream::in);
-			if (file << signature) {
-				if (signature == "M")
+			if (file >> signature) {
+				if (signature[0] == 'M')
 					return DeserializeMLPMatrixModel(file);
-				else if (signature == "G")
+				else if (signature[0] == 'G')
 					return DeserializeMLPGraphModel(file);
 				file.close();
 			}
+			std::cerr << filename << std::endl << signature << std::endl;
 			throw UploadFileException("Unknown or empty model file signature");
 			return nullptr;
 		}
@@ -78,7 +83,7 @@ namespace s21 {
 					// nullptr
 					new ActivationFunction(ActivationFunction::Sigmoid)
 			);
-//			is >> *model;
+			is >> *model;
 			CloseStream(is);
 			return model;
 		}
@@ -91,7 +96,7 @@ namespace s21 {
 			// 		// nullptr
 			// 		new ActivationFunction(ActivationFunction::Sigmoid)
 			// );
-//			is >> *model;
+			is >> *model;
 			CloseStream(is);
 			return model;
 		}

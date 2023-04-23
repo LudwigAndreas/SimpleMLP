@@ -10,8 +10,8 @@ include_directories(src)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Og")
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Og -Ofast -march=native")
+#set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og")
 #set(CMAKE_CXX_FLAGS_RELEASE  "-Ofast -march=native")
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
@@ -35,9 +35,10 @@ add_executable(SimpleMLP
 #        src/core/graph/MLPGraphModel.hpp
 #        src/core/graph/MLPGraphNode.hpp
 #        src/core/matrix/Matrix.hpp
-#        src/core/matrix/MLPMatrixModel.hpp
+        src/core/matrix/MLPMatrixLayer.cc
+        src/core/matrix/MLPMatrixModel.cc
         src/core/utils/ActivationFunction.cpp
-        src/core/utils/BMPReader.cpp
+#        src/core/utils/BMPReader.cpp
 #        src/core/utils/BMPReader.hpp
 #        src/core/exceptions/MatrixException.hpp
         src/core/DatasetReading.cpp
@@ -45,11 +46,11 @@ add_executable(SimpleMLP
         src/core/graph/MLPGraphLayer.cpp
         src/core/graph/MLPGraphModel.cpp
         src/core/graph/MLPGraphNode.cpp
-        src/core/main.cpp
+#        src/core/main.cpp
 
 
-#        src/gui/main.cpp
-        src/gui/utils/MTWorker.cpp
+        src/gui/main.cpp
+#        src/gui/utils/MTWorker.cpp
 #        src/gui/utils/MTWorker.hpp
         src/gui/view/ConfigureModulePage.cpp
         src/gui/view/TrainModelPage.cpp
@@ -68,9 +69,13 @@ add_executable(SimpleMLP
 #        src/tests/main.cpp src/tests/core/matrix/MatrixTest.cpp
 #        src/tests/core/utils/ActivationFunctionTest.cpp src/tests/core/utils/BMPReaderTest.cpp
         src/gui/utils/ModelTestWorker.cpp
-        src/gui/utils/ModelTestWorker.hpp
+        src/gui/utils/ModelTrainWorker.cpp
         src/gui/utils/ModelWorker.cpp
         src/gui/utils/ModelWorker.hpp
+        src/libs21/s21_load_bmp.cc
+        src/libs21/s21_split.cc
+        src/libs21/s21_to_lower.cc
+        src/libs21/s21_to_upper.cc
         )
 target_link_libraries(SimpleMLP Qt6::Widgets Qt6::Charts ${GTEST_BOTH_LIBRARIES})
 #target_link_libraries(SimpleMLP ${GTEST_BOTH_LIBRARIES})

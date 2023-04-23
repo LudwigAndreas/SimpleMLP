@@ -347,7 +347,10 @@ namespace s21 {
 			if (line_data.size() != cols)
 				throw MatrixCalculationsException("Invalid input file: Elements count on matrix line is incorrect");
 			// is >> tmp;
-			data.emplace_back(line_data.begin(), line_data.end());
+			for (int j = 0; j < line_data.size(); ++j) {
+				data.push_back(line_data[j]);
+			}
+			// data.emplace_back(line_data.begin(), line_data.end());
 		}
 		matrix = Matrix<float>(data);
 		matrix.set_rows(rows);
