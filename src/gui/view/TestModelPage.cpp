@@ -3,7 +3,7 @@
 #include "ui_mainwindow.h"
 #include "testdatainfodialog.h"
 #include "src/core/utils/MLPSerializer.hpp"
-#include "lib/libs21/libs21.h"
+#include "libs21/include/libs21.h"
 
 void MainWindow::on_to_configure_push_button_2_pressed()
 {

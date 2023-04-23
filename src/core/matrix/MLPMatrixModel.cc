@@ -1,52 +1,54 @@
-//
-// Created by Ludwig Andreas on 20.04.2023.
-//
 #include "MLPMatrixModel.hpp"
+#include <libs21/include/libs21.h>
 
-std::ostream &operator<<(std::ostream &os, const s21::MLPMatrixModel &model) {
-//		for (auto unit: model.get_units_per_layer()) {
-//			os << unit << " ";
-//		}
-//		os << model.get_lr() << '\n';
-//		for (auto layer : model.GetLayers())
-//			os << *layer;
-    // for (auto weights: model.get_weight_matrices())
-    // 	os << weights;
-    // for (auto bias: model.get_bias_vectors())
-    // 	os << bias;
-    // for (auto neuron_values: model.get_neuron_values())
-    // 	os << neuron_values;
-    // for (auto error: model.get_error())
-    // 	os << error;
-    // for (auto incorrect_values: model.get_incorrect_values())
-    // 	os << incorrect_values;
-    // for (auto raw: model.get_raw())
-    // 	os << raw;
-    return os;
-}
+namespace s21 {
 
-std::istream &operator>>(std::istream &is, s21::MLPMatrixModel &model) {
-    // std::vector<float> matrix_values;
-    // std::vector<std::string> row_values;
-    // std::vector<s21::Matrix<float>> weights_matrices;
-    // s21::Matrix<float> matrix;
+	std::ostream &operator<<(std::ostream &os, const MLPMatrixModel &model) {
+		for (auto unit: model.get_units_per_layer()) {
+			os << unit << " ";
+		}
+		os << model.get_lr() << '\n';
+		for (const auto &layer : model.GetLayers())
+			os << *layer;
+		return os;
+	}
 
-//		std::string units_per_layer_str;
-//		// std::string line;
-//		std::getline(is, units_per_layer_str);
-//
-//		auto upls = split(units_per_layer_str, " ");
-//		std::vector<size_t> units_per_layer;
-//		for (auto i = upls.begin(); i < upls.end() - 1; ++i)
-//			units_per_layer.push_back(std::atoi(i->data()));
-//		model.set_units_per_layer(units_per_layer);
-//		model.set_lr(std::atof(upls.rbegin()->data()));
+	std::istream &operator>>(std::istream &is, MLPMatrixModel &model) {
+		// std::vector<float> matrix_values;
+		// std::vector<std::string> row_values;
+		// std::vector<s21::Matrix<float>> weights_matrices;
+		// s21::Matrix<float> matrix;
 
-    // model.set_weight_martices	(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-    // model.set_bias				(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-    // model.set_neuron_values		(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-    // model.set_error				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-    // model.set_incorrect_values	(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-    // model.set_raw				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-    return is;
+
+		std::vector<MLPMatrixLayer *> layers;
+		std::string units_per_layer_str;
+		
+		// std::string line;
+		std::getline(is, units_per_layer_str);
+
+		auto upls = s21::split(units_per_layer_str, " ");
+		std::vector<size_t> units_per_layer;
+		for (auto i = upls.begin(); i < upls.end() - 1; ++i)
+			units_per_layer.push_back(std::atoi(i->data()));
+		model.set_units_per_layer(units_per_layer);
+		model.set_lr(std::atof(upls.rbegin()->data()));
+
+		for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+			Matrix<float> w(0,0), b(0,0);
+			is >> w >> b;
+			layers.push_back(new MLPMatrixLayer(w, b));
+		}
+		layers.push_back(new MLPMatrixLayer(units_per_layer.back()));
+		model.SetLayers(std::move(layers));
+		
+
+		// model.set_weight_martices	(readVectorMatrix<float>(is, units_per_layer.size() - 1));
+		// model.set_bias				(readVectorMatrix<float>(is, units_per_layer.size() - 1));
+		// model.set_neuron_values		(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		// model.set_error				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		// model.set_incorrect_values	(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		// model.set_raw				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
+		return is;
+	}
+
 }
