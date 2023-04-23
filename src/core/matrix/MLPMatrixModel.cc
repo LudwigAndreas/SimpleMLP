@@ -76,7 +76,6 @@ namespace s21 {
 			layers[i + 1]->raw = y;
 			y = y.apply_function(af->getFunction());
 			layers[i + 1]->neuron_values = y;
-
 		}
 		return softmax(layers.back()->neuron_values.ToVector());
 	}
@@ -84,13 +83,14 @@ namespace s21 {
 	void MLPMatrixModel::Backward(Matrix<float> target) {
 		assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 		layers[layers.size() - 2]->error = (layers.back()->neuron_values - target);
+		
 		for (int i = (int) units_per_layer.size() - 3; i >= 0; --i) {
 			layers[i]->error = (layers[i + 1]->error.matmulTransposed(layers[i + 1]->weight_matrices))
 				& layers[i + 1]->raw.apply_function(af->getDerivative());
 		}
 		for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
-			layers[i]->weight_matrices = layers[i]->weight_matrices - (layers[i]->neuron_values.T() * layers[i]->error * lr);
-			layers[i]->bias = layers[i]->bias - layers[i]->error * lr;
+			layers[i]->weight_matrices = layers[i]->weight_matrices - (layers[i]->neuron_values.T() * layers[i]->error * .1f);
+			layers[i]->bias = layers[i]->bias - (layers[i]->error * .1f);
 		}
 	}
 
@@ -144,11 +144,6 @@ namespace s21 {
 	}
 
 	std::istream &operator>>(std::istream &is, MLPMatrixModel &model) {
-		// std::vector<float> matrix_values;
-		// std::vector<std::string> row_values;
-		// std::vector<s21::Matrix<float>> weights_matrices;
-		// s21::Matrix<float> matrix;
-
 		std::vector<MLPMatrixLayer *> layers;
 		std::string units_per_layer_str;
 		
@@ -170,13 +165,6 @@ namespace s21 {
 		layers.push_back(new MLPMatrixLayer(units_per_layer.back()));
 		model.set_layers(std::move(layers));
 		
-
-		// model.set_weight_martices	(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-		// model.set_bias				(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-		// model.set_neuron_values		(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		// model.set_error				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		// model.set_incorrect_values	(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		// model.set_raw				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
 		return is;
 	}
 

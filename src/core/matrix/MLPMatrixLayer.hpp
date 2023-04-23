@@ -14,7 +14,7 @@ namespace s21 {
 		Matrix<float> neuron_values;
 		Matrix<float> error;
 		Matrix<float> raw;
-		const bool is_output_layer;
+		const bool 	  is_output_layer;
 	};
 
 	std::istream &operator>>(std::istream &is, MLPMatrixLayer &layer);
