@@ -6,12 +6,15 @@
 
 namespace s21 {
 	struct MLPMatrixLayer : public IMLPLayer {
+		MLPMatrixLayer(Matrix<float> w, Matrix<float> b);
+		MLPMatrixLayer(int in);
+
 		Matrix<float> bias;
 		Matrix<float> weight_matrices;
 		Matrix<float> neuron_values;
-		Matrix<float> incorrect_values;
 		Matrix<float> error;
 		Matrix<float> raw;
+		bool is_output_layer;
 	};
 
 	std::istream &operator>>(std::istream &is, MLPMatrixLayer &layer);

@@ -33,8 +33,8 @@ namespace s21 {
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
 
-		Matrix(size_t rows, size_t cols) : cols(cols), rows(rows) {
-			data.resize(cols * rows);
+		Matrix(size_t rows, size_t cols) : rows(rows), cols(cols) {
+			data.resize(rows * cols);
 			shape = (std::tuple<size_t, size_t>) {rows, cols};
 		}
 

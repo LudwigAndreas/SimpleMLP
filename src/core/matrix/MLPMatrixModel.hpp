@@ -27,37 +27,27 @@ namespace s21 {
 								float lr = .05f) :
 								units_per_layer(units_per_layer),
 								auto_decrease(use_auto_decrease), lr(lr) {
-			af = func;
+			af 		 = func;
 			start_lr = lr;
 			
 			for (size_t i = 0; i < units_per_layer.size(); ++i) {
-				auto layer = new MLPMatrixLayer();
-				size_t in_channels = units_per_layer[i];
+				MLPMatrixLayer* layer 		= nullptr;
+				size_t 			in_channels = units_per_layer[i];
 				if (i != units_per_layer.size() - 1) {
 					size_t out_channels = units_per_layer[i + 1];
-					layer->weight_matrices 	= GenerateNDMatrix<float>
-											(in_channels, out_channels);
-					layer->bias 			= GenerateNDMatrix<float>
-											(1, out_channels);
-					layer->error			= Matrix<float>(1, out_channels);
+					layer = new MLPMatrixLayer(GenerateNDMatrix<float>
+											(in_channels, out_channels),
+											GenerateNDMatrix<float>
+											(1, out_channels));
 				}
-				layer->neuron_values	= Matrix<float>(1, in_channels);
-				layer->incorrect_values = Matrix<float>(1, in_channels);
-				layer->raw				= Matrix<float>(1, in_channels);
+				else {
+					layer = new MLPMatrixLayer(in_channels);
+				}
+				layers.push_back(layer);
 			}
-			// dedt.resize(units_per_layer.size() - 1);
-			// dedw.resize(units_per_layer.size() - 1);
-			// dedb.resize(units_per_layer.size() - 1);
-			// dedh.resize(units_per_layer.size() - 2);
 		}
 
 	public:
-		// MLPMatrixModel() = delete;
-
-		// MLPMatrixModel &operator=(const MLPMatrixModel matrix) = delete;
-
-		// MLPMatrixModel(MLPMatrixModel const &) = delete;
-
 		const std::vector<size_t> &get_units_per_layer() const {
 			return units_per_layer;
 		}
@@ -65,26 +55,6 @@ namespace s21 {
 		const std::vector<MLPMatrixLayer *> &GetLayers() const {
 			return layers;
 		}
-
-		// const std::vector<Matrix<float>> &get_weight_matrices() const {
-		// 	return weight_matrices;
-		// }
-
-		// const std::vector<Matrix<float>> &get_neuron_values() const {
-		// 	return neuron_values;
-		// }
-
-		// const std::vector<Matrix<float>> &get_error() const {
-		// 	return error;
-		// }
-
-		// const std::vector<Matrix<float>> &get_incorrect_values() const {
-		// 	return incorrect_values;
-		// }
-
-		// const std::vector<Matrix<float>> &get_raw() const {
-		// 	return raw;
-		// }
 
 		float get_lr() const {
 			return lr;
@@ -99,32 +69,6 @@ namespace s21 {
 			this->layers = l;
 			//TODO: add check for setter logic
 		}
-
-		// void set_weight_martices(std::vector<Matrix<float>> W) {
-		// 	this->weight_matrices = W;
-
-		// 	//TODO: add check for setter logic
-		// }
-
-		// void set_neuron_values(std::vector<Matrix<float>> h) {
-		// 	this->neuron_values = h;
-		// 	//TODO: add check for setter logic
-		// }
-
-		// void set_error(std::vector<Matrix<float>> error) {
-		// 	this->error = error;
-		// 	//TODO: add check for setter logic
-		// }
-
-		// void set_incorrect_values(std::vector<Matrix<float>> incorrect_values) {
-		// 	this->incorrect_values = incorrect_values;
-		// 	//TODO: add check for setter logic
-		// }
-
-		// void set_raw(std::vector<Matrix<float>> raw) {
-		// 	this->raw = raw;
-		// 	//TODO: add check for setter logic
-		// }
 
 		void set_lr(float lr) {
 			MLPMatrixModel::lr = lr;
@@ -156,17 +100,6 @@ namespace s21 {
 			}
 			return softmax(layers.back()->neuron_values.ToVector());
 		}
-
-		// void AppendError() {
-		// 	for (int i = 0; i < neuron_values.size(); ++i)
-		// 		incorrect_values[i] = incorrect_values[i] + neuron_values[i];
-		// }
-
-		// void	ClearError() {
-		// 	for (int i = 0; i < units_per_layer.size(); ++i) {
-		// 		incorrect_values[i] = Matrix<float>(1, units_per_layer[i]);
-		// 	}
-		// }
 		
 		void Backward(Matrix<float> target) override {
 			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
@@ -248,56 +181,11 @@ namespace s21 {
 			result.push_back(matrix);
 		}
 		return (std::move(result));
-		// model->set_weight_martices(weights_matrices);
 	}
 
-	std::ostream &operator<<(std::ostream &os, const MLPMatrixModel &model) {
-		for (auto unit: model.get_units_per_layer()) {
-			os << unit << " ";
-		}
-		os << model.get_lr() << '\n';
-		for (auto layer : model.GetLayers())
-			os << *layer;
-		// for (auto weights: model.get_weight_matrices())
-		// 	os << weights;
-		// for (auto bias: model.get_bias_vectors())
-		// 	os << bias;
-		// for (auto neuron_values: model.get_neuron_values())
-		// 	os << neuron_values;
-		// for (auto error: model.get_error())
-		// 	os << error;
-		// for (auto incorrect_values: model.get_incorrect_values())
-		// 	os << incorrect_values;
-		// for (auto raw: model.get_raw())
-		// 	os << raw;
-		return os;
-	}
+	std::istream &operator>>(std::istream &is, MLPMatrixModel &model);
 
-	std::istream &operator>>(std::istream &is, MLPMatrixModel &model) {
-		// std::vector<float> matrix_values;
-		// std::vector<std::string> row_values;
-		// std::vector<s21::Matrix<float>> weights_matrices;
-		// s21::Matrix<float> matrix;
-
-		std::string units_per_layer_str;
-		// std::string line;
-		std::getline(is, units_per_layer_str);
-
-		auto upls = split(units_per_layer_str, " ");
-		std::vector<size_t> units_per_layer;
-		for (auto i = upls.begin(); i < upls.end() - 1; ++i)
-			units_per_layer.push_back(std::atoi(i->data()));
-		model.set_units_per_layer(units_per_layer);
-		model.set_lr(std::atof(upls.rbegin()->data()));
-
-		// model.set_weight_martices	(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-		// model.set_bias				(readVectorMatrix<float>(is, units_per_layer.size() - 1));
-		// model.set_neuron_values		(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		// model.set_error				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		// model.set_incorrect_values	(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		// model.set_raw				(readVectorMatrix<float>(is, units_per_layer.size()	   ));
-		return is;
-	}
+	std::ostream &operator<<(std::ostream &os, const MLPMatrixModel &model);
 }
 
 #endif
