@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
+
 namespace s21 {
     std::string to_lower(std::string str);
 

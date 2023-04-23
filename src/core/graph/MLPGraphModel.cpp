@@ -1,5 +1,7 @@
 #include "MLPGraphModel.hpp"
 
+#include "libs21/include/libs21.h"
+
 namespace s21 {
 	MLPGraphModel::MLPGraphModel(std::vector<size_t> units_per_layer,
 							ActivationFunction *func,
@@ -158,7 +160,7 @@ namespace s21 {
 		// std::string line;
 		std::getline(is, units_per_layer_str);
 
-		auto upls = split(units_per_layer_str, " ");
+		auto upls = s21::split(units_per_layer_str, " ");
 		std::vector<size_t> units_per_layer;
 		for (auto i = upls.begin(); i < upls.end() - 1; ++i)
 			units_per_layer.push_back(std::atoi(i->data()));

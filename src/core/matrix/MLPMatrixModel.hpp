@@ -31,37 +31,27 @@ class MLPMatrixModel : public s21::IMLPModel {
     start_lr = lr;
 
     for (size_t i = 0; i < units_per_layer.size(); ++i) {
-      auto layer = new MLPMatrixLayer();
+      MLPMatrixLayer* layer = nullptr;
       size_t in_channels = units_per_layer[i];
       if (i != units_per_layer.size() - 1) {
         size_t out_channels = units_per_layer[i + 1];
-        layer->weight_matrices =
-            GenerateNDMatrix<float>(in_channels, out_channels);
-        layer->bias = GenerateNDMatrix<float>(1, out_channels);
-        layer->error = Matrix<float>(1, out_channels);
+        layer = new MLPMatrixLayer(
+            GenerateNDMatrix<float>(in_channels, out_channels),
+            GenerateNDMatrix<float>(1, out_channels));
+      } else {
+        layer = new MLPMatrixLayer(in_channels);
       }
-      layer->neuron_values = Matrix<float>(1, in_channels);
-      layer->incorrect_values = Matrix<float>(1, in_channels);
-      layer->raw = Matrix<float>(1, in_channels);
       layers.push_back(layer);
     }
-    // dedt.resize(units_per_layer.size() - 1);
-    // dedw.resize(units_per_layer.size() - 1);
-    // dedb.resize(units_per_layer.size() - 1);
-    // dedh.resize(units_per_layer.size() - 2);
   }
 
  public:
-  const std::vector<size_t>& get_units_per_layer() const {
+  [[nodiscard]] const std::vector<size_t>& get_units_per_layer() const {
     return units_per_layer;
   }
 
-  const std::vector<MLPMatrixLayer*>& GetLayers() const { return layers; }
-  float get_lr() const { return lr; }
-
-  void set_units_per_layer(const std::vector<size_t>& unitsPerLayer) {
-    units_per_layer = unitsPerLayer;
-    //TODO: add check for setter logic
+  void set_units_per_layer(const std::vector<size_t>& upl) {
+    this->units_per_layer = upl;
   }
 
   void SetLayers(std::vector<MLPMatrixLayer*> l) {
@@ -69,20 +59,17 @@ class MLPMatrixModel : public s21::IMLPModel {
     //TODO: add check for setter logic
   }
 
-  void set_lr(float lr) { MLPMatrixModel::lr = lr; }
-
-  Matrix<float> NormalizedInput(Matrix<float> matrix) {
-    std::vector<float>::iterator begin = matrix.ToVector().begin(),
-                                 end = matrix.ToVector().end();
-    float min, max;
-    max = *std::max_element(begin, end);
-    min = *std::min_element(begin, end);
-    if (min == max)
-      return matrix;
-    for (auto it = begin; it < end; ++it)
-      *it = std::min(1.f, std::max(0.f, (*it - min) * (1.f / (max - min))));
-    return (matrix);
+  [[nodiscard]] const std::vector<MLPMatrixLayer*>& GetLayers() const {
+    return layers;
+    //TODO: add check for setter logic
   }
+
+  [[nodiscard]] float get_lr() const { return lr; }
+
+  int Predict(Matrix<float> x) override {
+    return getMostProbablePrediction(Forward(x));
+  }
+  void set_lr(float lr) { MLPMatrixModel::lr = lr; }
 
   std::vector<float> Forward(Matrix<float> matrix) override {
     assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] &&
@@ -130,15 +117,13 @@ class MLPMatrixModel : public s21::IMLPModel {
       index = getMostProbablePrediction(y_hat);
       if (index == getMostProbablePrediction(sample.y.ToVector()))
         ++correct_guesses;
+      //				if (output.is_open())
+      //					log(output, getMostProbablePrediction(sample.y.ToVector()), index, y_hat[index]);
     }
     accuracy = ((float)correct_guesses / samples.size());
-    //			if (!silent_mode)
-    //				std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
+    if (!silent_mode)
+      std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
     return accuracy;
-  }
-
-  int Predict(Matrix<float> x) override {
-    return getMostProbablePrediction(Forward(x));
   }
 
   static IMLPModel* MakeModel(size_t in_channels, size_t out_channels,
@@ -158,23 +143,9 @@ class MLPMatrixModel : public s21::IMLPModel {
   }
 };
 
-template <typename T>
-static std::vector<s21::Matrix<T>> readVectorMatrix(std::istream& input,
-                                                    size_t size) {
-  std::vector<s21::Matrix<T>> result;
-  s21::Matrix<T> matrix;
-
-  result.reserve(size);
-  for (int i = 0; i < size; ++i) {
-    input >> matrix;
-    result.push_back(matrix);
-  }
-  return (std::move(result));
-}
+std::istream& operator>>(std::istream& is, MLPMatrixModel& model);
 
 std::ostream& operator<<(std::ostream& os, const MLPMatrixModel& model);
-
-std::istream& operator>>(std::istream& is, MLPMatrixModel& model);
 }  // namespace s21
 
 #endif
