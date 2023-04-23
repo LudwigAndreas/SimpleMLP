@@ -11,7 +11,7 @@
 
 namespace s21 {
 
-	class MLPMatrixModel : s21::IMLPModel {
+	class MLPMatrixModel : public s21::IMLPModel {
 	private:
 		std::vector<size_t> units_per_layer;
 		std::vector<MLPMatrixLayer *> layers;
@@ -105,7 +105,7 @@ namespace s21 {
 			assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 			layers[layers.size() - 2]->error = (layers.back()->neuron_values - target);
 			for (int i = (int) units_per_layer.size() - 3; i >= 0; --i) {
-				layers[i]->error = (layers[i + 1]->error.matmulTransposed(layers[i]->weight_matrices))
+				layers[i]->error = (layers[i + 1]->error.matmulTransposed(layers[i + 1]->weight_matrices))
 					& layers[i + 1]->raw.apply_function(af->getDerivative());
 			}
 			for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {

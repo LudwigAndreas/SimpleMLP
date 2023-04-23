@@ -21,14 +21,12 @@ void PaintView::paintEvent(QPaintEvent *event)
     painter.setPen(QPen(Qt::white, 24, Qt::SolidLine));
     setPalette(pal);
     if (pixmap) {
-//		qDebug() << "belive me";
 		if (new_pixmap) {
 			vv.clear();
 			new_pixmap = false;
 		}
 //		TODO: pixmap.data may be not pixmap
 		painter.drawPixmap(-1, -1, pixmap->scaled(this->width(), this->height()));
-//		pixmap = nullptr;
     }
 	for (auto & line : vv) {
 		painter.drawEllipse(line.first(), 3, 3);
@@ -37,10 +35,6 @@ void PaintView::paintEvent(QPaintEvent *event)
 		}
 		painter.drawEllipse(line.back(), 3, 3);
 	}
-//    for (auto & i : vv)
-//        painter.drawEllipse(i, 5, 7);
-//	painter.drawPoints(vv.data(), vv.size());
-//    QWidget::paintEvent(event);
     hide();
     show();
 }
@@ -62,7 +56,7 @@ void PaintView::mouseMoveEvent(QMouseEvent *event) {
 
 void PaintView::mouseReleaseEvent(QMouseEvent *event) {
     draw = false;
-    QPixmap scr = this->grab();
+    QPixmap scr = this->grab().scaled(28, 28);
     scr.save("my_letter.bmp");
 	emit file_saved();
 	qDebug() << "file_saved emited";
