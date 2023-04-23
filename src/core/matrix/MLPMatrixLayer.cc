@@ -6,14 +6,14 @@ namespace s21 {
 		weight_matrices = std::move(w);
 		bias 			= std::move(b);
 
-		error			= Matrix<float>(1, w.get_cols());
-		neuron_values	= Matrix<float>(1, w.get_rows());
-		raw				= Matrix<float>(1, w.get_rows());
+		// error			= Matrix<float>(1, w.get_cols());
+		// neuron_values	= Matrix<float>(1, w.get_rows());
+		// raw				= Matrix<float>(1, w.get_rows());
 	}
 
 	MLPMatrixLayer::MLPMatrixLayer(int in) : is_output_layer(true) {
-		neuron_values	= Matrix<float>(1, in);
-		raw				= Matrix<float>(1, in);
+		// neuron_values	= Matrix<float>(1, in);
+		// raw				= Matrix<float>(1, in);
 	}
 
 	std::istream &operator>>(std::istream &is, MLPMatrixLayer &layer) {
