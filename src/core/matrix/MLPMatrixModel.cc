@@ -33,7 +33,7 @@ namespace s21 {
 		model.set_lr(std::atof(upls.rbegin()->data()));
 
 		for (int i = 0; i < units_per_layer.size() - 1; ++i) {
-			Matrix<float> w, b;
+			Matrix<float> w(0,0), b(0,0);
 			is >> w >> b;
 			layers.push_back(new MLPMatrixLayer(w, b));
 		}
