@@ -8,17 +8,9 @@
 #include <algorithm>
 #include <numeric>
 
+#include "AFLibrary.h"
+
 namespace s21 {
-	inline float linear(float x) {
-		return x;
-	}
-
-	inline float d_linear(float x) {
-		return 1;
-	}
-
-	std::vector<float> softmax(std::vector<float> matrix);
-	
 	class ActivationFunction {
 	private:
 		std::function<float (float)> f;
@@ -33,7 +25,7 @@ namespace s21 {
 			Linear = 0
 		};
 
-		void SetValues(std::function<float (float)> func = linear, std::function<float (float)> derivative = d_linear, Flags flag = Linear);
+		void SetValues(std::function<float (float)> func = sigmoid, std::function<float (float)> derivative = d_sigmoid, Flags flag = Sigmoid);
 		ActivationFunction(Flags flag);
 		ActivationFunction(std::string name);
 		std::function<float (float)> getFunction();

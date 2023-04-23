@@ -6,9 +6,9 @@
 #include <algorithm>
 
 namespace s21 {
-    std::string to_lower_case(std::string str);
+    std::string to_lower(std::string str);
 
-    std::string to_upper_case(std::string str);
+    std::string to_upper(std::string str);
 
     std::vector <std::string> split(std::string s, std::string delimiter);
 

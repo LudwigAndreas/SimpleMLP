@@ -4,7 +4,7 @@
 #include <QValueAxis>
 
 #include "ui_mainwindow.h"
-
+//TODO pass batch number into testing page
 bool MainWindow::exitFromTrainPage() {
 	if (this->training_thread != nullptr && this->training_thread->isRunning()) {
 		QMessageBox training_is_running_message;

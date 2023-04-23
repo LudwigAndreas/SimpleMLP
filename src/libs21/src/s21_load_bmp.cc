@@ -19,7 +19,7 @@ namespace s21 {
             return nullptr;
         }
 
-        int file_size = *(int32_t*)&header[2];
+        // int file_size = *(int32_t*)&header[2];
         int data_offset = *(int32_t*)&header[10];
         int width_px = *(int32_t*)&header[18];
         int height_px = *(int32_t*)&header[22];

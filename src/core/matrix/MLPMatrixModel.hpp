@@ -1,26 +1,26 @@
 #ifndef SIMPLEMLP_MLPMATRIXMODEL2_HPP
 #define SIMPLEMLP_MLPMATRIXMODEL2_HPP
 
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 
-#include "../utils/IMLPModel.hpp"
-#include "Matrix.hpp"
-#include "MLPMatrixLayer.hpp"
 #include "../utils/ActivationFunction.hpp"
-#include "../../libs21/libs21.h"
+// #include "../../libs21/libs21.h"
+#include "../utils/IMLPModel.hpp"
+#include "MLPMatrixLayer.hpp"
+#include "Matrix.hpp"
 
 namespace s21 {
 
-	class MLPMatrixModel : public s21::IMLPModel {
-	private:
-		std::vector<size_t> units_per_layer;
-		std::vector<MLPMatrixLayer *> layers;
-		bool auto_decrease;
+class MLPMatrixModel : public s21::IMLPModel {
+ private:
+  std::vector<size_t> units_per_layer;
+  std::vector<MLPMatrixLayer*> layers;
+  bool auto_decrease;
 
-		ActivationFunction			*af;
-		float						lr;
-		float						start_lr;
+  ActivationFunction* af;
+  float lr;
+  float start_lr;
 
 		explicit MLPMatrixModel(std::vector<size_t> units_per_layer,
 								ActivationFunction *func,
