@@ -33,6 +33,13 @@ private slots:
 
     void on_train_model_push_button_pressed();
 
+<<<<<<< Updated upstream
+=======
+    void on_to_configure_push_button_pressed();
+
+    void on_to_configure_push_button_2_pressed();
+  //
+>>>>>>> Stashed changes
     void on_test_model_push_button_pressed();
 
     void on_tabWidget_currentChanged(int index);
@@ -60,8 +67,34 @@ private slots:
     void on_pushButton_pressed();
 
     void on_toolButton_4_pressed();
+<<<<<<< Updated upstream
 
     void on_to_configure_push_button_pressed();
+=======
+  //
+  //    void OnModelConfigWasUploaded();
+  //
+  //    void onTrainingDatasetWasUploaded();
+  //
+  //    void onTestingDatasetWasUploaded();
+  //
+      void on_test_model_push_button_2_pressed();
+  //
+      void on_pushButton_pressed();
+  //
+  //
+  //
+  //    void on_testing_size_horizontal_slider_valueChanged(int value);
+  //
+        void onFileWasDrawn();
+  //
+  //	void on_export_model_push_button_pressed();
+  //
+//      void show_predict_window(std::vector<s21::ConfusionMatrix> *result);
+  //	void update_testing_status(int completion);
+  //
+      void GoToConfigModelPage();
+>>>>>>> Stashed changes
 
     void on_to_configure_push_button_2_pressed();
 
@@ -69,7 +102,12 @@ private slots:
 
 	void onFileWasDrawn();
 
+<<<<<<< Updated upstream
 	void on_export_model_push_button_pressed();
+=======
+  void CreateConnectionWithController();
+  void CreateConnectionWithView();
+>>>>>>> Stashed changes
 
 	void show_predict_window(std::vector<s21::ConfusionMatrix> *result);
 

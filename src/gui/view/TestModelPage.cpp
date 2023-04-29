@@ -129,6 +129,7 @@ void MainWindow::on_pushButton_pressed()
 	ui->prediction_result_label->clear();
 }
 
+<<<<<<< Updated upstream
 void MainWindow::on_testing_size_horizontal_slider_valueChanged(int value)
 {
 	ui->testing_size_label->setText(QString::number((float) value / 100));
@@ -146,3 +147,22 @@ void MainWindow::on_export_model_push_button_pressed()
 	// TODO rewrite for not matrix model (made in universal)
 	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)current_model, file_path.toStdString());
 }
+=======
+//void MainWindow::on_testing_size_horizontal_slider_valueChanged(int value)
+//{
+//	ui->testing_size_label->setText(QString::number((float) value / 100));
+//}
+//
+//void MainWindow::on_export_model_push_button_pressed()
+//{
+//	QString file_path = QFileDialog::getSaveFileName(this, "Save config file", "", "Model config files (*.mlpmodel)");
+//    if (file_path.isNull()) {
+//        QMessageBox::information(this, tr("File path is empty"),
+//                                 "Incorrect file path. Unable to save file");
+//        return;
+//    }
+//	//	QDir d = QFileInfo(file_path).absoluteFilePath();
+//	// TODO rewrite for not matrix model (made in universal)
+//	s21::MLPSerializer<float>::SerializeMLPModel(current_model, file_path.toStdString());
+//}
+>>>>>>> Stashed changes
