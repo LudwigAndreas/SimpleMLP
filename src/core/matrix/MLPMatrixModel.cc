@@ -23,7 +23,7 @@ namespace s21 {
 										(1, out_channels));
 			}
 			else {
-				layer = new MLPMatrixLayer(in_channels);
+				layer = new MLPMatrixLayer();
 			}
 			layers.push_back(layer);
 		}
@@ -41,6 +41,10 @@ namespace s21 {
 		return lr;
 	}
 
+	ActivationFunction *MLPMatrixModel::get_af() const {
+		return af;
+	}
+
 	void MLPMatrixModel::set_units_per_layer(const std::vector<size_t> &unitsPerLayer) {
 		units_per_layer = unitsPerLayer;
 		//TODO: add check for setter logic
@@ -53,6 +57,10 @@ namespace s21 {
 
 	void MLPMatrixModel::set_lr(float lr) {
 		MLPMatrixModel::lr = lr;
+	}
+
+	void MLPMatrixModel::set_af(ActivationFunction *af) {
+		MLPMatrixModel::af = af;
 	}
 
 	Matrix<float> MLPMatrixModel::NormalizedInput(Matrix<float> matrix) {
@@ -71,7 +79,7 @@ namespace s21 {
 		assert(std::get<1>(matrix.get_shape()) == units_per_layer[0] && std::get<1>(matrix.get_shape()));
 		layers[0]->neuron_values = matrix;
 		layers[0]->raw = matrix;
-		for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+		for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 			Matrix<float> y = layers[i]->neuron_values * layers[i]->weight_matrices;
 			y = y + layers[i]->bias;
 			layers[i + 1]->raw = y;
@@ -95,28 +103,28 @@ namespace s21 {
 		}
 	}
 
-	float MLPMatrixModel::TestOutput(std::vector<s21::Sample> samples, bool silent_mode, std::string filename) {
-		// std::fstream		output;
-		int					correct_guesses = 0;
-		float				accuracy;
-		std::vector<float>	y_hat;
-		int					index;
+// 	float MLPMatrixModel::TestOutput(std::vector<s21::Sample> samples, bool silent_mode, std::string filename) {
+// 		// std::fstream		output;
+// 		int					correct_guesses = 0;
+// 		float				accuracy;
+// 		std::vector<float>	y_hat;
+// 		int					index;
 
-		// if (!filename.empty())
-		// 	output.open(filename, std::ofstream::out | std::ofstream::trunc);
-		for (auto & sample : samples) {
-			y_hat = Forward(sample.x);
-			index = getMostProbablePrediction(y_hat);
-			if (index == getMostProbablePrediction(sample.y.ToVector()))
-				++correct_guesses;
-//				if (output.is_open())
-//					log(output, getMostProbablePrediction(sample.y.ToVector()), index, y_hat[index]);
-		}
-		accuracy = ((float)correct_guesses / samples.size());
-		if (!silent_mode)
-			std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
-		return accuracy;
-	}
+// 		// if (!filename.empty())
+// 		// 	output.open(filename, std::ofstream::out | std::ofstream::trunc);
+// 		for (auto & sample : samples) {
+// 			y_hat = Forward(sample.x);
+// 			index = getMostProbablePrediction(y_hat);
+// 			if (index == getMostProbablePrediction(sample.y.ToVector()))
+// 				++correct_guesses;
+// //				if (output.is_open())
+// //					log(output, getMostProbablePrediction(sample.y.ToVector()), index, y_hat[index]);
+// 		}
+// 		accuracy = ((float)correct_guesses / samples.size());
+// 		if (!silent_mode)
+// 			std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
+// 		return accuracy;
+// 	}
 
 	int MLPMatrixModel::Predict(Matrix<float> x) {
 		return getMostProbablePrediction(Forward(x));
@@ -138,7 +146,8 @@ namespace s21 {
 		for (auto unit: model.get_units_per_layer()) {
 			os << unit << " ";
 		}
-		os << model.get_lr() << '\n';
+		os << model.get_lr() << '\n'
+		   << model.get_af() << '\n';
 		for (const auto &layer : model.get_layers())
 			os << *layer;
 		return os;
@@ -147,9 +156,11 @@ namespace s21 {
 	std::istream &operator>>(std::istream &is, MLPMatrixModel &model) {
 		std::vector<MLPMatrixLayer *> layers;
 		std::string units_per_layer_str;
+		std::string af_str;
 		
 		// std::string line;
 		std::getline(is, units_per_layer_str);
+		std::getline(is, af_str);
 
 		auto upls = s21::split(units_per_layer_str, " ");
 		std::vector<size_t> units_per_layer;
@@ -157,13 +168,14 @@ namespace s21 {
 			units_per_layer.push_back(std::atoi(i->data()));
 		model.set_units_per_layer(units_per_layer);
 		model.set_lr(std::atof(upls.rbegin()->data()));
+		model.set_af(new ActivationFunction(af_str));
 
-		for (int i = 0; i < units_per_layer.size() - 1; ++i) {
+		for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 			Matrix<float> w, b;
 			is >> w >> b;
 			layers.push_back(new MLPMatrixLayer(w, b));
 		}
-		layers.push_back(new MLPMatrixLayer(units_per_layer.back()));
+		layers.push_back(new MLPMatrixLayer());
 		model.set_layers(std::move(layers));
 		
 		return is;

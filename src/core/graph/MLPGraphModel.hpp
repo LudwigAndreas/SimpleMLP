@@ -17,7 +17,6 @@ namespace s21 {
 		ActivationFunction				*af;
 		float							start_lr;
 		float							lr;
-		
 		bool							auto_decrease;
 		
 	
@@ -32,35 +31,38 @@ namespace s21 {
 		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 
 		const std::vector<size_t> &getUnitsPerLayer() const;
-
 		void setUnitsPerLayer(const std::vector<size_t> &unitsPerLayer);
 
 		const std::vector<MLPGraphLayer *> &get_layers() const;
-
 		void set_layers(const std::vector<MLPGraphLayer *> &layers);
 
 		ActivationFunction *getAf() const;
-
 		void setAf(ActivationFunction *af);
 
 		float getStartLr() const;
-
 		void setStartLr(float startLr);
 
 		float getLr() const;
-
 		void setLr(float lr);
 
 		bool isAutoDecrease() const;
-
 		void setAutoDecrease(bool autoDecrease);
+
+		std::vector<MLPGraphLayer *> &get_layers();
+		// std::vector<MLPGraphLayer *> &set_layers();
+
+		static IMLPModel *MakeModel(size_t in_channels, size_t out_channels,
+									size_t hidden_units_per_layer, 
+									int hidden_layers, float lr, 
+									ActivationFunction *func, 
+									bool use_auto_decrease = true);
 
 		virtual std::vector<T> Forward(Matrix<T>);
 		virtual void Backward(Matrix<T>);
 		virtual float Train(DatasetGroup samples, bool b = false);
 		virtual float Test(DatasetGroup samples, bool b = false);
 		virtual int Predict(Matrix<float>);
-		virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "");
+		// virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "");
 	};
 
 	std::istream &operator>>(std::istream &is, MLPGraphModel &model);

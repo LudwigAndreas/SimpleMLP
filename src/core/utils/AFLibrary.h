@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <numeric>
+#include <algorithm>
 
 namespace s21 {
   float linear(float x);

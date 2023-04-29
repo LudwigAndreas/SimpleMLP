@@ -98,7 +98,7 @@ int main() {
 	// std::cerr << "Dataset split on " << dataset.size() << " with " << dataset[0].size() << " samples in each." << std::endl;
 	CrossValidation(model, dataset);
 
-	model->TestOutput(ReadDataset("../../datasets/emnist-letters-test.csv"), false, "test.output");
+	// model->TestOutput(ReadDataset("../../datasets/emnist-letters-test.csv"), false, "test.output");
 	// CrossValidation(model, dataset);
 	// s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)(model), "testmodel.mlpmodel");
 	// std::cout << "\nAccuracy: " << ((float)corr / i) * 100 << '%' << std::endl;

@@ -8,7 +8,8 @@
 namespace s21 {
 	struct Sample {
 		Sample() = default;
-		Sample(const Matrix<float>& x_, const Matrix<float>& y_) : x(x_), y(y_) {}
+		Sample(const Matrix<float>& x_, const Matrix<float>& y_) : x(std::move(x_)),
+																   y(std::move(y_)) {}
 		Matrix<float>	x;
 		Matrix<float>	y;
 	};

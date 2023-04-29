@@ -1,11 +1,13 @@
 #pragma once
 
 #include "MLPGraphNode.hpp"
-#include "../matrix/Matrix.hpp"
-#include "../utils/ActivationFunction.hpp"
+#include "core/exceptions/UploadFileException.h"
+#include "core/matrix/Matrix.hpp"
+#include "core/utils/ActivationFunction.hpp"
 
 #include <vector>
 #include <algorithm>
+#include <sstream>
 
 namespace s21 {
 	class MLPGraphLayer {
@@ -21,10 +23,20 @@ namespace s21 {
 		MLPGraphLayer(size_t size, ActivationFunction *af,
 						MLPGraphLayer *input = nullptr,
 						MLPGraphLayer *output = nullptr);
+
+		MLPGraphLayer(std::vector<MLPGraphNode> &&neurons,
+						ActivationFunction *af,
+						MLPGraphLayer *input = nullptr,
+						MLPGraphLayer *output = nullptr);
+		
+		MLPGraphLayer(MLPGraphLayer &) = default;
+		MLPGraphLayer(MLPGraphLayer &&) = default;
+		MLPGraphLayer& operator=(MLPGraphLayer &) = default;
 		
 		void	GenerateLayer();
 
 		const MLPGraphNode	&operator[](int index) const;
+		MLPGraphNode		&operator[](int index);
 
 		void	SetLayerValues(Matrix<float> &values);
 		void	SetError	  (Matrix<float> &target);
@@ -38,7 +50,8 @@ namespace s21 {
 		void	CalculateError(std::vector<float> *target = nullptr);
 		void	UpdateWeights(float lr);
 
-		size_t Size();
+		size_t InputSize() const;
+		size_t Size() const;
 	};
 
 	std::istream &operator>>(std::istream &is, MLPGraphLayer &layer);
