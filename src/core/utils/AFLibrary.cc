@@ -18,6 +18,7 @@ namespace s21 {
   }
 
   float d_linear(float x) {
+    (void)x;
     return 1;
   }
 

@@ -21,7 +21,7 @@ namespace s21 {
 		virtual void Backward(Matrix<float>) = 0;
 		virtual int Predict(Matrix<float>) = 0;
 		// virtual int getMostProbablePrediction(std::vector<float> vector) = 0;
-		virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "") = 0;
+		// virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "") = 0;
 
 		int getMostProbablePrediction(std::vector<float> value) {
 			double max = value[0];
@@ -36,8 +36,7 @@ namespace s21 {
 			}
 			return prediction; // +1 for dataset (who tf thought that it would be a good idea to numerate dataset choices from 1 and not from 0)
 		}
-
-//		virtual IMLPModel *Instance(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr);
+		virtual ~IMLPModel() {}
 	};
 }
 

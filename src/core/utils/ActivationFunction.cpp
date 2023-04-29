@@ -78,7 +78,7 @@ namespace s21 {
 		std::string type;
 		
 		is >> type;
-		af = new ActivationFunction(type);
+		*af = *(new ActivationFunction(type));
 		return is;
 	}
 

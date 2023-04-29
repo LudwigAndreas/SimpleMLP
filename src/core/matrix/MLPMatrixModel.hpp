@@ -34,11 +34,15 @@ class MLPMatrixModel : public s21::IMLPModel {
 
 		float get_lr() const;
 
+		ActivationFunction *get_af() const;
+
 		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer);
 
 		void set_layers(std::vector<MLPMatrixLayer *> l);
 
 		void set_lr(float lr);
+
+		void set_af(ActivationFunction *af);
 
 		Matrix<float> NormalizedInput(Matrix<float> matrix);
 
@@ -46,11 +50,15 @@ class MLPMatrixModel : public s21::IMLPModel {
 		
 		void Backward(Matrix<float> target) override;
 
-		float TestOutput(std::vector<s21::Sample> samples, bool silent_mode = false, std::string filename = "") override;
+		// float TestOutput(std::vector<s21::Sample> samples, bool silent_mode = false, std::string filename = "") override;
 
 		int Predict(Matrix<float> x) override;
 
-		static IMLPModel *MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction *func, bool use_auto_decrease = true);
+		static IMLPModel *MakeModel(size_t in_channels, size_t out_channels,
+									size_t hidden_units_per_layer,
+									int hidden_layers, float lr, 
+									ActivationFunction *func, 
+									bool use_auto_decrease = true);
 	};
 
 	template <typename T>

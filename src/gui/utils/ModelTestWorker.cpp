@@ -23,7 +23,7 @@ void ModelTestWorker::process() {
 				return;
 			int expected = model->getMostProbablePrediction(dataset[0][k].y.ToVector());
 			int got = model->Predict(dataset[0][k].x);
-			for (int l = 0; l < result->size(); ++l) {
+			for (size_t l = 0; l < result->size(); ++l) {
 				if (expected != l && got != l)
 					(*result)[l].tn++;
 				else if (expected == l && got == l)

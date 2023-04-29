@@ -144,5 +144,5 @@ void MainWindow::on_export_model_push_button_pressed()
     }
 	//	QDir d = QFileInfo(file_path).absoluteFilePath();
 	// TODO rewrite for not matrix model (made in universal)
-	s21::MLPSerializer<float>::SerializeMLPMatrixModel((s21::MLPMatrixModel *)current_model, file_path.toStdString());
+	s21::MLPSerializer<float>::SerializeMLPModel((s21::MLPMatrixModel *)current_model, file_path.toStdString());
 }

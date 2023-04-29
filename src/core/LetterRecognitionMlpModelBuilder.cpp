@@ -1,5 +1,6 @@
 #include "LetterRecognitionMlpModelBuilder.hpp"
 #include "matrix/MLPMatrixModel.hpp"
+#include "graph/MLPGraphModel.hpp"
 
 #include "../libs21/include/libs21.h"
 
@@ -92,16 +93,15 @@ s21::LetterRecognitionMLPModelBuilder::GetResult() {
 				use_auto_decrease
 				);
 	} else if (base == PerceptronBase::Graph) {
-		// return MLPGraphModel::MakeModel(
-		// 		in_channels,
-		// 		out_channels,
-		// 		hidden_units_per_layer,
-		// 		hidden_layers,
-		// 		learning_rate,
-		// 		func,
-		// 		use_auto_decrease
-		// 		);
-		return nullptr;
+		return MLPGraphModel::MakeModel(
+				in_channels,
+				out_channels,
+				hidden_units_per_layer,
+				hidden_layers,
+				learning_rate,
+				func,
+				use_auto_decrease
+				);
 	}
 	return nullptr;
 }

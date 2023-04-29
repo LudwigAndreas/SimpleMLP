@@ -9,7 +9,7 @@ namespace s21 {
 		// raw				= Matrix<float>(1, weight_matrices.get_rows());
 	}
 
-	MLPMatrixLayer::MLPMatrixLayer(int in) : is_output_layer(true) {
+	MLPMatrixLayer::MLPMatrixLayer() : is_output_layer(true) {
 		// neuron_values	= Matrix<float>(1, in);
 		// raw				= Matrix<float>(1, in);
 	}
