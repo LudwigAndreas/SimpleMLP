@@ -5,25 +5,29 @@
 
 TestDataInfoDialog::TestDataInfoDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::TestDataInfoDialog) {
-  ui->setupUi(this);
-  setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+    ui->setupUi(this);
+    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 }
 
-TestDataInfoDialog::~TestDataInfoDialog() { delete ui; }
+TestDataInfoDialog::~TestDataInfoDialog() {
+    delete ui;
+}
 
 void TestDataInfoDialog::SetModelMetrics(int size, float recall, float precision, float accuracy) {
-  this->recall = recall;
-  this->precision = precision;
-  this->accuracy = accuracy;
-  this->size = size;
+    this->recall = recall;
+    this->precision = precision;
+    this->accuracy = accuracy;
+    this->size = size;
 }
 
-void TestDataInfoDialog::on_pushButton_pressed() { this->close(); }
+void TestDataInfoDialog::on_pushButton_pressed() {
+    this->close();
+}
 
 void TestDataInfoDialog::showEvent(QShowEvent *event) {
-  QDialog::showEvent(event);
+    QDialog::showEvent(event);
 
-  std::stringstream ss;
+    std::stringstream ss;
 
 //  if (result != nullptr) {
 //    int size = calculate_size(result);

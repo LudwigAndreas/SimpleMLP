@@ -26,121 +26,121 @@ class MainWindow;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
-  int getNumOfHiddenLayers() const;
+    int getNumOfHiddenLayers() const;
 
-  std::string getActivationFunc() const;
+    std::string getActivationFunc() const;
 
-  int getHiddenUnitsPerLayer() const;
+    int getHiddenUnitsPerLayer() const;
 
-  std::string getPerceptionBase() const;
+    std::string getPerceptionBase() const;
 
-  float getLearningRate() const;
+    float getLearningRate() const;
 
-  int getNumOfEpochs() const;
+    int getNumOfEpochs() const;
 
-  int getTestingDatasetFraction() const;
+    int getTestingDatasetFraction() const;
 
-  void update_testing_status(int completion);
+    void update_testing_status(int completion);
 
-  void update_training_status(int epoch, int group, float accuracy);
+    void update_training_status(int epoch, int group, float accuracy);
 
-  void show_predict_window();
+    void show_predict_window();
 
-  void onModelGuessed(char letter);
+    void onModelGuessed(char letter);
 
-  void ConnectController();
+    void ConnectController();
 
 private slots:
 
-  void on_train_model_push_button_pressed();
+    void on_train_model_push_button_pressed();
 
-  void on_test_model_push_button_pressed();
+    void on_test_model_push_button_pressed();
 
-  void on_tabWidget_currentChanged(int index);
+    void on_tabWidget_currentChanged(int index);
 
-  void on_to_train_push_button_pressed();
+    void on_to_train_push_button_pressed();
 
-  void on_predict_push_button_pressed();
+    void on_predict_push_button_pressed();
 
-  void on_start_training_push_button_pressed();
+    void on_start_training_push_button_pressed();
 
-  //  void update_training_status(int epoch, int group, float accuracy);
+    //  void update_training_status(int epoch, int group, float accuracy);
 
-  void on_toolButton_pressed();
+    void on_toolButton_pressed();
 
-  void OnModelConfigWasUploaded();
+    void OnModelConfigWasUploaded();
 
-  void onTrainingDatasetWasUploaded();
+    void onTrainingDatasetWasUploaded();
 
-  void onTestingDatasetWasUploaded();
+    void onTestingDatasetWasUploaded();
 
-  void on_toolButton_3_pressed();
+    void on_toolButton_3_pressed();
 
-  void on_test_model_push_button_2_pressed();
+    void on_test_model_push_button_2_pressed();
 
-  void on_pushButton_pressed();
+    void on_pushButton_pressed();
 
-  void on_toolButton_4_pressed();
+    void on_toolButton_4_pressed();
 
-  //    void OnModelConfigWasUploaded();
-  //
-  //    void onTrainingDatasetWasUploaded();
-  //
-  //    void onTestingDatasetWasUploaded();
-  //
-  //
-  //
-  //
-  //    void on_testing_size_horizontal_slider_valueChanged(int value);
-  //
-        void onFileWasDrawn();
-  //
-  //	void on_export_model_push_button_pressed();
-  //
+    //    void OnModelConfigWasUploaded();
+    //
+    //    void onTrainingDatasetWasUploaded();
+    //
+    //    void onTestingDatasetWasUploaded();
+    //
+    //
+    //
+    //
+    //    void on_testing_size_horizontal_slider_valueChanged(int value);
+    //
+    void onFileWasDrawn();
+    //
+    //	void on_export_model_push_button_pressed();
+    //
 //      void show_predict_window(std::vector<s21::ConfusionMatrix> *result);
-  //	void update_testing_status(int completion);
-  //
+    //	void update_testing_status(int completion);
+    //
 
-  void on_testing_size_horizontal_slider_valueChanged(int value);
+    void on_testing_size_horizontal_slider_valueChanged(int value);
 
-  void on_export_model_push_button_pressed();
+    void on_export_model_push_button_pressed();
 
 signals:
-  void ModelConfigured();
+    void ModelConfigured();
 
-  void ModelImported(QFile *file);
+    void ModelImported(QFile *file);
 
-  void TrainModel(QFile *file);
+    void TrainModel(QFile *file);
 
-  void StopTraining();
+    void StopTraining();
 
-  void TestModel(QFile *file);
+    void TestModel(QFile *file);
 
-  void LetterSaved();
+    void LetterSaved();
 
-  void SaveModel(std::string file_path);
+    void SaveModel(std::string file_path);
 
 private:
-  Ui::MainWindow *ui;
-  QFile *model_config_file;
-  QFile *training_dataset_file;
-  QFile *testing_dataset_file;
-  QLineSeries *chart_series;
-  ModelController *m_controller;
+    Ui::MainWindow *ui;
+    QFile *model_config_file;
+    QFile *training_dataset_file;
+    QFile *testing_dataset_file;
+    QLineSeries *chart_series;
+    ModelController *m_controller;
 
-  void ConnectDragNDrop();
-  void InitChart();
+    void ConnectDragNDrop();
+    void InitChart();
 
-  bool exitFromTrainPage();
-  bool exitFromConfigPage();
-  void modelConfigFileWasUploaded(QFile *file);
-  void trainDatasetFileWasUploaded(QFile *file);
-  void testDatasetFileWasUploaded(QFile *file);
+    bool exitFromTrainPage();
+    bool exitFromConfigPage();
+    void modelConfigFileWasUploaded(QFile *file);
+    void trainDatasetFileWasUploaded(QFile *file);
+    void testDatasetFileWasUploaded(QFile *file);
 };
 #endif // MAINWINDOW_H
