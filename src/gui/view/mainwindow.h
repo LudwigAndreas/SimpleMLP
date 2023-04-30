@@ -66,7 +66,11 @@ private slots:
 
   void on_to_train_push_button_pressed();
 
+  void on_to_configure_push_button_pressed();
+
   void on_predict_push_button_pressed();
+
+  void on_to_configure_push_button_2_pressed();
 
   void on_start_training_push_button_pressed();
 
@@ -99,7 +103,7 @@ private slots:
   //
   //    void on_testing_size_horizontal_slider_valueChanged(int value);
   //
-        void onFileWasDrawn();
+//        void onFileWasDrawn();
   //
   //	void on_export_model_push_button_pressed();
   //
