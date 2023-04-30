@@ -43,17 +43,13 @@ float CrossValidation(s21::IMLPModel *model, s21::Dataset dataset, bool silent_m
 		training_accuracy = 0;
 		trained_on = 0;
 		for (int j = 0; j < (int) dataset.size(); ++j) {
-			std::cerr << "\rEpoch #" << i << ", " << trained_on << '/' << dataset.size() - 1 << " groups trained on. ";
 			if (j)
 				std::cerr << "Current accuracy: " << (training_accuracy * 100) / ((float) trained_on) << '%';
 			if (j != dataset.current_iteration && ++trained_on)
 				training_accuracy += model->Train(dataset[j], true);
 			
 		}
-		std::cerr << "\rEpoch #" << i + 1 << ", " << trained_on << '/' << dataset.size() << " groups trained on.\n";
-		std::cerr << "Train: " << (training_accuracy * 100) / ((float) trained_on) << "% accuracy" << std::endl;
 		testing_accuracy = model->Test(dataset[dataset.current_iteration], true);
-		std::cerr << "Test:  " << testing_accuracy * 100 << "% accuracy" << std::endl;
 		++dataset.current_iteration;
 	}
 	return testing_accuracy;

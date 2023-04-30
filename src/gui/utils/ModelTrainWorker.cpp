@@ -8,7 +8,7 @@
 ModelTrainWorker::ModelTrainWorker() {}
 
 void ModelTrainWorker::process() {
-	try {
+	// try {
 		s21::Dataset dataset(ReadDataset(dataset_file_name), num_of_epochs);
 		for (size_t i = 0; i < dataset.size(); ++i) {
 			int correct_guesses = 0;
@@ -34,12 +34,29 @@ void ModelTrainWorker::process() {
 								   ((float)correct_guesses * 100) / dataset[j].size());
 
 			}
+			emit MeanErrorCalculated(i + 1, this->CalculateMSE(dataset[dataset.current_iteration % dataset.size()]));
 			SaveModel(model, i);
 			++dataset.current_iteration;
 		}
 		return;
-	} catch (std::exception &e) {
-		throw ModelProcessingException("Data processing error");
+	// } catch (std::exception &e) {
+		// throw ModelProcessingException("Data processing error");
+	// }
+}
+
+float ModelTrainWorker::CalculateMSE(s21::DatasetGroup &batch) {
+	float mse = 0;
+	float tmp;
+	for (size_t i = 0; i < batch.size(); ++i) {
+		tmp = 0;
+		auto prediction = model->Forward(batch[i].x);
+		for (size_t j = 0; j < prediction.size(); ++j) {
+			tmp += std::pow(prediction[j] - batch[i].x[j], 2);
+		}
+		tmp /= prediction.size();
+		mse += tmp;
 	}
+	mse /= batch.size();
+	return mse;
 }
 

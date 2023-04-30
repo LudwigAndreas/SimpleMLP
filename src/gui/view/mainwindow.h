@@ -45,6 +45,8 @@ private slots:
 
 	void update_training_status(int epoch, int group, float accuracy);
 
+    void MSEUpdated(int epoch, float mse);
+
 	void on_toolButton_pressed();
 
     void OnModelConfigWasUploaded();
@@ -87,6 +89,7 @@ private:
 	QThread *testing_thread;
 	s21::LetterRecognitionMLPModelBuilder *builder;
 	QLineSeries *chart_series;
+	QLineSeries *mse_series;
 
 	bool exitFromTrainPage();
 	bool exitFromConfigPage();

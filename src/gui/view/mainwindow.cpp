@@ -27,14 +27,22 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->chart_widget->hide();
 
 	this->chart_series = new QLineSeries();
+	this->mse_series = new QLineSeries();
 	auto *chart = new QChart();
 	chart->legend()->hide();
 	chart->addSeries(this->chart_series);
+	chart->addSeries(this->mse_series);
 	auto *y = new QValueAxis();
 	y->setMax(100);
-	y->setMin(0.1);
+	y->setMin(0.0);
 	chart->addAxis(y, Qt::AlignLeft);
+	auto *mse_y = new QValueAxis();
+	mse_y->setMax(1.0);
+	mse_y->setMin(0.0);
+	chart->addAxis(mse_y, Qt::AlignRight);
 	chart_series->attachAxis(y);
+	mse_series->attachAxis(mse_y);
+	mse_series->setColor(QColor::fromRgbF(0.8, 0.1, 0.1));
 	ui->chart_widget->setChart(chart);
 	ui->chart_widget->setRenderHint(QPainter::Antialiasing);
 //		ui->chart_widget->setCurrentWidget(chart);

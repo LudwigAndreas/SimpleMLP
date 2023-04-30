@@ -113,7 +113,7 @@ void MainWindow::onFileWasDrawn() {
 		matrix_image.set_cols(new_height * new_width);
 		matrix_image.set_rows(1);
 		std::stringstream ss;
-		ss << "<html><head/><body><p><span style=\" font-size:288pt;\">" <<
+		ss << "<html><head/><body><p><span style=\" font-size:192pt;\" >" <<
 		   (char) ('A' + current_model->Predict(matrix_image))
 		   << "</span></p></body></html>";
 		ui->prediction_result_label->setText(QString(ss.str().data()));
