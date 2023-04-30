@@ -34,8 +34,6 @@ void ModelController::HandleModelConfigured() {
   int hiddenUnitsPerLayer = window->getHiddenUnitsPerLayer();
   std::string perceptionBase = window->getPerceptionBase();
   float learningRate = window->getLearningRate();
-  if (current_model != nullptr)
-    delete current_model;
   current_model = builder->HiddenLayers(numOfHiddenLayers)
                       ->ActivationFunc(activationFunc)
                       ->HiddenUnitsPerLayer(hiddenUnitsPerLayer)
@@ -45,10 +43,8 @@ void ModelController::HandleModelConfigured() {
 }
 
 void ModelController::HandleModelImported(QFile *file) {
-  if (current_model != nullptr)
-    delete current_model;
-  current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
-      file->fileName().toStdString());
+//  current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
+//      file->fileName().toStdString());
 }
 
 bool ModelController::IsTrainingRunning() {
@@ -56,8 +52,8 @@ bool ModelController::IsTrainingRunning() {
 }
 
 void ModelController::HandleStartTraining(QFile *file) {
-  if (training_thread != nullptr) {
-    this->training_thread = new QThread();
+    if (this->training_thread != nullptr and !this->training_thread->isRunning())
+      this->training_thread = new QThread();
     if (training_worker == nullptr)
       delete training_worker;
     this->training_worker = new ModelTrainWorker();
@@ -80,7 +76,6 @@ void ModelController::HandleStartTraining(QFile *file) {
             SLOT(deleteLater()));
 
     this->training_thread->start();
-  }
 }
 
 void ModelController::TrainingStatusChanged(int epoch, int completion,
