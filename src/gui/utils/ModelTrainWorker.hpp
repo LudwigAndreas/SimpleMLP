@@ -17,8 +17,11 @@ public slots:
 
 signals:
 	void statusChanged(int epoch, int completion, float accuracy);
+	void MeanErrorCalculated(int epoch, float mse);
 
 	void finished();
+private:
+	float CalculateMSE(s21::DatasetGroup &batch);
 
 };
 

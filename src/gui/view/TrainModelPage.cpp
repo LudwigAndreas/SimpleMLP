@@ -123,6 +123,8 @@ void MainWindow::on_start_training_push_button_pressed()
 			this->training_thread, SLOT(quit()));
 	connect(training_worker, SIGNAL(statusChanged(int, int, float)),
 			this, SLOT(update_training_status(int, int, float)));
+	connect(training_worker, SIGNAL(MeanErrorCalculated(int, float)),
+			this, SLOT(MSEUpdated(int, float)));
 	connect(training_worker, SIGNAL(finished()),
 			training_worker, SLOT(deleteLater()));
 	connect(this->training_thread, SIGNAL(finished()),
@@ -138,6 +140,8 @@ void MainWindow::on_start_training_push_button_pressed()
 	ui->chart_widget->chart()->addAxis(x, Qt::AlignBottom);
 	chart_series->attachAxis(x);
 	this->chart_series->clear();
+	mse_series->attachAxis(x);
+	this->mse_series->clear();
 	ui->chart_widget->show();
 }
 
@@ -160,8 +164,6 @@ void MainWindow::update_training_status(int epoch, int completion, float accurac
 	ui->train_info_text_label->setText(ss.str().data());
 	ui->training_progress_bar->setValue(completion);
 	this->chart_series->append(epoch, accuracy);
-	std::cerr << epoch << " " << accuracy << std::endl;
-	std::cerr << chart_series->chart() << std::endl;
 	setUpdatesEnabled(this->chart_series);
 	if (ui->training_progress_bar->value() == 100) {
 		ui->test_model_push_button_2->setEnabled(true);
@@ -170,5 +172,9 @@ void MainWindow::update_training_status(int epoch, int completion, float accurac
 		delete training_thread;
 		training_thread = nullptr;
 	}
+}
+
+void MainWindow::MSEUpdated(int epoch, float mse) {
+	this->mse_series->append(epoch, mse);
 }
 
