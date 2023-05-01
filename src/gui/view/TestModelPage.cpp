@@ -6,6 +6,21 @@
 #include "ui_mainwindow.h"
 
 //  TODO remove exitFromTestingPage and add onCreate analog
+
+void MainWindow::onStartTestingPage() {
+  ui->paint_view->clear();
+  ui->prediction_result_label->clear();
+  ui->testing_progress_bar->hide();
+  ui->testing_progress_bar->setValue(0);
+  ui->file_path_label_3->clear();
+  ui->import_test_dataset_label->clear();
+  ui->import_test_dataset_label->setText(
+      "<html><head/><body><p><span style=\" font-size:18pt;\">Drag and drop "
+      "test dataset file</span></p><p><span style=\" font-size:18pt;\"> "
+      "(should be *.csv)</span></p></body></html>");
+  ui->tabWidget_2->setCurrentIndex(0);
+}
+
 void MainWindow::on_to_configure_push_button_2_pressed() {
   ui->stackedWidget->setCurrentIndex(0);
   ui->predict_push_button->setDisabled(true);
