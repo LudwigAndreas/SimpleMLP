@@ -17,10 +17,10 @@ MainWindow::MainWindow(QWidget *parent)
   this->model_config_file = nullptr;
   this->training_dataset_file = nullptr;
   this->testing_dataset_file = nullptr;
-//  this->testing_worker = nullptr;
-//  this->training_worker = nullptr;
-//  this->builder = new s21::LetterRecognitionMLPModelBuilder();
-//  ui->chart_widget->setCurrentWidget(chart);
+  //  this->testing_worker = nullptr;
+  //  this->training_worker = nullptr;
+  //  this->builder = new s21::LetterRecognitionMLPModelBuilder();
+  //  ui->chart_widget->setCurrentWidget(chart);
 
   ui->stackedWidget->setCurrentIndex(0);
   ui->testing_progress_bar->setValue(0);
@@ -86,15 +86,32 @@ void MainWindow::InitChart() {
 }
 
 void MainWindow::ConnectController() {
-  connect(this, SIGNAL(ModelConfigured()), m_controller, SLOT(HandleModelConfigured()));
-  connect(this, SIGNAL(ModelImported(QFile *)), m_controller, SLOT(HandleModelImported(QFile *)));
-  connect(this, SIGNAL(TrainModel(QFile *)), m_controller, SLOT(HandleStartTraining(QFile *)));
+  connect(this, SIGNAL(ModelConfigured()), m_controller,
+          SLOT(HandleModelConfigured()));
+  connect(this, SIGNAL(ModelImported(QFile *)), m_controller,
+          SLOT(HandleModelImported(QFile *)));
+  connect(this, SIGNAL(TrainModel(QFile *)), m_controller,
+          SLOT(HandleStartTraining(QFile *)));
   connect(this, SIGNAL(StopTraining()), m_controller, SLOT(QuitTraining()));
-  connect(this, SIGNAL(TestModel(QFile *)), m_controller, SLOT(HandleStartTesting(QFile *)));
+  connect(this, SIGNAL(TestModel(QFile *)), m_controller,
+          SLOT(HandleStartTesting(QFile *)));
   connect(this, SIGNAL(LetterSaved()), m_controller, SLOT(FileWasDrawn()));
-//  connect(this, SIGNAL(SaveModel(std::string)), m_controller, SLOT(Save));
+  //  connect(this, SIGNAL(SaveModel(std::string)), m_controller, SLOT(Save));
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
-int MainWindow::getTestingDatasetFraction() const { return ui->testing_size_horizontal_slider->value(); }
+int MainWindow::getTestingDatasetFraction() const {
+  return ui->testing_size_horizontal_slider->value();
+}
+
+void MainWindow::on_stackedWidget_currentChanged(int index)
+{
+  if (index == 0)
+    onStartConfigurePage();
+  else if (index == 1)
+    onStartTrainingPage();
+  else if (index == 2)
+    onStartTestingPage();
+}
+

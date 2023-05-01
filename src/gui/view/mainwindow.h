@@ -74,8 +74,6 @@ private slots:
 
   void on_start_training_push_button_pressed();
 
-  //  void update_training_status(int epoch, int group, float accuracy);
-
   void on_toolButton_pressed();
 
   void OnModelConfigWasUploaded();
@@ -92,28 +90,11 @@ private slots:
 
   void on_toolButton_4_pressed();
 
-  //    void OnModelConfigWasUploaded();
-  //
-  //    void onTrainingDatasetWasUploaded();
-  //
-  //    void onTestingDatasetWasUploaded();
-  //
-  //
-  //
-  //
-  //    void on_testing_size_horizontal_slider_valueChanged(int value);
-  //
-//        void onFileWasDrawn();
-  //
-  //	void on_export_model_push_button_pressed();
-  //
-//      void show_predict_window(std::vector<s21::ConfusionMatrix> *result);
-  //	void update_testing_status(int completion);
-  //
-
   void on_testing_size_horizontal_slider_valueChanged(int value);
 
   void on_export_model_push_button_pressed();
+
+  void on_stackedWidget_currentChanged(int index);
 
 signals:
   void ModelConfigured();
@@ -141,8 +122,12 @@ private:
   void ConnectDragNDrop();
   void InitChart();
 
-  bool exitFromTrainPage();
-  bool exitFromConfigPage();
+  void onStartConfigurePage();
+  void onStartTrainingPage();
+  void onStartTestingPage();
+
+  bool checkTrainingStatus();
+
   void modelConfigFileWasUploaded(QFile *file);
   void trainDatasetFileWasUploaded(QFile *file);
   void testDatasetFileWasUploaded(QFile *file);

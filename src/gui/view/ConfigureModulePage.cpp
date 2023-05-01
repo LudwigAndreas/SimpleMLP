@@ -6,8 +6,7 @@
 
 #include "ui_mainwindow.h"
 
-//  TODO remove exitFromConfigPage and add onCreate analog
-bool MainWindow::exitFromConfigPage() {
+void MainWindow::onStartConfigurePage() {
   ui->file_path_label->clear();
   ui->import_model_config_label->clear();
   ui->import_model_config_label->setText(
@@ -15,7 +14,9 @@ bool MainWindow::exitFromConfigPage() {
       "Drag and drop model config file"
       "</span></p><p><span style=\" font-size:18pt;\">"
       " (should be *.mlpmodel)</span></p></body></html>");
-  return true;
+  ui->train_model_push_button->setEnabled(true);
+  ui->test_model_push_button->setDisabled(true);
+  ui->tabWidget->setCurrentIndex(0);
 }
 
 void MainWindow::on_train_model_push_button_pressed() {
@@ -36,15 +37,15 @@ void MainWindow::on_train_model_push_button_pressed() {
     emit ModelImported(model_config_file);
   } else {
     QMessageBox::information(this, tr("Unable to create model"),
-                             "There is an error in creating model");
+                             "There is no configured model");
+    return;
   }
-  exitFromConfigPage();
   ui->stackedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::on_test_model_push_button_pressed() {
-  exitFromConfigPage();
-  ui->stackedWidget->setCurrentIndex(2);
+  if (this->model_config_file != nullptr)
+    ui->stackedWidget->setCurrentIndex(2);
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index) {

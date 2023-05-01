@@ -5,8 +5,25 @@
 
 #include "ui_mainwindow.h"
 
-bool MainWindow::exitFromTrainPage() {
-//  TODO remove exitFromTrainPage and add onCreate analog
+void MainWindow::onStartTrainingPage() {
+
+  ui->training_progress_bar->hide();
+  ui->training_progress_bar->setValue(0);
+  ui->num_of_epochs_spin_box->show();
+  ui->chart_widget->hide();
+  ui->train_info_text_label->setDisabled(true);
+  ui->start_training_push_button->show();
+  ui->start_training_push_button->setDisabled(true);
+  ui->import_train_dataset_label->clear();
+  ui->import_train_dataset_label->setText(
+      "<html><head/><body><p><span style=\" "
+      "font-size:14pt;\">Drag and drop train dataset file"
+      "</span></p><p><span style=\" font-size:14pt;\">"
+      " (should be *.csv)</span></p></body></html>");
+  ui->file_path_label_2->clear();
+}
+
+bool MainWindow::checkTrainingStatus() {
   if (m_controller->IsTrainingRunning()) {
     QMessageBox training_is_running_message;
     training_is_running_message.setText("If you stop the learning process, "
@@ -27,30 +44,16 @@ bool MainWindow::exitFromTrainPage() {
     delete this->training_dataset_file;
     this->training_dataset_file = nullptr;
   }
-  ui->training_progress_bar->hide();
-  ui->num_of_epochs_spin_box->show();
-  ui->training_progress_bar->setValue(0);
-  ui->chart_widget->hide();
-  ui->train_info_text_label->setDisabled(true);
-  ui->start_training_push_button->show();
-  ui->start_training_push_button->setDisabled(true);
-  ui->import_train_dataset_label->clear();
-  ui->import_train_dataset_label->setText(
-      "<html><head/><body><p><span style=\" "
-      "font-size:14pt;\">Drag and drop train dataset file"
-      "</span></p><p><span style=\" font-size:14pt;\">"
-      " (should be *.csv)</span></p></body></html>");
-  ui->file_path_label_2->clear();
   return true;
 }
 
 void MainWindow::on_test_model_push_button_2_pressed() {
-  if (exitFromTrainPage())
+  if (checkTrainingStatus())
     ui->stackedWidget->setCurrentIndex(2);
 }
 
 void MainWindow::on_to_configure_push_button_pressed() {
-  if (exitFromTrainPage())
+  if (checkTrainingStatus())
     ui->stackedWidget->setCurrentIndex(0);
 }
 
@@ -134,12 +137,14 @@ void MainWindow::update_training_status(int epoch, int completion,
      << "</span></p></body></html>";
   ui->train_info_text_label->setText(ss.str().data());
   ui->training_progress_bar->setValue(completion);
-  this->chart_series->append(((float)completion) / (getNumOfEpochs() * (getNumOfEpochs() - 1)), accuracy);
-//  std::cerr << epoch << " " << accuracy << std::endl;
-//  std::cerr << chart_series->chart() << std::endl;
+  this->chart_series->append(((float)completion) /
+                                 (getNumOfEpochs() * (getNumOfEpochs() - 1)),
+                             accuracy);
+  //  std::cerr << epoch << " " << accuracy << std::endl;
+  //  std::cerr << chart_series->chart() << std::endl;
   setUpdatesEnabled(this->chart_series);
   if (ui->training_progress_bar->value() == 100) {
-//    TODO move this into finish slot
+    //    TODO move this into finish slot
     ui->test_model_push_button_2->setEnabled(true);
     emit StopTraining();
   }

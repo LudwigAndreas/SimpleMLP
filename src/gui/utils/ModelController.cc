@@ -43,8 +43,8 @@ void ModelController::HandleModelConfigured() {
 }
 
 void ModelController::HandleModelImported(QFile *file) {
-//  current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
-//      file->fileName().toStdString());
+  //  current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
+  //      file->fileName().toStdString());
 }
 
 bool ModelController::IsTrainingRunning() {
@@ -52,30 +52,28 @@ bool ModelController::IsTrainingRunning() {
 }
 
 void ModelController::HandleStartTraining(QFile *file) {
-    if (this->training_thread != nullptr and !this->training_thread->isRunning())
-      this->training_thread = new QThread();
-    if (training_worker == nullptr)
-      delete training_worker;
-    this->training_worker = new ModelTrainWorker();
-    training_worker->setModel(current_model);
-    training_worker->setNumOfEpochs(window->getNumOfEpochs());
-    training_worker->setDatasetFileName(file->fileName().toStdString());
-    training_worker->moveToThread(this->training_thread);
+  this->training_thread = new QThread();
+  this->training_worker = new ModelTrainWorker();
+  training_worker->setModel(current_model);
+  training_worker->setNumOfEpochs(window->getNumOfEpochs());
+  training_worker->setDatasetFileName(file->fileName().toStdString());
+  training_worker->moveToThread(this->training_thread);
 
-    connect(this->training_thread, SIGNAL(started()), training_worker,
-            SLOT(process()));
-    connect(training_worker, SIGNAL(finished()), this->training_thread,
-            SLOT(quit()));
-    connect(training_worker, SIGNAL(statusChanged(int, int, float)), this,
-            SLOT(TrainingStatusChanged(int, int, float)));
-    connect(training_worker, SIGNAL(finished()), training_worker,
-            SLOT(deleteLater()));
-    //  connect(training_worker, SIGNAL(),
-    //          this, SLOT()); //TODO add finished signal and slot that handle process finish
-    connect(this->training_thread, SIGNAL(finished()), this->training_thread,
-            SLOT(deleteLater()));
+  connect(this->training_thread, SIGNAL(started()), training_worker,
+          SLOT(process()));
+  connect(training_worker, SIGNAL(finished()), this->training_thread,
+          SLOT(quit()));
+  connect(training_worker, SIGNAL(statusChanged(int, int, float)), this,
+          SLOT(TrainingStatusChanged(int, int, float)));
+  connect(training_worker, SIGNAL(finished()), training_worker,
+          SLOT(deleteLater()));
+  //  connect(training_worker, SIGNAL(),
+  //          this, SLOT()); //TODO add finished signal and slot that handle
+  //          process finish
+  connect(this->training_thread, SIGNAL(finished()), this->training_thread,
+          SLOT(deleteLater()));
 
-    this->training_thread->start();
+  this->training_thread->start();
 }
 
 void ModelController::TrainingStatusChanged(int epoch, int completion,
