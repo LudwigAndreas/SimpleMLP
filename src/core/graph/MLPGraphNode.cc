@@ -1,4 +1,4 @@
-// #include "MLPGraphNode.hpp"
+// #include "MLPGraphNode.h"
 
 // namespace s21 {
 // 	MLPGraphNode::MLPGraphNode(int input_size) {

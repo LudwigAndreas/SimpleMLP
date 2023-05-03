@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "src/core/matrix/Matrix.hpp"
-#include "src/core/exceptions/MatrixException.hpp"
+#include "core/matrix/Matrix.h"
+#include "core/exceptions/MatrixException.h"
 
 class MatrixTest : public ::testing::Test {
 protected:

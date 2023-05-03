@@ -1,13 +1,13 @@
-#include "src/gui/view/mainwindow.h"
+#include "mainwindow.h"
 
 #include <sstream>
 
 #include <QLogValueAxis>
 #include <QValueAxis>
 
-#include "src/core/LetterRecognitionMlpModelBuilder.hpp"
-#include "src/gui/utils/importfileitem.h"
-#include "src/gui/view/testdatainfodialog.h"
+#include "core/LetterRecognitionMlpModelBuilder.h"
+#include "gui/utils/importfileitem.h"
+#include "gui/view/testdatainfodialog.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)

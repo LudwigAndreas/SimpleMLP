@@ -1,11 +1,11 @@
-#include "ModelWorker.hpp"
+#include "ModelWorker.h"
 
 #include <QDebug>
 
 #include "sstream"
 
-#include "src/core/utils/MLPSerializer.hpp"
-#include "src/core/exceptions/ModelProcessingException.hpp"
+#include "core/utils/MLPSerializer.h"
+#include "core/exceptions/ModelProcessingException.h"
 
 
 ModelWorker::ModelWorker() {

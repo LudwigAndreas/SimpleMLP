@@ -1,10 +1,10 @@
-#ifndef SIMPLEMLP_MODELTRAINWORKER_HPP
-#define SIMPLEMLP_MODELTRAINWORKER_HPP
+#ifndef SIMPLEMLP_MODELTRAINWORKER_H
+#define SIMPLEMLP_MODELTRAINWORKER_H
 
 #include "QObject"
-#include "src/core/utils/IMLPModel.hpp"
+#include "core/utils/IMLPModel.h"
 
-#include "ModelWorker.hpp"
+#include "ModelWorker.h"
 
 class ModelTrainWorker : public ModelWorker {
 
@@ -22,4 +22,4 @@ signals:
 
 };
 
-#endif //SIMPLEMLP_MODELTRAINWORKER_HPP
+#endif //SIMPLEMLP_MODELTRAINWORKER_H

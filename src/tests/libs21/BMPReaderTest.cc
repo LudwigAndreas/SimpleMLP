@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "src/core/utils/BMPReader.hpp"
-
 #include <gtest/gtest.h>
 #include <fstream>
 #include <iostream>

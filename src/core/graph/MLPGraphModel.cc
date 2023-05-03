@@ -1,4 +1,4 @@
-#include "MLPGraphModel.hpp"
+#include "MLPGraphModel.h"
 
 #include "libs21/include/libs21.h"
 

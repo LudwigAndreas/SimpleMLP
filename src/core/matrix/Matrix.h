@@ -1,5 +1,5 @@
-#ifndef SIMPLEMLP_MATRIX_HPP
-#define SIMPLEMLP_MATRIX_HPP
+#ifndef SIMPLEMLP_MATRIX_H
+#define SIMPLEMLP_MATRIX_H
 
 #include <vector>
 #include <cmath>
@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "../exceptions/MatrixException.hpp"
+#include "../exceptions/MatrixException.h"
 
 namespace s21 {
 	template<typename Type>

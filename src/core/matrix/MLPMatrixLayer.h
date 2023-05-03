@@ -1,8 +1,8 @@
-#ifndef MLPMATRIXLAYER_HPP
-#define MLPMATRIXLAYER_HPP
+#ifndef MLPMATRIXLAYER_H
+#define MLPMATRIXLAYER_H
 
-#include "../utils/IMLPLayer.hpp"
-#include "../matrix/Matrix.hpp"
+#include "../utils/IMLPLayer.h"
+#include "../matrix/Matrix.h"
 
 namespace s21 {
 	struct MLPMatrixLayer : public IMLPLayer {

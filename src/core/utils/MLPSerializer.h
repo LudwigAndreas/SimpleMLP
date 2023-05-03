@@ -1,14 +1,14 @@
 
-#ifndef SIMPLEMLP_MLPSERIALIZER_HPP
-#define SIMPLEMLP_MLPSERIALIZER_HPP
+#ifndef SIMPLEMLP_MLPSERIALIZER_H
+#define SIMPLEMLP_MLPSERIALIZER_H
 
 #include <string>
 #include <fstream>
 #include <algorithm>
 #include <exception>
 
-#include "../matrix/MLPMatrixModel.hpp"
-#include "../graph/MLPGraphModel.hpp"
+#include "../matrix/MLPMatrixModel.h"
+#include "../graph/MLPGraphModel.h"
 #include "../exceptions/UploadFileException.h"
 
 namespace s21 {
@@ -103,4 +103,4 @@ namespace s21 {
 	};	
 }
 
-#endif //SIMPLEMLP_MLPSERIALIZER_HPP
+#endif //SIMPLEMLP_MLPSERIALIZER_H

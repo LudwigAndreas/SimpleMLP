@@ -1,4 +1,4 @@
-#include "MLPMatrixLayer.hpp"
+#include "MLPMatrixLayer.h"
 
 namespace s21 {
 

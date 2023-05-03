@@ -2,13 +2,13 @@
 #define SIMPLEMLP_MODELCONTROLLER_H
 
 #include <QObject>
-
 #include <QFile>
-#include <core/LetterRecognitionMlpModelBuilder.hpp>
-#include <core/utils/IMLPModel.hpp>
 
-#include "ModelTestWorker.hpp"
-#include "ModelTrainWorker.hpp"
+#include "core/LetterRecognitionMlpModelBuilder.h"
+#include "core/utils/IMLPModel.h"
+
+#include "ModelTestWorker.h"
+#include "ModelTrainWorker.h"
 
 class MainWindow;
 

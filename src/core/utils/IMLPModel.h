@@ -1,10 +1,10 @@
-#ifndef IMLPMODEL_HPP
-#define IMLPMODEL_HPP
+#ifndef IMLPMODEL_H
+#define IMLPMODEL_H
 
 #include <vector>
-#include "Sample.hpp"
-#include "ActivationFunction.hpp"
-#include "IMLPLayer.hpp"
+#include "Sample.h"
+#include "ActivationFunction.h"
+#include "IMLPLayer.h"
 
 namespace s21 {
     class IMLPModel {

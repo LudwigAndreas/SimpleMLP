@@ -1,5 +1,5 @@
-#ifndef IMLPLAYER_HPP
-#define IMLPLAYER_HPP
+#ifndef IMLPLAYER_H
+#define IMLPLAYER_H
 
 namespace s21 {
 	class IMLPLayer {

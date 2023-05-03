@@ -1,4 +1,4 @@
-#include "MLPGraphLayer.hpp"
+#include "MLPGraphLayer.h"
 
 namespace s21 {
 	MLPGraphLayer::MLPGraphLayer(size_t size,

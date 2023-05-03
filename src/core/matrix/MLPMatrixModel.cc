@@ -1,5 +1,6 @@
-#include "MLPMatrixModel.hpp"
-#include <libs21/include/libs21.h>
+#include "MLPMatrixModel.h"
+
+#include "libs21/include/libs21.h"
 
 namespace s21 {
 
