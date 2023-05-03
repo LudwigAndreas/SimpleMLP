@@ -1,7 +1,7 @@
-#include "ModelTrainWorker.hpp"
+#include "ModelTrainWorker.h"
 
-#include "src/core/DatasetReading.hpp"
-#include "src/core/exceptions/ModelProcessingException.hpp"
+#include "core/DatasetReading.h"
+#include "core/exceptions/ModelProcessingException.h"
 
 #include <list>
 

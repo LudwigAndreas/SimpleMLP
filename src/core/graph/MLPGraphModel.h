@@ -2,10 +2,10 @@
 
 #include <fstream>
 
-#include "../utils/IMLPModel.hpp"
-#include "../utils/ActivationFunction.hpp"
-#include "../graph/MLPGraphLayer.hpp"
-#include "../DatasetReading.hpp"
+#include "../utils/IMLPModel.h"
+#include "../utils/ActivationFunction.h"
+#include "../graph/MLPGraphLayer.h"
+#include "../DatasetReading.h"
 
 namespace s21 {
 	typedef float T;

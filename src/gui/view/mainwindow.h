@@ -11,13 +11,11 @@
 
 #include <sstream>
 
-#include "src/core/LetterRecognitionMlpModelBuilder.hpp"
-#include "src/core/utils/IMLPModel.hpp"
-
-#include "src/gui/utils/ModelController.h"
-
-#include "src/gui/utils/ModelTestWorker.hpp"
-#include "src/gui/utils/ModelTrainWorker.hpp"
+#include "core/LetterRecognitionMlpModelBuilder.h"
+#include "core/utils/IMLPModel.h"
+#include "gui/controller/ModelController.h"
+#include "gui/controller/ModelTestWorker.h"
+#include "gui/controller/ModelTrainWorker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

@@ -1,0 +1,97 @@
+# Set the minimum required version of CMake
+cmake_minimum_required(VERSION 3.20)
+
+# Set the project name
+if(NOT PROJECT_NAME)
+    set(PROJECT_NAME "Project")
+endif()
+project(${PROJECT_NAME} VERSION 1.0 LANGUAGES CXX)
+
+# Set c++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# Set compilation flags
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror -g -Og")
+set(CMAKE_CXX_FLAGS_RELEASE  "-Wall -Wextra -Werror -Ofast -march=native")
+
+# Include Qt
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Charts)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Charts)
+
+# Enable ui compilation
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+add_executable(${PROJECT_NAME}
+        core/DatasetReading.h
+        core/LetterRecognitionMlpModelBuilder.cc
+        core/graph/MLPGraphNode.cc
+        core/graph/MLPGraphModel.cc
+        core/graph/MLPGraphLayer.cc
+        core/graph/MLPGraphLayer.h
+        core/graph/MLPGraphModel.h
+        core/graph/MLPGraphNode.h
+        core/utils/AFLibrary.cc
+        core/utils/ModelMetrics.cc
+        core/utils/AFLibrary.h
+        core/utils/ModelMetrics.h
+        core/utils/IMLPModel.h
+        core/utils/MLPSerializer.h
+        core/utils/ActivationFunction.cc
+        core/utils/IMLPLayer.h
+        core/utils/ConfusionMatrix.h
+        core/utils/ActivationFunction.h
+        core/utils/Sample.h
+        core/exceptions/MatrixException.h
+        core/exceptions/ModelProcessingException.h
+        core/exceptions/UploadFileException.h
+        core/DatasetReading.cc
+        core/LetterRecognitionMlpModelBuilder.h
+        core/matrix/MLPMatrixLayer.cc
+        core/matrix/MLPMatrixModel.cc
+        core/matrix/MLPMatrixModel.h
+        core/matrix/Matrix.h
+        core/matrix/MLPMatrixLayer.h
+        core/IMLPModelBuilder.h
+        gui/main.cc
+        gui/utils/paintview.h
+        gui/utils/importfileitem.h
+        gui/utils/paintview.cc
+        gui/utils/importfileitem.cc
+        gui/controller/ModelWorker.h
+        gui/controller/ModelController.h
+        gui/controller/ModelTrainWorker.cc
+        gui/controller/ModelWorker.cc
+        gui/controller/ModelController.cc
+        gui/controller/ModelTrainWorker.h
+        gui/controller/ModelTestWorker.h
+        gui/controller/ModelTestWorker.cc
+        gui/view/testdatainfodialog.cc
+        gui/view/TestModelPage.cc
+        gui/view/mainwindow.h
+        gui/view/testdatainfodialog.h
+        gui/view/ConfigureModulePage.cc
+        gui/view/ui_mainwindow.h
+        gui/view/mainwindow.cc
+        gui/view/TrainModelPage.cc
+        gui/view/ui_testdatainfodialog.h
+        )
+
+
+# Import static library
+add_library(libs21 STATIC IMPORTED)
+
+# Set library location for each configuration
+set_target_properties(libs21 PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libs21/lib/libs21.a)
+
+# Link against the required libraries
+target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Charts ${GTEST_BOTH_LIBRARIES} libs21)
+
+# Set the include directories for the project
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Set the output directory for the executable
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")

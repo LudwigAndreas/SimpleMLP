@@ -1,4 +1,4 @@
-#include "src/gui/view/mainwindow.h"
+#include "gui/view/mainwindow.h"
 
 #include <QValueAxis>
 #include <iomanip>

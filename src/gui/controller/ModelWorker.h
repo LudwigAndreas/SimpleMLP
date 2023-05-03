@@ -1,9 +1,9 @@
-#ifndef SIMPLEMLP_MODELWORKER_HPP
-#define SIMPLEMLP_MODELWORKER_HPP
+#ifndef SIMPLEMLP_MODELWORKER_H
+#define SIMPLEMLP_MODELWORKER_H
 
 #include <QObject>
 
-#include "src/core/utils/IMLPModel.hpp"
+#include "core/utils/IMLPModel.h"
 
 class ModelWorker: public QObject {
 	Q_OBJECT
@@ -30,4 +30,4 @@ public slots:
 };
 
 
-#endif //SIMPLEMLP_MODELWORKER_HPP
+#endif //SIMPLEMLP_MODELWORKER_H

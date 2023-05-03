@@ -1,10 +1,9 @@
-#include "src/gui/view/mainwindow.h"
-
 #include <QChart>
 #include <QChartView>
 #include <QLineSeries>
 
 #include "ui_mainwindow.h"
+#include "gui/view/mainwindow.h"
 
 void MainWindow::onStartConfigurePage() {
   ui->file_path_label->clear();

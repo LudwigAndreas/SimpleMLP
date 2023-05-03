@@ -1,13 +1,13 @@
-#ifndef SIMPLEMLP_MLPMATRIXMODEL2_HPP
-#define SIMPLEMLP_MLPMATRIXMODEL2_HPP
+#ifndef SIMPLEMLP_MLPMATRIXMODEL2_H
+#define SIMPLEMLP_MLPMATRIXMODEL2_H
 
 #include <algorithm>
 #include <fstream>
 
-#include "../utils/ActivationFunction.hpp"
-#include "../utils/IMLPModel.hpp"
-#include "MLPMatrixLayer.hpp"
-#include "Matrix.hpp"
+#include "../utils/ActivationFunction.h"
+#include "../utils/IMLPModel.h"
+#include "MLPMatrixLayer.h"
+#include "Matrix.h"
 
 namespace s21 {
 

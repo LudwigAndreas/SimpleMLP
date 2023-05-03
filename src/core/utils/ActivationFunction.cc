@@ -1,7 +1,8 @@
-#include "ActivationFunction.hpp"
+#include "ActivationFunction.h"
 
-#include <libs21/include/libs21.h>
 #include <utility>
+
+#include "libs21/include/libs21.h"
 
 namespace s21 {
 

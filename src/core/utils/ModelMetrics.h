@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "ConfusionMatrix.hpp"
+#include "ConfusionMatrix.h"
 namespace s21 {
 
 float calculate_recall(std::vector<s21::ConfusionMatrix> *result, int size);

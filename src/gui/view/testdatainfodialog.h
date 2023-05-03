@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "src/core/utils/ConfusionMatrix.hpp"
+#include "core/utils/ConfusionMatrix.h"
 
 namespace Ui {
 class TestDataInfoDialog;

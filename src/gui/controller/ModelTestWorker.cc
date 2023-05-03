@@ -1,8 +1,8 @@
-#include "ModelTestWorker.hpp"
+#include "ModelTestWorker.h"
 
-#include "src/core/DatasetReading.hpp"
-#include "src/core/exceptions/ModelProcessingException.hpp"
-#include "src/core/utils/ConfusionMatrix.hpp"
+#include "core/DatasetReading.h"
+#include "core/exceptions/ModelProcessingException.h"
+#include "core/utils/ConfusionMatrix.h"
 
 ModelTestWorker::ModelTestWorker() {
 	fraction = 100;

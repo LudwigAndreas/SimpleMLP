@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <algorithm>
-#include "../utils/ActivationFunction.hpp"
+#include "../utils/ActivationFunction.h"
 
 namespace s21 {
 	struct MLPGraphNode {

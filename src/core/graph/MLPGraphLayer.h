@@ -1,8 +1,8 @@
 #pragma once
 
-#include "MLPGraphNode.hpp"
-#include "../matrix/Matrix.hpp"
-#include "../utils/ActivationFunction.hpp"
+#include "MLPGraphNode.h"
+#include "../matrix/Matrix.h"
+#include "../utils/ActivationFunction.h"
 
 #include <vector>
 #include <algorithm>

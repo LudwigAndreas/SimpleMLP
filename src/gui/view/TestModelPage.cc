@@ -1,7 +1,7 @@
-#include "src/gui/view/mainwindow.h"
+#include "gui/view/mainwindow.h"
 
 #include "libs21/include/libs21.h"
-#include "src/core/utils/MLPSerializer.hpp"
+#include "core/utils/MLPSerializer.h"
 #include "testdatainfodialog.h"
 #include "ui_mainwindow.h"
 

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "src/core/utils/ActivationFunction.hpp"
+#include "core/utils/ActivationFunction.h"
 
 inline float sigmoid(float x) {
 	return 1.0f / (1 + std::exp(-x));

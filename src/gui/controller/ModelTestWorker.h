@@ -1,9 +1,9 @@
-#ifndef SIMPLEMLP_MODELTESTWORKER_HPP
-#define SIMPLEMLP_MODELTESTWORKER_HPP
+#ifndef SIMPLEMLP_MODELTESTWORKER_H
+#define SIMPLEMLP_MODELTESTWORKER_H
 
-#include "ModelWorker.hpp"
+#include "ModelWorker.h"
 
-#include "src/core/utils/ConfusionMatrix.hpp"
+#include "core/utils/ConfusionMatrix.h"
 
 
 class ModelTestWorker : public ModelWorker {
@@ -29,4 +29,4 @@ signals:
 };
 
 
-#endif //SIMPLEMLP_MODELTESTWORKER_HPP
+#endif //SIMPLEMLP_MODELTESTWORKER_H
