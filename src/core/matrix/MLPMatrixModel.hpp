@@ -18,12 +18,12 @@ class MLPMatrixModel : public s21::IMLPModel {
   std::vector<MLPMatrixLayer*> layers;
   bool auto_decrease;
 
-  ActivationFunction* af;
+  ActivationFunction af;
   float lr;
   float start_lr;
 
 		explicit MLPMatrixModel(std::vector<size_t> units_per_layer,
-								ActivationFunction *func,
+								ActivationFunction func,
 								bool use_auto_decrease = true,
 								float lr = .05f);
 
@@ -34,7 +34,7 @@ class MLPMatrixModel : public s21::IMLPModel {
 
 		float get_lr() const;
 
-		ActivationFunction *get_af() const;
+		const ActivationFunction &get_af() const;
 
 		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer);
 
@@ -42,7 +42,7 @@ class MLPMatrixModel : public s21::IMLPModel {
 
 		void set_lr(float lr);
 
-		void set_af(ActivationFunction *af);
+		void set_af(ActivationFunction &af);
 
 		Matrix<float> NormalizedInput(Matrix<float> matrix);
 
@@ -57,7 +57,7 @@ class MLPMatrixModel : public s21::IMLPModel {
 		static IMLPModel *MakeModel(size_t in_channels, size_t out_channels,
 									size_t hidden_units_per_layer,
 									int hidden_layers, float lr, 
-									ActivationFunction *func, 
+									ActivationFunction func, 
 									bool use_auto_decrease = true);
 	};
 
@@ -67,7 +67,7 @@ class MLPMatrixModel : public s21::IMLPModel {
 		s21::Matrix<T>				matrix;
 
 		result.reserve(size);
-		for (int i = 0; i < size; ++i) {
+		for (size_t i = 0; i < size; ++i) {
 			input >> matrix;
 			result.push_back(matrix);
 		}

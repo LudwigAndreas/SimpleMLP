@@ -18,7 +18,7 @@ void ModelTrainWorker::process() {
 					return;
 				if (j != (size_t) dataset.current_iteration || dataset.size() == 1) {
 					correct_guesses = 0;
-					for (int k = 0; k < (int) dataset[j].size(); ++k) {
+					for (size_t k = 0; k < dataset[j].size(); ++k) {
 						if (this->stop)
 							return;
 

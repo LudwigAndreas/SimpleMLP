@@ -4,7 +4,7 @@
 namespace s21 {
 
 	MLPMatrixModel::MLPMatrixModel(std::vector<size_t> units_per_layer,
-							ActivationFunction *func,
+							ActivationFunction func,
 							bool use_auto_decrease,
 							float lr) :
 							units_per_layer(units_per_layer),
@@ -41,7 +41,7 @@ namespace s21 {
 		return lr;
 	}
 
-	ActivationFunction *MLPMatrixModel::get_af() const {
+	const ActivationFunction &MLPMatrixModel::get_af() const {
 		return af;
 	}
 
@@ -59,7 +59,7 @@ namespace s21 {
 		MLPMatrixModel::lr = lr;
 	}
 
-	void MLPMatrixModel::set_af(ActivationFunction *af) {
+	void MLPMatrixModel::set_af(ActivationFunction &af) {
 		MLPMatrixModel::af = af;
 	}
 
@@ -83,7 +83,7 @@ namespace s21 {
 			Matrix<float> y = layers[i]->neuron_values * layers[i]->weight_matrices;
 			y = y + layers[i]->bias;
 			layers[i + 1]->raw = y;
-			y = y.apply_function(af->getFunction());
+			y = y.apply_function(af.getFunction());
 			layers[i + 1]->neuron_values = y;
 		}
 		return softmax(layers.back()->neuron_values.ToVector());
@@ -93,9 +93,11 @@ namespace s21 {
 		assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 		layers[layers.size() - 2]->error = (layers.back()->neuron_values - target);
 		
-		for (int i = (int) units_per_layer.size() - 3; i >= 0; --i) {
+		for (size_t i = units_per_layer.size() - 3; ; --i) {
 			layers[i]->error = (layers[i + 1]->error.matmulTransposed(layers[i + 1]->weight_matrices))
-				& layers[i + 1]->raw.apply_function(af->getDerivative());
+				& layers[i + 1]->raw.apply_function(af.getDerivative());
+			if (i == 0)
+				break;
 		}
 		for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 			layers[i]->weight_matrices = layers[i]->weight_matrices - (layers[i]->neuron_values.T() * layers[i]->error * .1f);
@@ -130,7 +132,7 @@ namespace s21 {
 		return getMostProbablePrediction(Forward(x));
 	}
 
-	IMLPModel *MLPMatrixModel::MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction *func, bool use_auto_decrease) {
+	IMLPModel *MLPMatrixModel::MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction func, bool use_auto_decrease) {
 		std::vector<size_t> units_per_layer;
 		units_per_layer.push_back(in_channels);
 
@@ -163,12 +165,13 @@ namespace s21 {
 		std::getline(is, af_str);
 
 		auto upls = s21::split(units_per_layer_str, " ");
+		auto af = ActivationFunction(af_str);
 		std::vector<size_t> units_per_layer;
 		for (auto i = upls.begin(); i < upls.end() - 1; ++i)
 			units_per_layer.push_back(std::atoi(i->data()));
 		model.set_units_per_layer(units_per_layer);
 		model.set_lr(std::atof(upls.rbegin()->data()));
-		model.set_af(new ActivationFunction(af_str));
+		model.set_af(af);
 
 		for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
 			Matrix<float> w, b;
