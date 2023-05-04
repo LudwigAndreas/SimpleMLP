@@ -15,3 +15,4 @@ CMakeCache.txt
 cmake_install.cmake
 src/res
 src/bin
+*.mlpmodel

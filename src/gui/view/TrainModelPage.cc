@@ -150,3 +150,7 @@ void MainWindow::update_training_status(int epoch, int completion,
     emit StopTraining();
   }
 }
+
+void MainWindow::MSEUpdated(int epoch, float mse) {
+	this->mse_series->append(epoch, mse);
+}

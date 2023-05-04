@@ -31,8 +31,7 @@ void ModelWorker::SaveModel(s21::IMLPModel *model, int iteration) {
 
 	if (model != nullptr) {
 		ss << s21::constant::model_autosave_filename << iteration << ".mlpmodel";
-		s21::MLPSerializer<float>::SerializeMLPMatrixModel(
-				(s21::MLPMatrixModel *) (model), ss.str());
+		s21::MLPSerializer<float>::SerializeMLPModel(model, ss.str());
 	}
 }
 

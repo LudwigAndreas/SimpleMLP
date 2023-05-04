@@ -12,9 +12,6 @@
 
 namespace s21 {
 	class ActivationFunction {
-	private:
-		std::function<float (float)> f;
-		std::function<float (float)> df;
 	public:
 		enum Flags {
 			Sigmoid = 1,
@@ -25,19 +22,21 @@ namespace s21 {
 			Linear = 0
 		};
 
-		void SetValues(std::function<float (float)> func = sigmoid, std::function<float (float)> derivative = d_sigmoid, Flags flag = Sigmoid);
+	private:
+		std::function<float (float)> f;
+		std::function<float (float)> df;
+		void SetValues(std::function<float (float)> func = sigmoid,
+					   std::function<float (float)> derivative = d_sigmoid,
+					   Flags flag = Sigmoid);
+		
+	public:
 		ActivationFunction(Flags flag);
-		ActivationFunction(std::string name);
+		ActivationFunction(std::string name = "");
 		std::function<float (float)> getFunction();
 		std::function<float (float)> getDerivative();
 		float applyFunction(float);
 		float applyDerivative(float);
-		// static int Sigmoid = 1;
 		int	type;
-
-		// static ActivationFunction* getFunctionByName(const std::string& name);
-
-		// static ActivationFunction* getFunctionByFlag(Flags flag);
 
 		explicit operator std::string() const;
 	};

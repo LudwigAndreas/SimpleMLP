@@ -36,17 +36,17 @@ TEST(ActivationFunction, ApplyFunctionMethod) {
 }
 
 TEST(ActivationFunction, GetFunctionByNameMethod) {
-	s21::ActivationFunction *af = s21::ActivationFunction::getFunctionByName("sigmoid");
+	s21::ActivationFunction af = s21::ActivationFunction("sigmoid");
 	for (float i = -1; i <= 1; i += 0.1) {
-		ASSERT_EQ(sigmoid(i), af->applyFunction(i));
-		ASSERT_EQ(d_sigmoid(i), af->applyDerivative(i));
+		ASSERT_EQ(sigmoid(i), af.applyFunction(i));
+		ASSERT_EQ(d_sigmoid(i), af.applyDerivative(i));
 	}
 }
 
 TEST(ActivationFunction, GetFunctionByFlagMethod) {
-	s21::ActivationFunction *af = s21::ActivationFunction::getFunctionByFlag(s21::ActivationFunction::Sigmoid);
+	s21::ActivationFunction af = s21::ActivationFunction(s21::ActivationFunction::Sigmoid);
 	for (float i = -1; i <= 1; i += 0.1) {
-		ASSERT_EQ(sigmoid(i), af->applyFunction(i));
-		ASSERT_EQ(d_sigmoid(i), af->applyDerivative(i));
+		ASSERT_EQ(sigmoid(i), af.applyFunction(i));
+		ASSERT_EQ(d_sigmoid(i), af.applyDerivative(i));
 	}
 }

@@ -6,8 +6,9 @@
 
 namespace s21 {
 
-	void ActivationFunction::SetValues(
-		std::function<float (float)> func, std::function<float (float)> derivative, Flags flag) {
+	void ActivationFunction::SetValues(std::function<float (float)> func,
+									   std::function<float (float)> derivative,
+									   Flags flag) {
 		f = std::move(func);
 		df = std::move(derivative);
 		type = flag;
@@ -22,10 +23,10 @@ namespace s21 {
 			SetValues(relu, d_relu, flag);
 		else if (flag == BoundedLinear)
 			SetValues(bounded_linear, d_bounded_linear, flag);
-        else if (flag == Linear)
-            SetValues(linear, d_linear, flag);
-        else
-            SetValues();
+		else if (flag == Linear)
+			SetValues(linear, d_linear, flag);
+		else
+			SetValues();
 	}
 
 	ActivationFunction::ActivationFunction(std::string name) {
@@ -38,6 +39,8 @@ namespace s21 {
 			SetValues(relu, d_relu, Flags::ReLU);
 		else if (name == "bounded linear")
 			SetValues(bounded_linear, d_bounded_linear, Flags::BoundedLinear);
+		else if (name == "linear")
+			SetValues(linear, d_linear, Flags::Linear);
 		else
 		 	SetValues();
 	}
@@ -75,11 +78,11 @@ namespace s21 {
 		return "";
 	}
 
-	std::istream &operator>>(std::istream &is, ActivationFunction *af) {
+	std::istream &operator>>(std::istream &is, ActivationFunction &af) {
 		std::string type;
 		
 		is >> type;
-		af = new ActivationFunction(type);
+		af = ActivationFunction(type);
 		return is;
 	}
 

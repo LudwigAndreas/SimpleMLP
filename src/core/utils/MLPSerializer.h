@@ -19,12 +19,12 @@ namespace s21 {
 			try {
 				auto &ifs = dynamic_cast<std::ifstream &>(is);
 				ifs.close();
-			} catch (std::bad_cast) {
+			} catch (std::bad_cast &) {
 
 			}
 		}
 	public:
-		static void SerializeMLPModel(s21::IMLPModel *model,
+		static void SerializeMLPModel(IMLPModel *model,
 										const std::string &filename) {
 			auto *matrix_model = dynamic_cast<s21::MLPMatrixModel *>(model);
 			auto *graph_model  = dynamic_cast<s21::MLPGraphModel *> (model);
@@ -39,7 +39,7 @@ namespace s21 {
 			 	throw std::runtime_error("Eto chto za pokemon?");
 		}
 
-		static void SerializeMLPMatrixModel(s21::MLPMatrixModel *model,
+		static void SerializeMLPMatrixModel(MLPMatrixModel *model,
 											const std::string &filename) {
 			const std::string signature = "M";
 			std::fstream file;
@@ -50,7 +50,7 @@ namespace s21 {
 			file.close();
 		}
 
-		static void SerializeMLPGraphModel(s21::MLPGraphModel *model,
+		static void SerializeMLPGraphModel(MLPGraphModel *model,
 											const std::string &filename) {
 			const std::string signature = "G";
 			std::fstream file;
@@ -65,7 +65,7 @@ namespace s21 {
 			std::fstream file;
 			std::string signature;
 			file.open(filename, std::ofstream::in);
-			if (file >> signature) {
+			if (std::getline(file, signature)) {
 				if (signature[0] == 'M')
 					return DeserializeMLPMatrixModel(file);
 				else if (signature[0] == 'G')
@@ -78,11 +78,11 @@ namespace s21 {
 		}
 
 		static s21::IMLPModel *DeserializeMLPMatrixModel(std::istream &is) {
-			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
+			s21::MLPMatrixModel *model = reinterpret_cast<s21::MLPMatrixModel *>
+					(s21::MLPMatrixModel::MakeModel(
 					0, 0, 0, 0, 0,
-					// nullptr
-					new ActivationFunction(ActivationFunction::Sigmoid)
-			);
+					ActivationFunction(ActivationFunction::Sigmoid)
+			));
 			is >> *model;
 			CloseStream(is);
 			return model;
@@ -90,12 +90,6 @@ namespace s21 {
 
 		static s21::IMLPModel *DeserializeMLPGraphModel(std::istream &is) {
 			s21::MLPGraphModel *model = new s21::MLPGraphModel();
-			
-			// (
-			// 		0, 0, 0, 0, 0,
-			// 		// nullptr
-			// 		new ActivationFunction(ActivationFunction::Sigmoid)
-			// );
 			is >> *model;
 			CloseStream(is);
 			return model;
