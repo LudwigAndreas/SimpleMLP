@@ -78,11 +78,11 @@ namespace s21 {
 		}
 
 		static s21::IMLPModel *DeserializeMLPMatrixModel(std::istream &is) {
-			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
+			s21::MLPMatrixModel *model = reinterpret_cast<s21::MLPMatrixModel *>
+					(s21::MLPMatrixModel::MakeModel(
 					0, 0, 0, 0, 0,
-					// nullptr
 					ActivationFunction(ActivationFunction::Sigmoid)
-			);
+			));
 			is >> *model;
 			CloseStream(is);
 			return model;
@@ -90,12 +90,6 @@ namespace s21 {
 
 		static s21::IMLPModel *DeserializeMLPGraphModel(std::istream &is) {
 			s21::MLPGraphModel *model = new s21::MLPGraphModel();
-			
-			// (
-			// 		0, 0, 0, 0, 0,
-			// 		// nullptr
-			// 		new ActivationFunction(ActivationFunction::Sigmoid)
-			// );
 			is >> *model;
 			CloseStream(is);
 			return model;
