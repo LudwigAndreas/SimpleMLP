@@ -5,7 +5,7 @@
 #ifndef SIMPLEMLP_LETTERRECOGNITIONMLPMODELBUILDER_HPP
 #define SIMPLEMLP_LETTERRECOGNITIONMLPMODELBUILDER_HPP
 
-#include "IMLPModelBuilder.hpp"
+#include "IMLPModelBuilder.h"
 
 namespace s21 {
 	class LetterRecognitionMLPModelBuilder : IMLPModelBuilder {
