@@ -13,8 +13,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Set compilation flags
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror -g -Og")
-set(CMAKE_CXX_FLAGS_RELEASE  "-Wall -Wextra -Werror -Ofast -march=native")
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og")
+set(CMAKE_CXX_FLAGS_RELEASE  "-Wall -Wextra  -Ofast -march=native")
 
 # Include Qt
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Charts)

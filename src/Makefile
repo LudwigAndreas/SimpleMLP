@@ -46,9 +46,9 @@ $(BIN_DIR)/$(NAME):
 	@make -C $(LIB_DIR)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
-	@cmake -S . -DPROJECT_NAME=$(NAME) -B build
+	@cmake -S . -DPROJECT_NAME=$(NAME) $(CMAKE_FLAGS) -B build
 	@cmake --build build
-	@./$(BIN_DIR)/$(NAME)
+	# @./$(BIN_DIR)/$(NAME)
 
 install: $(BIN_DIR)/$(NAME)
 	@cp $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
@@ -56,15 +56,15 @@ install: $(BIN_DIR)/$(NAME)
 uninstall:
 	@rm -f $(INSTALL_PATH)/$(NAME)
 
-dist:
+dist: $(BIN_DIR)/$(NAME)
 	@mkdir -p $(DIST_PATH)
-	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(SRC_DIR) Makefile README.md LICENSE 
+	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(SRC_DIR) Makefile ../README.md ../LICENSE 
 
 tests:
 	@make -C $(LIB_DIR)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
-	@cmake -S ./$(TEST_DIR) -DPROJECT_NAME=$(NAME)-tests -B $(TEST_BUILD_DIR)
+	@cmake -S ./$(TEST_DIR) -DPROJECT_NAME=$(NAME)-tests $(CMAKE_FLAGS) -B $(TEST_BUILD_DIR)
 	@cmake --build $(TEST_BUILD_DIR)
 	@./$(BIN_DIR)/$(NAME)-tests
 
@@ -102,7 +102,7 @@ clean:
 
 fclean: clean
 	@make -C $(LIB_DIR) fclean
-	@rm -rf $(BIN_DIR) $(DOC_DIR)
+	@rm -rf $(BIN_DIR) $(DOC_DIR) $(DIST_PATH)
 
 re: fclean all
 
