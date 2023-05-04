@@ -4,6 +4,7 @@
 
 #include "ui_mainwindow.h"
 #include "gui/view/mainwindow.h"
+#include "gui/utils/const.h"
 
 void MainWindow::onStartConfigurePage() {
   ui->file_path_label->clear();
@@ -70,7 +71,7 @@ void MainWindow::modelConfigFileWasUploaded(QFile *file) {
     ui->file_path_label->setText(fileInfo.fileName());
     ui->test_model_push_button->setEnabled(true);
     ui->import_model_config_label->setPixmap(
-        QPixmap(":/img/empty_file.png").scaled(150, 150));
+        QPixmap(s21::constant::empty_file_icon_path.c_str()).scaled(150, 150));
   }
 }
 

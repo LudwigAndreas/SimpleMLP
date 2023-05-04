@@ -4,6 +4,7 @@
 #include <iomanip>
 
 #include "ui_mainwindow.h"
+#include "gui/utils/const.h"
 
 void MainWindow::onStartTrainingPage() {
 
@@ -72,7 +73,7 @@ void MainWindow::trainDatasetFileWasUploaded(QFile *file) {
     QFileInfo fileInfo(file->fileName());
     ui->file_path_label_2->setText(fileInfo.fileName());
     ui->import_train_dataset_label->setPixmap(
-        QPixmap(":/img/empty_file.png").scaled(150, 150));
+        QPixmap(s21::constant::empty_file_icon_path.c_str()).scaled(150, 150));
     ui->start_training_push_button->setEnabled(true);
   }
 }

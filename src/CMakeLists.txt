@@ -16,14 +16,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og")
 set(CMAKE_CXX_FLAGS_RELEASE  "-Wall -Wextra  -Ofast -march=native")
 
-# Include Qt
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Charts)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Charts)
-
-# Enable ui compilation
+# Enable qt compilation
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
+
+# Include Qt
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Widgets Charts REQUIRED )
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Charts REQUIRED )
+
+# define resources
+set(RESOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/res)
+qt6_add_resources(RESOURCES ${RESOURCES_DIR}/resources.qrc)
 
 add_executable(${PROJECT_NAME}
         core/DatasetReading.h
@@ -88,7 +92,7 @@ add_library(libs21 STATIC IMPORTED)
 set_target_properties(libs21 PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libs21/lib/libs21.a)
 
 # Link against the required libraries
-target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Charts ${GTEST_BOTH_LIBRARIES} libs21)
+target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Widgets Qt6::Charts ${RESOURCES} ${GTEST_BOTH_LIBRARIES} libs21)
 
 # Set the include directories for the project
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
