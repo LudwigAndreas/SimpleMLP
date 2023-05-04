@@ -37,6 +37,7 @@ void MainWindow::on_to_train_push_button_pressed() {
 void MainWindow::on_predict_push_button_pressed() {
   ui->predict_push_button->hide();
   ui->testing_progress_bar->show();
+  emit TestModel(this->testing_dataset_file);
 }
 
 void MainWindow::update_testing_status(int completion) {

@@ -6,7 +6,7 @@ VERSION = 1.0
 
 # Make and cmake settings
 CMAKE = cmake
-CMAKE_FLAGS = -DCMAKE_PREFIX_PATH=$(QT_PATH) -DCMAKE_BUILD_TYPE=Release
+CMAKE_FLAGS = -DCMAKE_PREFIX_PATH=$(QT_PATH) -DCMAKE_BUILD_TYPE=Release #Release / Debug
 OS = $(shell uname)
 ifeq ($(OS), Linux)
   OPEN=xdg-open
@@ -24,6 +24,7 @@ BIN_DIR = bin
 INSTALL_PATH = /usr/bin
 DIST_PATH = dist
 DOC_DIR = docs
+RES_DIR = $(SRC)/res
 
 # Static library
 LIB_POSTFIX = s21
@@ -35,7 +36,7 @@ LIB = $(LIB_PATH)/$(LIB_NAME)
 # Documentation build
 TEXI2DVI = texi2dvi
 TEXI2PDF = texi2pdf
-TEX_FILES = tex/SimpleMLP.tex
+TEX_FILES = res/tex/SimpleMLP.tex
 
 DVIS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.dvi,$(addprefix $(SRC_DIR)/, $(TEX_FILES)))
 PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(addprefix $(SRC_DIR)/, $(TEX_FILES)))
@@ -102,7 +103,7 @@ clean:
 
 fclean: clean
 	@make -C $(LIB_DIR) fclean
-	@rm -rf $(BIN_DIR) $(DOC_DIR) $(DIST_PATH)
+	@rm -rf $(BIN_DIR) $(DOC_DIR) $(DIST_PATH) $(RES_DIR)/autosave*
 
 re: fclean all
 
