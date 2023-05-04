@@ -22,7 +22,7 @@ class LetterRecognitionMLPModelBuilder : IMLPModelBuilder {
  public:
   LetterRecognitionMLPModelBuilder();
 
-  virtual ~LetterRecognitionMLPModelBuilder();
+  ~LetterRecognitionMLPModelBuilder();
 
   LetterRecognitionMLPModelBuilder *PerceptionBase(
       PerceptronBase flag) override;
