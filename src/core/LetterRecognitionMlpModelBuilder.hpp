@@ -11,7 +11,7 @@ namespace s21 {
 	class LetterRecognitionMLPModelBuilder : IMLPModelBuilder {
 		PerceptronBase base;
 		int hidden_layers;
-		ActivationFunction *func;
+		ActivationFunction func;
 		int hidden_units_per_layer;
 		float learning_rate;
 		bool use_auto_decrease;

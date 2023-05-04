@@ -2,12 +2,10 @@
 
 namespace s21 {
 	MLPGraphLayer::MLPGraphLayer(size_t size,
-								 ActivationFunction *af,
+								 const ActivationFunction &af,
 								 MLPGraphLayer *input,
-								 MLPGraphLayer *output) {
-		this->size 	  = size;
+								 MLPGraphLayer *output) : size(size), af(af) {
 		this->neurons = std::vector<MLPGraphNode>(this->size);
-		this->af      = af;
 		this->SetInputLayer(input);
 		this->SetOutputLayer(output);
 	}
@@ -66,7 +64,7 @@ namespace s21 {
 		return value;
 	}
 
-	void	MLPGraphLayer::CalculateLayer(ActivationFunction *af) {
+	void	MLPGraphLayer::CalculateLayer(ActivationFunction &af) {
 		for (size_t i = 0; i < neurons.size(); ++i)
 		{
 			neurons[i].raw_value = 0;
@@ -74,10 +72,7 @@ namespace s21 {
 				neurons[i].raw_value += neurons[i].weight[j] * (*input)[j].value;
 
 			if (output) {
-				if (af)
-					neurons[i].value = af->applyFunction(neurons[i].raw_value);
-				else
-				 	neurons[i].value = neurons[i].raw_value;
+				neurons[i].value = af.applyFunction(neurons[i].raw_value);
 			}
 		}
 		if (!output) {
@@ -102,7 +97,7 @@ namespace s21 {
 				for (size_t j = 0; j < output->Size(); ++j) {
 					neurons[i].error += (*output)[j].error * (*output)[j].weight[i];
 				}
-				neurons[i].error *= af->applyDerivative(neurons[i].raw_value);
+				neurons[i].error *= af.applyDerivative(neurons[i].raw_value);
 			}
 		}
 	}

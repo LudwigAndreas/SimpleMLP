@@ -35,14 +35,14 @@ s21::LetterRecognitionMLPModelBuilder::HiddenLayers(int hidden_layers) {
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::ActivationFunc(
 		s21::ActivationFunction::Flags flag) {
-	this->func = new ActivationFunction(flag);
+	this->func = ActivationFunction(flag);
 	return this;
 }
 
 s21::LetterRecognitionMLPModelBuilder *
 s21::LetterRecognitionMLPModelBuilder::ActivationFunc(
 		const std::string func_name) {
-	this->func = new ActivationFunction(func_name);
+	this->func = ActivationFunction(func_name);
 	return this;
 }
 
@@ -75,11 +75,11 @@ s21::LetterRecognitionMLPModelBuilder::GetResult() {
 	if (learning_rate == 0) {
 		learning_rate = 0.5f;
 	}
-	if (func == nullptr) {
-		func = new ActivationFunction(
-				ActivationFunction::Sigmoid
-				);
-	}
+	// if (func == nullptr) {
+	// 	func = ActivationFunction(
+	// 			ActivationFunction::Sigmoid
+	// 			);
+	// }
 	if (base == PerceptronBase::Matrix) {
 		return MLPMatrixModel::MakeModel(
 				in_channels,
@@ -105,7 +105,7 @@ s21::LetterRecognitionMLPModelBuilder::GetResult() {
 }
 
 s21::LetterRecognitionMLPModelBuilder::~LetterRecognitionMLPModelBuilder() {
-	delete func;
+	// delete func;
 //	if (model)
 //		delete model;
 }
@@ -117,7 +117,7 @@ s21::LetterRecognitionMLPModelBuilder::LetterRecognitionMLPModelBuilder() {
 void s21::LetterRecognitionMLPModelBuilder::Reset() {
 	base = PerceptronBase::Matrix;
 	hidden_layers = 0;
-	func = new ActivationFunction(ActivationFunction::Sigmoid);
+	func = ActivationFunction(ActivationFunction::Sigmoid);
 	hidden_units_per_layer = 0;
 	learning_rate = 0;
 	use_auto_decrease = true;

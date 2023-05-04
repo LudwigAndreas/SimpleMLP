@@ -81,7 +81,7 @@ namespace s21 {
 			s21::MLPMatrixModel *model = (s21::MLPMatrixModel *) s21::MLPMatrixModel::MakeModel(
 					0, 0, 0, 0, 0,
 					// nullptr
-					new ActivationFunction(ActivationFunction::Sigmoid)
+					ActivationFunction(ActivationFunction::Sigmoid)
 			);
 			is >> *model;
 			CloseStream(is);

@@ -13,20 +13,19 @@ namespace s21 {
 	class MLPGraphModel : public IMLPModel {
 	private:
 		std::vector<size_t>				units_per_layer;
-		std::vector<MLPGraphLayer *>	layers;
-		ActivationFunction				*af;
-		float							start_lr;
-		float							lr;
+		ActivationFunction				af;
 		bool							auto_decrease;
-		
-	
+		float							lr;
+		float							start_lr;
+		std::vector<MLPGraphLayer *>	layers;
+			
 	public:
 		explicit MLPGraphModel(std::vector<size_t> units_per_layer,
-								ActivationFunction *func,
+								const ActivationFunction &func,
 								bool use_auto_decrease = true,
 								float lr = .05f);
 
-		MLPGraphModel() {}
+		MLPGraphModel() : af(ActivationFunction()) {}
 								
 		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 
@@ -36,8 +35,8 @@ namespace s21 {
 		const std::vector<MLPGraphLayer *> &get_layers() const;
 		void set_layers(const std::vector<MLPGraphLayer *> &layers);
 
-		ActivationFunction *getAf() const;
-		void setAf(ActivationFunction *af);
+		const ActivationFunction &getAf() const;
+		void setAf(ActivationFunction &af);
 
 		float getStartLr() const;
 		void setStartLr(float startLr);
@@ -54,7 +53,7 @@ namespace s21 {
 		static IMLPModel *MakeModel(size_t in_channels, size_t out_channels,
 									size_t hidden_units_per_layer, 
 									int hidden_layers, float lr, 
-									ActivationFunction *func, 
+									ActivationFunction func, 
 									bool use_auto_decrease = true);
 
 		virtual std::vector<T> Forward(Matrix<T>);

@@ -9,12 +9,12 @@
 namespace s21 {
     class IMLPModel {
     protected:
-        ActivationFunction *af;
-        std::vector<size_t> units_per_layer;
-        float lr;
-        float start_lr;
-        bool auto_decrease;
-        std::vector<IMLPLayer *> layers;
+        // ActivationFunction *af;
+        // std::vector<size_t> units_per_layer;
+        // float lr;
+        // float start_lr;
+        // bool auto_decrease;
+        // std::vector<IMLPLayer *> layers;
 
     public:
 		virtual std::vector<float> Forward(Matrix<float>) = 0;
@@ -27,7 +27,7 @@ namespace s21 {
 			double max = value[0];
 			int prediction = 0;
 			double tmp;
-			for (int j = 1; j < (int) value.size(); ++j) {
+			for (size_t j = 1; j < value.size(); ++j) {
 				tmp = value[j];
 				if (tmp > max) {
 					prediction = j;

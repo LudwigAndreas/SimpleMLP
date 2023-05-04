@@ -15,17 +15,17 @@ namespace s21 {
 		MLPGraphLayer		*input;
 		MLPGraphLayer		*output;
 		size_t				size;
-		ActivationFunction	*af;
+		ActivationFunction	af;
 		
 		std::vector<MLPGraphNode>	neurons;
 	
 	public:
-		MLPGraphLayer(size_t size, ActivationFunction *af,
+		MLPGraphLayer(size_t size, const ActivationFunction &af,
 						MLPGraphLayer *input = nullptr,
 						MLPGraphLayer *output = nullptr);
 
 		MLPGraphLayer(std::vector<MLPGraphNode> &&neurons,
-						ActivationFunction *af,
+						const ActivationFunction &af,
 						MLPGraphLayer *input = nullptr,
 						MLPGraphLayer *output = nullptr);
 		
@@ -46,7 +46,7 @@ namespace s21 {
 
 		std::vector<float> GetResultingVector();
 
-		void	CalculateLayer(ActivationFunction *af);
+		void	CalculateLayer(ActivationFunction &af);
 		void	CalculateError(std::vector<float> *target = nullptr);
 		void	UpdateWeights(float lr);
 
