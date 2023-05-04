@@ -70,13 +70,9 @@ private slots:
 
   void on_to_configure_push_button_2_pressed();
 
-<<<<<<< HEAD
-    void MSEUpdated(int epoch, float mse);
+  void MSEUpdated(int epoch, float mse);
 
-	void on_toolButton_pressed();
-=======
   void on_start_training_push_button_pressed();
->>>>>>> lsherry_make
 
   void on_toolButton_pressed();
 
@@ -116,27 +112,13 @@ signals:
   void SaveModel(std::string file_path);
 
 private:
-<<<<<<< HEAD
-    Ui::MainWindow *ui;
-    QFile *model_config_file;
-    QFile *training_dataset_file;
-    QFile *testing_dataset_file;
-    s21::IMLPModel *current_model;
-	QThread *training_thread;
-	ModelTrainWorker *training_worker;
-	ModelTestWorker *testing_worker;
-	QThread *testing_thread;
-	s21::LetterRecognitionMLPModelBuilder *builder;
-	QLineSeries *chart_series;
-	QLineSeries *mse_series;
-=======
   Ui::MainWindow *ui;
   QFile *model_config_file;
   QFile *training_dataset_file;
   QFile *testing_dataset_file;
   QLineSeries *chart_series;
+	QLineSeries *mse_series;
   ModelController *m_controller;
->>>>>>> lsherry_make
 
   void ConnectDragNDrop();
   void InitChart();

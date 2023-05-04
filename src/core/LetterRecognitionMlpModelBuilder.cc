@@ -1,6 +1,6 @@
-#include "LetterRecognitionMlpModelBuilder.hpp"
-#include "matrix/MLPMatrixModel.hpp"
-#include "graph/MLPGraphModel.hpp"
+#include "LetterRecognitionMlpModelBuilder.h"
+#include "matrix/MLPMatrixModel.h"
+#include "graph/MLPGraphModel.h"
 
 #include "../libs21/include/libs21.h"
 
