@@ -13,14 +13,16 @@ ImportFileItem::ImportFileItem(QWidget *parent): QLabel(parent)
 void ImportFileItem::dropEvent(QDropEvent *event) {
     event->acceptProposedAction();
     const QMimeData* data = event->mimeData();
-    QString file_path = data->urls()[0].path();
-    auto *file_try = new QFile(file_path);
-    if (!file_try->open(QIODevice::ReadOnly)) {
-        QMessageBox::information(this, tr("Unable to open file"), file_try->errorString());
-        return;
+    if (!data->urls().empty()) {
+        QString file_path = data->urls()[0].path();
+        auto *file_try = new QFile(file_path);
+        if (file_try->open(QIODevice::ReadOnly)) {
+            this->file = file_try;
+            emit fileWasUploaded();
+        }
     } else {
-        this->file = file_try;
-        emit fileWasUploaded();
+        QMessageBox::information(this, tr("Unable to open file"), "File open error.");
+        return;
     }
 }
 

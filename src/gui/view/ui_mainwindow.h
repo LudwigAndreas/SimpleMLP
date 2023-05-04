@@ -31,7 +31,6 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-
 #include "gui/utils/importfileitem.h"
 #include "gui/utils/paintview.h"
 
