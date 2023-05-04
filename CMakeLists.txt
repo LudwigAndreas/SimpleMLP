@@ -72,7 +72,10 @@ add_executable(SimpleMLP
         src/core/matrix/MLPMatrixModel.cc
         src/gui/utils/ModelWorker.hpp
         src/core/utils/AFLibrary.cc
-        )
+        src/gui/utils/ModelController.cc
+        src/gui/utils/ModelController.h
+        src/core/utils/ModelMetrics.cc
+        src/core/utils/ModelMetrics.h)
 
 
 # Import static library
