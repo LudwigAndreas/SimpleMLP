@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "../exceptions/MatrixException.h"
+#include "core/exceptions/MatrixException.h"
 
 namespace s21 {
 	template<typename Type>
@@ -45,6 +45,10 @@ namespace s21 {
         Matrix(std::vector<Type> vector, size_t rows, size_t cols) : rows(rows), cols(cols), data(std::move(vector)) {
             shape = (std::tuple<size_t, size_t>) {rows, cols};
         }
+
+		Matrix(const Matrix<Type>& matrix) = default;
+
+		Matrix(Matrix<Type>&& matrix) = default;
 
 		Matrix &operator=(const Matrix<Type> matrix) {
 			Matrix::rows = matrix.get_rows();
@@ -331,7 +335,7 @@ namespace s21 {
 
 	template<typename Type>
 	std::istream &operator>>(std::istream &is, Matrix<Type> &matrix) {
-		int							rows, cols;
+		size_t						rows, cols;
 		std::vector<float>			data;
 		std::vector<float>			line_data;
 		std::string					line;
@@ -340,14 +344,14 @@ namespace s21 {
 
 		is >> rows >> cols;
 		data.reserve(rows * cols);
-		for (int i = 0; i < rows && is >> line; ++i) {
+		for (size_t i = 0; i < rows && is >> line; ++i) {
 			ss.str(line);
 			while (ss >> tmp)
 				line_data.push_back(tmp);
 			if (line_data.size() != cols)
 				throw MatrixCalculationsException("Invalid input file: Elements count on matrix line is incorrect");
 			// is >> tmp;
-			for (int j = 0; j < line_data.size(); ++j) {
+			for (size_t j = 0; j < line_data.size(); ++j) {
 				data.push_back(line_data[j]);
 			}
 			// data.emplace_back(line_data.begin(), line_data.end());

@@ -4,12 +4,11 @@
 
 namespace s21 {
 	MLPGraphModel::MLPGraphModel(std::vector<size_t> units_per_layer,
-							ActivationFunction *func,
+							const ActivationFunction &func,
 							bool use_auto_decrease,
 							float lr) :
-							units_per_layer(units_per_layer),
+							units_per_layer(units_per_layer), af(func),
 							auto_decrease(use_auto_decrease), lr(lr) {
-		af = func;
 		start_lr = lr;
 		MLPGraphLayer *input_layer = nullptr;
 		for (auto size : units_per_layer) 
@@ -36,20 +35,20 @@ namespace s21 {
 		return layers.back()->GetResultingVector();
 	}
 
-	void			MLPGraphModel::Backward(Matrix<T> target) {
+	void	MLPGraphModel::Backward(Matrix<T> target) {
 		assert(std::get<1>(target.get_shape()) == units_per_layer.back());
 
 		layers.back()->CalculateError(&(target.ToVector()));
-		for (int i = (int) layers.size() - 2; i > 0; --i) {
+		for (size_t i = layers.size() - 2; i > 0; --i) {
 			layers[i]->CalculateError();
 		}
-		for (int i = (int)layers.size() - 1; i > 0; --i)
+		for (size_t i = layers.size() - 1; i > 0; --i)
 			layers[i]->UpdateWeights(lr);
 	}
 
-	float			MLPGraphModel::Train(DatasetGroup samples, bool silent_mode) {
+	float	MLPGraphModel::Train(DatasetGroup samples, bool silent_mode) {
 		int correct_guesses = 0;
-		for (int i = 0; i < (int) samples.size(); ++i) {
+		for (size_t i = 0; i < samples.size(); ++i) {
 			if (Predict(samples[i].x) == getMostProbablePrediction(samples[i].y.ToVector()))
 				++correct_guesses;
 			else
@@ -64,7 +63,7 @@ namespace s21 {
 		return accuracy;
 	}
 
-	float			MLPGraphModel::Test(DatasetGroup samples, bool silent_mode) { 
+	float	MLPGraphModel::Test(DatasetGroup samples, bool silent_mode) { 
 		int correct_guesses = 0;
 		float accuracy;
 		for (size_t i = 0; i < samples.size(); ++i) {
@@ -78,32 +77,8 @@ namespace s21 {
 
 	}
 
-	int				MLPGraphModel::Predict(Matrix<float> x) {
+	int	MLPGraphModel::Predict(Matrix<float> x) {
 		return getMostProbablePrediction(Forward(x));
-	}
-
-	float			MLPGraphModel::TestOutput(std::vector<Sample> samples, bool silent_mode, std::string filename) {
-		// std::fstream		output;
-		// int					correct_guesses = 0;
-		// float				accuracy;
-		// std::vector<float>	y_hat;
-		// int					index;
-
-		// if (!filename.empty())
-		// 	output.open(filename, std::ofstream::out | std::ofstream::trunc);
-		// for (auto & sample : samples) {
-		// 	y_hat = Forward(sample.x);
-		// 	index = getMostProbablePrediction(y_hat);
-		// 	if (index == getMostProbablePrediction(sample.y.ToVector()))
-		// 		++correct_guesses;
-		// 	if (output.is_open())
-		// 		log(output, getMostProbablePrediction(sample.y.ToVector()), index, y_hat[index]);
-		// }
-		// accuracy = ((float)correct_guesses / samples.size());
-		// if (!silent_mode)
-		// 	std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
-		// return accuracy;
-		return 1;
 	}
 
 	const std::vector<size_t> &MLPGraphModel::getUnitsPerLayer() const {
@@ -114,19 +89,19 @@ namespace s21 {
 		units_per_layer = unitsPerLayer;
 	}
 
-	const std::vector<MLPGraphLayer *> &MLPGraphModel::getLayers() const {
+	const std::vector<MLPGraphLayer *> &MLPGraphModel::get_layers() const {
 		return layers;
 	}
 
-	void MLPGraphModel::setLayers(const std::vector<MLPGraphLayer *> &layers) {
+	void MLPGraphModel::set_layers(const std::vector<MLPGraphLayer *> &layers) {
 		MLPGraphModel::layers = layers;
 	}
 
-	ActivationFunction *MLPGraphModel::getAf() const {
+	const ActivationFunction &MLPGraphModel::getAf() const {
 		return af;
 	}
 
-	void MLPGraphModel::setAf(ActivationFunction *af) {
+	void MLPGraphModel::setAf(ActivationFunction &af) {
 		MLPGraphModel::af = af;
 	}
 
@@ -154,30 +129,61 @@ namespace s21 {
 		auto_decrease = autoDecrease;
 	}
 
+	std::vector<MLPGraphLayer *> &MLPGraphModel::get_layers() {
+		return layers;
+	}
+
+	IMLPModel *MLPGraphModel::MakeModel(size_t in_channels, size_t out_channels,
+								size_t hidden_units_per_layer, 
+								int hidden_layers, float lr, 
+								ActivationFunction func, 
+								bool use_auto_decrease) {
+		std::vector<size_t> units_per_layer;
+		units_per_layer.push_back(in_channels);
+
+		for (int i = 0; i < hidden_layers; ++i)
+			units_per_layer.push_back(hidden_units_per_layer);
+
+		units_per_layer.push_back(out_channels);
+		auto *model = new MLPGraphModel(units_per_layer, func, use_auto_decrease, lr);
+		return model;
+	}
+
 	std::istream &operator>>(std::istream &is, MLPGraphModel &model) {
 		
 		std::string units_per_layer_str;
+		std::string af_str;
 		// std::string line;
 		std::getline(is, units_per_layer_str);
+		std::getline(is, af_str);
 
 		auto upls = s21::split(units_per_layer_str, " ");
+		auto af = ActivationFunction(af_str);
 		std::vector<size_t> units_per_layer;
 		for (auto i = upls.begin(); i < upls.end() - 1; ++i)
 			units_per_layer.push_back(std::atoi(i->data()));
 		model.setUnitsPerLayer(units_per_layer);
+		model.setLr(std::atoi(upls.rbegin()->data()));
+		model.setAf(af);
 
+		MLPGraphLayer *input_layer = nullptr;
+		for (auto size : units_per_layer) 
+			input_layer = model.AddLayer(new MLPGraphLayer(size, ActivationFunction(model.getAf()), input_layer));
+		auto &layers = model.get_layers();
+		for (size_t i = 1; i < layers.size(); ++i)
+			is >> *layers[i];
 		return is;
 	}
 
 	std::ostream &operator<<(std::ostream &os, MLPGraphModel &model) {
-		os << "G" << std::endl;
+		// os << "G" << std::endl;
 		for (auto unit : model.getUnitsPerLayer())
 			os << unit << ' ';
 		os << model.getLr() << std::endl;
-		os << *model.getAf();
-//		for (auto & layer : model.getLayers()) {
-//			os << layer;
-//		}
+		os << model.getAf() << std::endl;
+		for (auto it = model.get_layers().begin() + 1; it != model.get_layers().end(); ++it) {
+			os << **it;
+		}
 		return os;
 	}
 }

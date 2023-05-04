@@ -70,6 +70,8 @@ private slots:
 
   void on_to_configure_push_button_2_pressed();
 
+  void MSEUpdated(int epoch, float mse);
+
   void on_start_training_push_button_pressed();
 
   void on_toolButton_pressed();
@@ -115,6 +117,7 @@ private:
   QFile *training_dataset_file;
   QFile *testing_dataset_file;
   QLineSeries *chart_series;
+	QLineSeries *mse_series;
   ModelController *m_controller;
 
   void ConnectDragNDrop();
