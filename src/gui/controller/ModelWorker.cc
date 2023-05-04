@@ -6,6 +6,7 @@
 
 #include "core/utils/MLPSerializer.h"
 #include "core/exceptions/ModelProcessingException.h"
+#include "gui/utils/const.h"
 
 
 ModelWorker::ModelWorker() {
@@ -29,7 +30,7 @@ void ModelWorker::SaveModel(s21::IMLPModel *model, int iteration) {
 	std::stringstream	ss;
 
 	if (model != nullptr) {
-		ss << "testmodel" << iteration << ".mlpmodel";
+		ss << s21::constant::model_autosave_filename << iteration << ".mlpmodel";
 		s21::MLPSerializer<float>::SerializeMLPMatrixModel(
 				(s21::MLPMatrixModel *) (model), ss.str());
 	}
