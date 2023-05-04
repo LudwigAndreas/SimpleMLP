@@ -2,6 +2,7 @@
 
 #include "libs21/include/libs21.h"
 #include "core/utils/MLPSerializer.h"
+#include "gui/utils/const.h"
 #include "testdatainfodialog.h"
 #include "ui_mainwindow.h"
 
@@ -63,7 +64,7 @@ void MainWindow::testDatasetFileWasUploaded(QFile *file) {
     QFileInfo fileInfo(file->fileName());
     ui->file_path_label_3->setText(fileInfo.fileName());
     ui->import_test_dataset_label->setPixmap(
-        QPixmap(":/img/empty_file.png").scaled(150, 150));
+        QPixmap(s21::constant::empty_file_icon_path.c_str()).scaled(150, 150));
     ui->predict_push_button->setEnabled(true);
   }
 }

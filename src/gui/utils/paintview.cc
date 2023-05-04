@@ -1,5 +1,7 @@
 #include "paintview.h"
 
+#include "gui/utils/const.h"
+
 PaintView::PaintView(QWidget *parent): QGraphicsView{parent}
 {
     setAcceptDrops(true);
@@ -57,7 +59,7 @@ void PaintView::mouseMoveEvent(QMouseEvent *event) {
 void PaintView::mouseReleaseEvent(QMouseEvent *event) {
     draw = false;
     QPixmap scr = this->grab().scaled(28, 28);
-    scr.save("my_letter.bmp");
+    scr.save(s21::constant::letter_file.c_str());
 	emit file_saved();
 	qDebug() << "file_saved emited";
     QGraphicsView::mouseReleaseEvent(event);
@@ -88,7 +90,7 @@ void PaintView::dropEvent(QDropEvent *event)
         QMessageBox::information(this,"Image Viewer","Error Displaying image");
         return;
     }
-    this->pixmap->save("my_letter.bmp");
+    this->pixmap->save(s21::constant::letter_file.c_str());
 	new_pixmap = true;
 	emit file_saved();
 }

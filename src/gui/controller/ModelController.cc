@@ -4,6 +4,7 @@
 
 #include "core/utils/MLPSerializer.h"
 #include "core/utils/ModelMetrics.h"
+#include "gui/utils/const.h"
 #include "gui/view/mainwindow.h"
 #include "gui/view/testdatainfodialog.h"
 
@@ -144,7 +145,7 @@ void ModelController::FileWasDrawn() {
   int channels_in_file;
   int width_in_file;
   int height_in_file;
-  auto image = s21::load_bmp("my_letter.bmp", &width_in_file, &height_in_file,
+  auto image = s21::load_bmp(s21::constant::letter_file.c_str(), &width_in_file, &height_in_file,
                              &channels_in_file);
   auto grayscale = s21::bmp_data_to_grayscale(image, new_width, new_height, 3);
   if (current_model) {
