@@ -1,14 +1,14 @@
 #ifndef SIMPLEMLP_MODELCONTROLLER_H
 #define SIMPLEMLP_MODELCONTROLLER_H
 
-#include <QObject>
 #include <QFile>
+#include <QObject>
 
 #include "core/LetterRecognitionMlpModelBuilder.h"
 #include "core/utils/IMLPModel.h"
 
-#include "ModelTestWorker.h"
-#include "ModelTrainWorker.h"
+#include "../../core/ModelWorker/ModelTestWorker.h"
+#include "../../core/ModelWorker/ModelTrainWorker.h"
 
 class MainWindow;
 
@@ -29,12 +29,15 @@ protected slots:
   void HandleStartTraining(QFile *file);
   void TrainingStatusChanged(int epoch, int completion, float accuracy);
   void QuitTraining();
+  void TrainingFinished();
   void HandleStartTesting(QFile *file);
   void QuitTesting();
   void TestingStatusChanged(int completion);
-  void TestingFinished(std::vector<s21::ConfusionMatrix> *result, float time = 0);
+  void TestingFinished(std::vector<s21::ConfusionMatrix> *result,
+                       float time = 0);
   void FileWasDrawn();
   void HandleSaveModel(std::string filename);
+  void HandleMSEUpdate(int epoch, float mse);
 
 private:
   MainWindow *window;

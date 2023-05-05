@@ -14,8 +14,8 @@
 #include "core/LetterRecognitionMlpModelBuilder.h"
 #include "core/utils/IMLPModel.h"
 #include "gui/controller/ModelController.h"
-#include "gui/controller/ModelTestWorker.h"
-#include "gui/controller/ModelTrainWorker.h"
+#include "core/ModelWorker/ModelTestWorker.h"
+#include "core/ModelWorker/ModelTrainWorker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -54,6 +54,10 @@ public:
 
   void ConnectController();
 
+  void MSEUpdated(int epoch, float mse);
+
+  void TrainingFinished();
+
 private slots:
 
   void on_train_model_push_button_pressed();
@@ -69,8 +73,6 @@ private slots:
   void on_predict_push_button_pressed();
 
   void on_to_configure_push_button_2_pressed();
-
-  void MSEUpdated(int epoch, float mse);
 
   void on_start_training_push_button_pressed();
 
@@ -117,7 +119,7 @@ private:
   QFile *training_dataset_file;
   QFile *testing_dataset_file;
   QLineSeries *chart_series;
-	QLineSeries *mse_series;
+  QLineSeries *mse_series;
   ModelController *m_controller;
 
   void ConnectDragNDrop();
