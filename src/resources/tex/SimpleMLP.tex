@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry, graphicx}
+\geometry{a4paper, margin=1in}
+
+\title{Multilayer Perceptron Application Documentation}
+\author{lsherry, kdancy}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Project Overview}
+A tutorial application that implements a multilayer perceptron to recognise written Latin characters. The application is implemented in the C++ programming language and uses the Qt library to implement the graphical interface. The implementation of the perceptron and all mathematical calculations is written from scratch and does not use library methods. The perceptron is implemented in two ways: through a matrix and through a graph. 
+
+\section{System Architecture}
+The application is implemented on MVC architecture.
+Model. Implementation of perceptron, matrix and graph computing, implementation of learning, back-propagation methods and learning results computation
+View. All the classes responsible for GUI visualisation are written with Qt. These classes contain no business logic. 
+Controller. The controller class contains methods for creating, teaching, and testing the model. It binds the view and model
+
+\section{Technical Details}
+Based on the technical requirements, the perceptron model itself was implemented in two types: matrix perceptron and graph perceptron. The matrix class is based on the std::vector class and implements access to its elements in matrix form, and contains all the methods of matrix calculations. The graph class contains node objects and combines them into a graph.
+The activation functions for this project have also been predefined in the technical requirements but we have implemented some additional activation functions as well, but their choice is not appropriate because sigmoid proved to be the best on the basis of the conducted tests.
+According to the requirements, it was possible to select in the graphical interface the perceptron implementation, the number of hidden layers, the number of cross-validation groups. In addition, we have implemented a selection from the graphical interface of the learning rate, the number of neurones in the hidden layers, the activation function.
+Also, based on the requirements we have implemented the ability to test the model using the test dataset and / or by drawing letters on a separate screen and display the result of the model.
+
+All the technical requirements have been met in full, and also added additional features to use the application
+
+\section{User Manual}
+The application contains three main screens in the main window. The first screen is the Model Settings screen. Here you can configure the model the way you want and with the settings you see fit. In the second tab of the first screen you can import a finished model. Once you have configured the model, you will be able to go to the next screen. The second screen is the training screen. Here you need to load a dataset in csv format. You can do this by simply dragging the file into the dragNdrop field, or you can select the file using the button below. After downloading the dataset you need to press the start training button and wait for the training to finish. After training you can go to the next screen. The last screen also has two tabs. On the first one you can draw any letter with the mouse and see the result of the model in the next field. In the second tab you can unload the test dataset, click on predict and see in a new window the prediction statistics of the model trained in.
+
+\section{Code Documentation}
+---
+
+\section{Testing and Validation}
+The application contains testing module that you can compile using makefile with 'test' argument. There are tests for every class and method in core directory.
+
+\section{Limitations and Future Work}
+The application does not utilize graphics processing unit computations, and all computations are performed exclusively on the central processing unit. In addition, the training process and model testing process are separated into separate threads. The controller monitors the threads' operation and contains methods for initiating and terminating training. The threads themselves are implemented based on QThread and use their standard implementation. Backpropagation calculations do not use core parallelization, which would have significantly complicated the project's implementation, but this approach sufficiently accelerated the computations.
+
+\section{References}
+During the project's implementation, information from open sources was used as a reference. However, we could not find any similar projects, which resulted in almost all of the code written for the application's core being unique.
+In the process of writing the graphical interface, the design of the macOS graphical interface served as the main example.
+
+\section{Appendices}
+---
+\end{document}

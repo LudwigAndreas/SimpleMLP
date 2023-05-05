@@ -108,14 +108,15 @@ void MainWindow::InitChart() {
 void MainWindow::ConnectController() {
   connect(this, SIGNAL(ModelConfigured()), m_controller,
           SLOT(HandleModelConfigured()));
-  connect(this, SIGNAL(ModelImported(QFile *)), m_controller,
-          SLOT(HandleModelImported(QFile *)));
-  connect(this, SIGNAL(TrainModel(QFile *)), m_controller,
-          SLOT(HandleStartTraining(QFile *)));
+  connect(this, SIGNAL(ModelImported(QFile*)), m_controller,
+          SLOT(HandleModelImported(QFile*)));
+  connect(this, SIGNAL(TrainModel(QFile*)), m_controller,
+          SLOT(HandleStartTraining(QFile*)));
   connect(this, SIGNAL(StopTraining()), m_controller, SLOT(QuitTraining()));
-  connect(this, SIGNAL(TestModel(QFile *)), m_controller,
-          SLOT(HandleStartTesting(QFile *)));
+  connect(this, SIGNAL(TestModel(QFile*)), m_controller,
+          SLOT(HandleStartTesting(QFile*)));
   connect(this, SIGNAL(LetterSaved()), m_controller, SLOT(FileWasDrawn()));
+  connect(this, SIGNAL(SaveModel(std::string)), m_controller, SLOT(HandleSaveModel(std::string)));
   //  connect(this, SIGNAL(SaveModel(std::string)), m_controller, SLOT(Save));
 }
 

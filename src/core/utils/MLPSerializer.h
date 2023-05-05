@@ -61,7 +61,7 @@ namespace s21 {
 			file.close();
 		}
 
-		static s21::IMLPModel *DeserializeMLPMatrixModel(const std::string &filename) {
+		static s21::IMLPModel *DeserializeMLPModel(const std::string &filename) {
 			std::fstream file;
 			std::string signature;
 			file.open(filename, std::ofstream::in);
