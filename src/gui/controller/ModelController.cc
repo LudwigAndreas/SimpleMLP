@@ -1,5 +1,7 @@
 #include "ModelController.h"
 
+#include <QMessageBox>
+
 #include "libs21/include/libs21.h"
 
 #include "core/utils/MLPSerializer.h"
@@ -46,8 +48,8 @@ void ModelController::HandleModelConfigured() {
 }
 
 void ModelController::HandleModelImported(QFile *file) {
-    //  current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
-    //      file->fileName().toStdString());
+      this->current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
+          file->fileName().toStdString());
 }
 
 bool ModelController::IsTrainingRunning() {
@@ -66,8 +68,8 @@ void ModelController::HandleStartTraining(QFile *file) {
             SLOT(process()));
     connect(training_worker, SIGNAL(finished()), this->training_thread,
             SLOT(quit()));
-    connect(training_worker, SIGNAL(statusChanged(int, int, float)), this,
-            SLOT(TrainingStatusChanged(int, int, float)));
+    connect(training_worker, SIGNAL(statusChanged(int,int,float)), this,
+            SLOT(TrainingStatusChanged(int,int,float)));
     connect(training_worker, SIGNAL(finished()), training_worker,
             SLOT(deleteLater()));
     //  connect(training_worker, SIGNAL(),
@@ -97,42 +99,49 @@ void ModelController::QuitTraining() {
 }
 
 void ModelController::HandleStartTesting(QFile *file) {
-    if (testing_thread != nullptr) {
-        this->testing_thread = new QThread();
-        if (testing_worker == nullptr)
-            delete testing_worker;
-        this->testing_worker = new ModelTestWorker();
-        testing_worker->setModel(current_model);
-        testing_worker->setDatasetFileName(file->fileName().toStdString());
-        testing_worker->setDatasetFraction(window->getTestingDatasetFraction());
-        testing_worker->moveToThread(this->testing_thread);
-
-        connect(this->testing_thread, SIGNAL(started()), testing_worker,
-                SLOT(process()));
-        connect(testing_worker, SIGNAL(finished()), this->testing_thread,
-                SLOT(quit()));
-        connect(testing_worker, SIGNAL(statusChanged(int)), this,
-                SLOT(TestingStatusChanged(int)));
-        connect(testing_worker,
-                SIGNAL(finishedResult(std::vector<s21::ConfusionMatrix> * )), this,
-                SLOT(TestingFinished(std::vector<s21::ConfusionMatrix> * )));
-        connect(testing_worker, SIGNAL(finished()), testing_worker,
-                SLOT(deleteLater()));
-        connect(this->testing_thread, SIGNAL(finished()), this->testing_thread,
-                SLOT(deleteLater()));
-        testing_thread->start();
+    if (testing_thread) {
+        if (testing_thread->isRunning())
+            testing_thread->quit();
     }
+    this->testing_thread = new QThread();
+    if (testing_worker) {
+        testing_worker->stopTraining();
+        delete testing_worker;
+    }
+    this->testing_worker = new ModelTestWorker();
+    testing_worker->setModel(current_model);
+    testing_worker->setDatasetFileName(file->fileName().toStdString());
+    testing_worker->setDatasetFraction(window->getTestingDatasetFraction());
+    testing_worker->moveToThread(this->testing_thread);
+
+    connect(this->testing_thread, SIGNAL(started()), testing_worker,
+            SLOT(process()));
+    connect(testing_worker, SIGNAL(finished()), this->testing_thread,
+            SLOT(quit()));
+    connect(testing_worker, SIGNAL(statusChanged(int)), this,
+            SLOT(TestingStatusChanged(int)));
+    connect(testing_worker,
+            SIGNAL(finishedResult(std::vector<s21::ConfusionMatrix>*,float)), this,
+            SLOT(TestingFinished(std::vector<s21::ConfusionMatrix>*,float)));
+    connect(testing_worker, SIGNAL(finished()), testing_worker,
+            SLOT(deleteLater()));
+    connect(this->testing_thread, SIGNAL(finished()), this->testing_thread,
+            SLOT(deleteLater()));
+    testing_thread->start();
 }
 
-void ModelController::TestingStatusChanged(int completion) {}
+void ModelController::TestingStatusChanged(int completion) {
+    this->window->update_testing_status(completion);
+}
 
 void ModelController::TestingFinished(
-        std::vector<s21::ConfusionMatrix> *result) {
+        std::vector<s21::ConfusionMatrix> *result, float time) {
     auto *predict_window = new TestDataInfoDialog();
     int size = s21::calculate_size(result);
     predict_window->SetModelMetrics(size, s21::calculate_recall(result, size),
                                     s21::calculate_precision(result, size),
-                                    s21::calculate_accuracy(result, size));
+                                    s21::calculate_accuracy(result, size),
+                                    time);
     window->show_predict_window();
     predict_window->show();
 }
@@ -157,6 +166,9 @@ void ModelController::FileWasDrawn() {
     int height_in_file;
     auto image = s21::load_bmp(s21::constant::letter_file.c_str(), &width_in_file, &height_in_file,
                                &channels_in_file);
+    if (!image) {
+        QMessageBox::warning(this->window, tr("Image error"), "Letter imported wrong. Please restart application.");
+    }
     auto grayscale = s21::bmp_data_to_grayscale(image, new_width, new_height, 3);
     if (current_model) {
         auto matrix_image =

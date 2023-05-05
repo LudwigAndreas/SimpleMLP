@@ -23,7 +23,7 @@ public slots:
 signals:
 	void statusChanged(int completion);
 
-	void finishedResult(std::vector<s21::ConfusionMatrix> *accuracy);
+	void finishedResult(std::vector<s21::ConfusionMatrix> *accuracy, float time = 0);
 
 	void finished();
 };

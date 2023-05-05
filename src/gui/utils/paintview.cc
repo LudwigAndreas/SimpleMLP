@@ -61,7 +61,6 @@ void PaintView::mouseReleaseEvent(QMouseEvent *event) {
     QPixmap scr = this->grab().scaled(28, 28);
     scr.save(s21::constant::letter_file.c_str());
 	emit file_saved();
-	qDebug() << "file_saved emited";
     QGraphicsView::mouseReleaseEvent(event);
 }
 

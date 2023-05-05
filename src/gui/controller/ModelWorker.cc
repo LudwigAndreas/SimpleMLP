@@ -14,9 +14,7 @@ ModelWorker::ModelWorker() {
 	this->stop = false;
 }
 
-ModelWorker::~ModelWorker() {
-	delete model;
-}
+ModelWorker::~ModelWorker() {}
 
 void ModelWorker::setModel(s21::IMLPModel *model) {
 	this->model = model;

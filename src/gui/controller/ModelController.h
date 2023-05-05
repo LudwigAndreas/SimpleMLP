@@ -32,7 +32,7 @@ protected slots:
   void HandleStartTesting(QFile *file);
   void QuitTesting();
   void TestingStatusChanged(int completion);
-  void TestingFinished(std::vector<s21::ConfusionMatrix> *result);
+  void TestingFinished(std::vector<s21::ConfusionMatrix> *result, float time = 0);
   void FileWasDrawn();
   void HandleSaveModel(std::string filename);
 

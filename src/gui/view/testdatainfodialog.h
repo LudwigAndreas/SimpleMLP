@@ -16,7 +16,7 @@ public:
   explicit TestDataInfoDialog(QWidget *parent = nullptr);
   ~TestDataInfoDialog();
 
-  void SetModelMetrics(int size, float recall, float precision, float accuracy);
+  void SetModelMetrics(int size, float recall, float precision, float accuracy, float time);
 
 protected:
   void showEvent(QShowEvent *event) override;
@@ -30,7 +30,8 @@ private:
   float recall;
   float precision;
   float accuracy;
-  float size;
+  float time;
+  int size;
 };
 
 #endif // TESTDATAINFODIALOG_H
