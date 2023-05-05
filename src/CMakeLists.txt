@@ -86,14 +86,14 @@ add_executable(${PROJECT_NAME}
         gui/utils/importfileitem.h
         gui/utils/paintview.cc
         gui/utils/importfileitem.cc
-        gui/controller/ModelWorker.h
+        core/ModelWorker/ModelWorker.h
         gui/controller/ModelController.h
-        gui/controller/ModelTrainWorker.cc
-        gui/controller/ModelWorker.cc
+        core/ModelWorker/ModelTrainWorker.cc
+        core/ModelWorker/ModelWorker.cc
         gui/controller/ModelController.cc
-        gui/controller/ModelTrainWorker.h
-        gui/controller/ModelTestWorker.h
-        gui/controller/ModelTestWorker.cc
+        core/ModelWorker/ModelTrainWorker.h
+        core/ModelWorker/ModelTestWorker.h
+        core/ModelWorker/ModelTestWorker.cc
         gui/view/testdatainfodialog.cc
         gui/view/TestModelPage.cc
         gui/view/mainwindow.h
