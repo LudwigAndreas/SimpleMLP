@@ -153,6 +153,7 @@ void ModelController::TestingFinished(std::vector<s21::ConfusionMatrix> *result,
                                   s21::calculate_accuracy(result, size), time);
   window->show_predict_window();
   predict_window->show();
+  delete result;
 }
 
 void ModelController::QuitTesting() {

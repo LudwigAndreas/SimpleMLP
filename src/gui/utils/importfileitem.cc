@@ -32,10 +32,6 @@ QFile *ImportFileItem::getUploadedFile() {
 
 void ImportFileItem::dragEnterEvent(QDragEnterEvent *event)
 {
-//    QFont font = this->font();
-//    font.setPointSize(18);
-//    this->setFont(font);
-//    setText(tr("drop here"));
     event->acceptProposedAction();
 }
 
