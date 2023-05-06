@@ -22,10 +22,8 @@ ModelController::ModelController() {
 
 ModelController::~ModelController() {
   delete current_model;
-  delete training_thread;
-  delete training_worker;
-  delete testing_thread;
-  delete testing_worker;
+  QuitTesting();
+  QuitTraining();
   delete builder;
 }
 
