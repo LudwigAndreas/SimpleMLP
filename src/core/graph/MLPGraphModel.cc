@@ -81,7 +81,7 @@ namespace s21 {
 		return getMostProbablePrediction(Forward(x));
 	}
 
-	const std::vector<size_t> &MLPGraphModel::getUnitsPerLayer() const {
+	const std::vector<size_t> &MLPGraphModel::get_units_per_layer() const {
 		return units_per_layer;
 	}
 
@@ -177,7 +177,7 @@ namespace s21 {
 
 	std::ostream &operator<<(std::ostream &os, MLPGraphModel &model) {
 		// os << "G" << std::endl;
-		for (auto unit : model.getUnitsPerLayer())
+		for (auto unit : model.get_units_per_layer())
 			os << unit << ' ';
 		os << model.getLr() << std::endl;
 		os << model.getAf() << std::endl;

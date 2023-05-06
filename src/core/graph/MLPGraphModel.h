@@ -26,10 +26,12 @@ namespace s21 {
 								float lr = .05f);
 
 		MLPGraphModel() : af(ActivationFunction()) {}
+
+		~MLPGraphModel() { for (auto layer : layers) delete layer; }
 								
 		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 
-		const std::vector<size_t> &getUnitsPerLayer() const;
+		const std::vector<size_t> &get_units_per_layer() const;
 		void setUnitsPerLayer(const std::vector<size_t> &unitsPerLayer);
 
 		const std::vector<MLPGraphLayer *> &get_layers() const;
