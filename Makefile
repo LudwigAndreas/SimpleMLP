@@ -58,13 +58,13 @@ $(BIN_DIR)/$(NAME):
 
 install: $(BIN_DIR)/$(NAME)
 	@cp $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
-	
+
 uninstall:
 	@rm -f $(INSTALL_PATH)/$(NAME)
 
 dist: $(BIN_DIR)/$(NAME)
 	@mkdir -p $(DIST_PATH)
-	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(SRC_DIR) Makefile $(ROOT_DIR)/README.md $(ROOT_DIR)/LICENSE 
+	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(SRC_DIR) Makefile $(ROOT_DIR)/README.md $(ROOT_DIR)/LICENSE
 
 tests:
 	@make -C $(LIB_DIR)
