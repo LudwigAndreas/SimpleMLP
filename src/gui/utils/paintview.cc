@@ -12,6 +12,11 @@ PaintView::PaintView(QWidget *parent): QGraphicsView{parent}
     this->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 }
 
+PaintView::~PaintView() {
+    delete scene;
+    delete pixmap;
+}
+
 void PaintView::paintEvent(QPaintEvent *event)
 {
     (void) event;
