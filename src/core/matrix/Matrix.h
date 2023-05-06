@@ -124,7 +124,7 @@ namespace s21 {
 		}
 
 		bool operator!=(const Matrix &other) const {
-			return this->data != other.get_data() && this->shape != other.get_shape();
+			return this->data != other.get_data() || this->shape != other.get_shape();
 		}
 
 		/*  Linear algebra methods */
