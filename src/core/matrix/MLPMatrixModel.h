@@ -27,6 +27,8 @@ class MLPMatrixModel : public s21::IMLPModel {
 								float lr = .05f);
 
 	public:
+		~MLPMatrixModel() { for (auto layer : layers) delete layer; }
+
 		const std::vector<size_t> &get_units_per_layer() const;
 
 		const std::vector<MLPMatrixLayer *> &get_layers() const;

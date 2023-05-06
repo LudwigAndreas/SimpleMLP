@@ -3,7 +3,7 @@
 #include "MLPGraphNode.h"
 #include "../matrix/Matrix.h"
 #include "../utils/ActivationFunction.h"
-#include "core/exceptions/UploadFileException.h"
+#include "../exceptions/UploadFileException.h"
 
 #include <vector>
 #include <algorithm>

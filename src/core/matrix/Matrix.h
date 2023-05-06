@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "core/exceptions/MatrixException.h"
+#include "../exceptions/MatrixException.h"
 
 namespace s21 {
 	template<typename Type>
