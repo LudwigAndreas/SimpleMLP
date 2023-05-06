@@ -26,22 +26,21 @@ void PaintView::paintEvent(QPaintEvent *event)
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     painter.setRenderHint(QPainter::RenderHint::SmoothPixmapTransform, true);
-    painter.setPen(QPen(Qt::white, 24, Qt::SolidLine));
+    painter.setPen(QPen(Qt::white, 24, Qt::SolidLine, Qt::RoundCap));
     setPalette(pal);
     if (pixmap) {
 		if (new_pixmap) {
 			vv.clear();
 			new_pixmap = false;
 		}
-//		TODO: pixmap.data may be not pixmap
 		painter.drawPixmap(-1, -1, pixmap->scaled(this->width(), this->height()));
     }
 	for (auto & line : vv) {
-		painter.drawEllipse(line.first(), 3, 3);
+        if (line.size() == 1)
+            line.push_back(QPoint(line[0].x() + 1, line[0].y() + 1));
 		for (int i = 0; i < line.size() - 1; ++i) {
 			painter.drawLine(line[i], line[i + 1]);
 		}
-		painter.drawEllipse(line.back(), 3, 3);
 	}
     hide();
     show();
