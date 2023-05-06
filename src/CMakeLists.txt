@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Set compilation flags
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og")
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og -fsanitize=address")
 set(CMAKE_CXX_FLAGS_RELEASE  "-Wall -Wextra  -Ofast -march=native")
 
 # Enable qt compilation

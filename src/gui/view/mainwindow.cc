@@ -45,6 +45,7 @@ MainWindow::~MainWindow() {
   delete chart_series;
   delete mse_series;
   delete ui->chart_widget->chart();
+  delete ui->chart_widget;
 
   delete ui;
 }
