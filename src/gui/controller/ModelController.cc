@@ -48,6 +48,8 @@ void ModelController::HandleModelConfigured() {
 }
 
 void ModelController::HandleModelImported(QFile *file) {
+  if (current_model)
+    delete current_model;
   this->current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
       file->fileName().toStdString());
 }
@@ -84,6 +86,10 @@ void ModelController::HandleStartTraining(QFile *file) {
 
 void ModelController::TrainingStatusChanged(int epoch, int completion,
                                             float accuracy) {
+  if (completion == 100) {
+    QuitTraining();
+    window->TrainingFinished();
+  }
   window->update_training_status(epoch, completion, accuracy);
 }
 
@@ -99,9 +105,7 @@ void ModelController::QuitTraining() {
   }
 }
 
-void ModelController::TrainingFinished() {
-  window->TrainingFinished();
-}
+void ModelController::TrainingFinished() {}
 
 void ModelController::HandleStartTesting(QFile *file) {
   if (testing_thread) {
