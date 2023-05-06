@@ -26,6 +26,7 @@ TEST(MLPGraphModelTest, size) {
 }
 
 TEST(MLPGraphModelTest, Forward) {
+  
   auto layers = model.get_layers();
   auto input = Matrix<float>({1, 0});
   auto result = model.Forward(input);
