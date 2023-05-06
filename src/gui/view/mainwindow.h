@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QThread>
+#include <QValueAxis>
 
 #include <sstream>
 
@@ -120,6 +121,8 @@ private:
   QFile *testing_dataset_file;
   QLineSeries *chart_series;
   QLineSeries *mse_series;
+  QValueAxis *mse_y;
+  QVector<float> mse_values;
   ModelController *m_controller;
 
   void ConnectDragNDrop();

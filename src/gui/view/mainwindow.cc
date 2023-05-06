@@ -83,7 +83,7 @@ void MainWindow::InitChart() {
   y->setMax(100);
   y->setMin(0.0);
   chart->addAxis(y, Qt::AlignLeft);
-  auto *mse_y = new QValueAxis();
+  this->mse_y = new QValueAxis();
   mse_y->setMax(1.0);
   mse_y->setMin(0.0);
   chart->addAxis(mse_y, Qt::AlignRight);

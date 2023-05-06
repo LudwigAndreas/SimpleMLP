@@ -119,7 +119,7 @@ void MainWindow::on_start_training_push_button_pressed() {
   mse_series->attachAxis(x);
   this->chart_series->clear();
   this->mse_series->clear();
-  mse_series->append(0,0);
+  // mse_series->append(0,0);
   ui->chart_widget->show();
 }
 
@@ -148,7 +148,11 @@ void MainWindow::update_training_status(int epoch, int completion,
 }
 
 void MainWindow::MSEUpdated(int epoch, float mse) {
+  this->mse_values.push_back(mse);
+  if (epoch == 1)
+    this->mse_series->append(0, mse * 1.2);
   this->mse_series->append(epoch, mse);
+  this->mse_y->setMax(*std::max_element(mse_values.begin(), mse_values.end()) * 1.25);
 }
 
 void MainWindow::TrainingFinished() {
