@@ -32,6 +32,10 @@ namespace s21 {
 	public:
 		ActivationFunction(Flags flag);
 		ActivationFunction(std::string name = "");
+
+		bool operator==(const ActivationFunction& rhs) const;
+		bool operator!=(const ActivationFunction& rhs) const;
+
 		std::function<float (float)> getFunction();
 		std::function<float (float)> getDerivative();
 		float applyFunction(float);

@@ -19,7 +19,7 @@ endif
 INSTALL_PATH = /usr/bin
 ROOT_DIR = $(shell pwd)
 SRC_DIR = $(ROOT_DIR)/src
-TEST_DIR = $(ROOT_DIR)/tests
+TEST_DIR = $(SRC_DIR)/tests
 BUILD_DIR = $(ROOT_DIR)/build
 TEST_BUILD_DIR = $(BUILD_DIR)/tests
 BIN_DIR = $(ROOT_DIR)/bin
@@ -70,9 +70,9 @@ tests:
 	@make -C $(LIB_DIR)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
-	@cmake -S ./$(TEST_DIR) -DPROJECT_NAME=$(NAME)-tests $(CMAKE_FLAGS) -B $(TEST_BUILD_DIR)
+	@cmake -S $(TEST_DIR) -DPROJECT_NAME=$(NAME)-tests -DSRC_DIR=$(SRC_DIR) $(CMAKE_FLAGS) -B $(TEST_BUILD_DIR)
 	@cmake --build $(TEST_BUILD_DIR)
-	@./$(BIN_DIR)/$(NAME)-tests
+	@$(BIN_DIR)/$(NAME)-tests
 
 leaks: tests
 ifeq ($(OS), Darwin)

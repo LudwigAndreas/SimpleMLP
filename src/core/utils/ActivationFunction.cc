@@ -45,6 +45,14 @@ namespace s21 {
 		 	SetValues();
 	}
 
+	bool ActivationFunction::operator==(const ActivationFunction& rhs) const{
+		return std::string(*this) == std::string(rhs);
+	}
+
+	bool ActivationFunction::operator!=(const ActivationFunction& rhs) const{
+		return !(*this == rhs);
+	}
+
 	std::function<float (float)> ActivationFunction::getFunction()		{ return f; }
 	std::function<float (float)> ActivationFunction::getDerivative()	{ return df; }
 	float ActivationFunction::applyFunction(float input)				{ return f(input); }

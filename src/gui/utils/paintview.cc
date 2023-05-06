@@ -26,7 +26,7 @@ void PaintView::paintEvent(QPaintEvent *event)
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     painter.setRenderHint(QPainter::RenderHint::SmoothPixmapTransform, true);
-    painter.setPen(QPen(Qt::white, 24, Qt::SolidLine, Qt::RoundCap));
+    painter.setPen(QPen(Qt::white, 30, Qt::SolidLine, Qt::RoundCap));
     setPalette(pal);
     if (pixmap) {
 		if (new_pixmap) {
