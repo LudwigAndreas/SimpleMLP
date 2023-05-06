@@ -7,7 +7,7 @@
 #include "ui_mainwindow.h"
 
 void MainWindow::onStartTrainingPage() {
-
+  ui->test_model_push_button_2->setDisabled(true);
   ui->training_progress_bar->hide();
   ui->training_progress_bar->setValue(0);
   ui->num_of_epochs_spin_box->show();
@@ -40,10 +40,6 @@ bool MainWindow::checkTrainingStatus() {
       emit StopTraining();
     } else
       return false;
-  }
-  if (this->training_dataset_file != nullptr) {
-    delete this->training_dataset_file;
-    this->training_dataset_file = nullptr;
   }
   return true;
 }

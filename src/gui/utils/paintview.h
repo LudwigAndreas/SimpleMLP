@@ -27,6 +27,7 @@ class PaintView : public QGraphicsView
 
 public:
     explicit PaintView(QWidget *parent = nullptr);
+    ~PaintView();
     void clear();
     QPixmap *getPixmap();
 
@@ -41,7 +42,6 @@ protected:
     void mousePressEvent(QMouseEvent *) override;
     void mouseMoveEvent(QMouseEvent *) override;
     void mouseReleaseEvent(QMouseEvent *) override;
-//    ~PaintView();
 public slots:
 
 signals:
