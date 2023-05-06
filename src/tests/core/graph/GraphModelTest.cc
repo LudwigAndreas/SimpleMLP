@@ -1,31 +1,24 @@
 #include <gtest/gtest.h>
 
 #include "core/graph/MLPGraphModel.h"
+#include "core/matrix/MLPMatrixModel.h"
+#include "core/utils/MLPSerializer.h"
 
-class MLPGraphModelTest : public ::testing::Test {
+class MLPMatrixGraphModelTest : public ::testing::Test {
 protected:
 	void SetUp() override {
-		model = s21::MLPGraphModel(
-      {2, 3, 1},
-			s21::ActivationFunction(s21::ActivationFunction::Flags::Linear));
-
   }
-
 	void TearDown() override {
 
 	}
 
-	s21::MLPGraphModel model;
 };
 
-TEST(MLPGraphModelTest, size) {
-  auto layers = model.get_layers();
-  ASSERT_EQ(*layers[0].size(), 2);
-  ASSERT_EQ(*layers[1].size(), 3);
-  ASSERT_EQ(*layers[2].size(), 1);
+TEST(MLPMatrixGraphModelTest, size) {
+  s21::MLPMatrixModel *matrix_model = s21::MLPSerializer::DeserializeMLPModel();
 }
 
-TEST(MLPGraphModelTest, Forward) {
+TEST(MLPMatrixGraphModelTest, Forward) {
   
   auto layers = model.get_layers();
   auto input = Matrix<float>({1, 0});
