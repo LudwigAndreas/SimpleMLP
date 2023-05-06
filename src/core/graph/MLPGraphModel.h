@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MLPGRAPHMODEL_H
+#define MLPGRAPHMODEL_H (x)
 
 #include <fstream>
 
@@ -69,3 +70,5 @@ namespace s21 {
 	std::istream &operator>>(std::istream &is, MLPGraphModel &model);
 	std::ostream &operator<<(std::ostream &os, MLPGraphModel &model);
 }
+
+#endif

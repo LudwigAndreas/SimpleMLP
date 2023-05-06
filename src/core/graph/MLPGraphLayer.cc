@@ -155,7 +155,6 @@ namespace s21 {
 			std::getline(is, line);
 		ss = std::stringstream(line);
 		ss >> input_size >> size;
-		std::cerr << line << std::endl << input_size << ' ' << size << std::endl;
 		if (1 != input_size || layer.Size() != size)
 			// std::raise(SIGTRAP);
 			throw UploadFileException("Incorrect bias vector size.");

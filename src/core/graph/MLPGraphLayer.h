@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MLPGRAPHLAYER_H
+#define MLPGRAPHLAYER_H
 
 #include "MLPGraphNode.h"
 #include "../matrix/Matrix.h"
@@ -58,3 +59,5 @@ namespace s21 {
 
 	std::ostream &operator<<(std::ostream &os, const MLPGraphLayer &layer);
 }
+
+#endif

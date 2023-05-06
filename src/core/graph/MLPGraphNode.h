@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MLPGRAPHNODE_H
+#define MLPGRAPHNODE_H
 
 #include <vector>
 #include <algorithm>
@@ -14,3 +15,4 @@ namespace s21 {
 	};
 }
 
+#endif

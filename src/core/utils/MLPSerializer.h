@@ -72,7 +72,6 @@ namespace s21 {
 					return DeserializeMLPGraphModel(file);
 				file.close();
 			}
-			std::cerr << filename << std::endl << signature << std::endl;
 			throw UploadFileException("Unknown or empty model file signature");
 			return nullptr;
 		}
