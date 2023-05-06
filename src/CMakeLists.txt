@@ -21,7 +21,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # Include Qt
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Widgets Charts REQUIRED )
+find_package(QT NAMES Qt6 COMPONENTS Core Widgets Charts REQUIRED )
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Charts REQUIRED )
 
 # define resources

@@ -54,9 +54,8 @@ float ModelTrainWorker::CalculateMSE(s21::DatasetGroup &batch) {
     tmp = 0;
     auto prediction = model->Forward(batch[i].x);
     for (size_t j = 0; j < prediction.size(); ++j) {
-      tmp += std::pow(prediction[j] - batch[i].x[j], 2);
+      tmp += std::pow(prediction[j] - batch[i].y[j], 2);
     }
-    tmp /= prediction.size();
     mse += tmp;
   }
   mse /= batch.size();
