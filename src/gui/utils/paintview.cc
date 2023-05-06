@@ -14,6 +14,7 @@ PaintView::PaintView(QWidget *parent): QGraphicsView{parent}
 
 void PaintView::paintEvent(QPaintEvent *event)
 {
+    (void) event;
     QPainter painter(viewport());
     QPalette pal(palette());
     pal.setColor(QPalette::Window , Qt::white);
@@ -61,7 +62,6 @@ void PaintView::mouseReleaseEvent(QMouseEvent *event) {
     QPixmap scr = this->grab().scaled(28, 28);
     scr.save(s21::constant::letter_file.c_str());
 	emit file_saved();
-	qDebug() << "file_saved emited";
     QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -81,7 +81,6 @@ void PaintView::dropEvent(QDropEvent *event)
     event->acceptProposedAction();
     const QMimeData* data = event->mimeData();
     QString file_path = data->urls()[0].path();
-    qDebug() << file_path;
     if (pixmap)
         delete pixmap;
     this->pixmap = new QPixmap(file_path);

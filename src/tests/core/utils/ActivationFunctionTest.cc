@@ -2,51 +2,45 @@
 
 #include "core/utils/ActivationFunction.h"
 
-inline float sigmoid(float x) {
-	return 1.0f / (1 + std::exp(-x));
-}
-
-inline float d_sigmoid(float x){
-	return std::exp(x) / std::pow(std::exp(x) + 1, 2);
-}
-
-TEST(ActivationFunction, CopyConstructor) {
-	s21::ActivationFunction af(sigmoid, d_sigmoid);
-	s21::ActivationFunction clone(af);
+TEST(ActivationFunction, GetFunctionByFlagMethod) {
+	s21::ActivationFunction af = s21::ActivationFunction(s21::ActivationFunction::Sigmoid);
+	ASSERT_EQ(s21::sigmoid, af.getFunction());
+	ASSERT_EQ(s21::d_sigmoid, af.getDerivative());
 	for (float i = -1; i <= 1; i += 0.1) {
-		ASSERT_EQ(clone.getFunction()(i), af.getFunction()(i));
-		ASSERT_EQ(clone.getDerivative()(i), af.getDerivative()(i));
-	}
-}
-
-TEST(ActivationFunction, ParameterizedConstructor) {
-	s21::ActivationFunction af(sigmoid, d_sigmoid);
-	for (float i = -1; i <= 1; i += 0.1) {
-		ASSERT_EQ(sigmoid(i), af.getFunction()(i));
-		ASSERT_EQ(d_sigmoid(i), af.getDerivative()(i));
-	}
-}
-
-TEST(ActivationFunction, ApplyFunctionMethod) {
-	s21::ActivationFunction af(sigmoid, d_sigmoid);
-	for (float i = -1; i <= 1; i += 0.1) {
-		ASSERT_EQ(sigmoid(i), af.applyFunction(i));
-		ASSERT_EQ(d_sigmoid(i), af.applyDerivative(i));
+		ASSERT_EQ(s21::sigmoid(i), af.applyFunction(i));
+		ASSERT_EQ(s21::d_sigmoid(i), af.applyDerivative(i));
 	}
 }
 
 TEST(ActivationFunction, GetFunctionByNameMethod) {
-	s21::ActivationFunction af = s21::ActivationFunction("sigmoid");
+	s21::ActivationFunction af = s21::ActivationFunction("linear");
 	for (float i = -1; i <= 1; i += 0.1) {
-		ASSERT_EQ(sigmoid(i), af.applyFunction(i));
-		ASSERT_EQ(d_sigmoid(i), af.applyDerivative(i));
+		ASSERT_EQ(s21::linear(i), af.applyFunction(i));
+		ASSERT_EQ(s21::d_linear(i), af.applyDerivative(i));
 	}
 }
 
-TEST(ActivationFunction, GetFunctionByFlagMethod) {
-	s21::ActivationFunction af = s21::ActivationFunction(s21::ActivationFunction::Sigmoid);
+TEST(ActivationFunction, GetFunctionByNoArguments) {
+	s21::ActivationFunction af = s21::ActivationFunction();
 	for (float i = -1; i <= 1; i += 0.1) {
-		ASSERT_EQ(sigmoid(i), af.applyFunction(i));
-		ASSERT_EQ(d_sigmoid(i), af.applyDerivative(i));
+		ASSERT_EQ(s21::sigmoid(i), af.applyFunction(i));
+		ASSERT_EQ(s21::d_sigmoid(i), af.applyDerivative(i));
+	}
+}
+
+TEST(ActivationFunction, CopyConstructor) {
+	s21::ActivationFunction af(s21::ActivationFunction::Flags::BipolarSigmoid);
+	s21::ActivationFunction clone(af);
+	for (float i = -1; i <= 1; i += 0.1) {
+		ASSERT_EQ(clone.applyFunction(i), af.applyFunction(i));
+		ASSERT_EQ(clone.applyFunction(i), af.applyDerivative(i));
+	}
+}
+
+TEST(ActivationFunction, GetFunction) {
+	s21::ActivationFunction af(s21::ActivationFunction::Flags::BipolarSigmoid);
+	for (float i = -1; i <= 1; i += 0.1) {
+		ASSERT_EQ(af.getFunction()(i), af.applyFunction(i));
+		ASSERT_EQ(af.getDerivative()(i), af.applyDerivative(i));
 	}
 }
