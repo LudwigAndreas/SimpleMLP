@@ -91,6 +91,7 @@ void MainWindow::on_toolButton_pressed() {
   if (!file->open(QIODevice::ReadOnly)) {
     QMessageBox::information(this, tr("Unable to open file"),
                              file->errorString());
+    delete file;
     return;
   } else {
     modelConfigFileWasUploaded(file);
