@@ -2,9 +2,9 @@
 #include <QChartView>
 #include <QLineSeries>
 
-#include "ui_mainwindow.h"
-#include "gui/view/mainwindow.h"
 #include "gui/utils/const.h"
+#include "gui/view/mainwindow.h"
+#include "ui_mainwindow.h"
 
 void MainWindow::onStartConfigurePage() {
   ui->file_path_label->clear();
@@ -44,8 +44,13 @@ void MainWindow::on_train_model_push_button_pressed() {
 }
 
 void MainWindow::on_test_model_push_button_pressed() {
-  if (this->model_config_file != nullptr)
-    ui->stackedWidget->setCurrentIndex(2);
+  if (this->model_config_file != nullptr) {
+    if (ui->tabWidget->currentIndex() == 1 &&
+        !ui->file_path_label->text().isEmpty()) {
+      emit ModelImported(model_config_file);
+      ui->stackedWidget->setCurrentIndex(2);
+    }
+  }
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index) {

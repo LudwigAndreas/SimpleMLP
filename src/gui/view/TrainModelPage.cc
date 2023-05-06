@@ -3,8 +3,8 @@
 #include <QValueAxis>
 #include <iomanip>
 
-#include "ui_mainwindow.h"
 #include "gui/utils/const.h"
+#include "ui_mainwindow.h"
 
 void MainWindow::onStartTrainingPage() {
 
@@ -116,7 +116,10 @@ void MainWindow::on_start_training_push_button_pressed() {
   x->setMin(0);
   ui->chart_widget->chart()->addAxis(x, Qt::AlignBottom);
   chart_series->attachAxis(x);
+  mse_series->attachAxis(x);
   this->chart_series->clear();
+  this->mse_series->clear();
+  // mse_series->append(0,0);
   ui->chart_widget->show();
 }
 
@@ -141,16 +144,17 @@ void MainWindow::update_training_status(int epoch, int completion,
   this->chart_series->append(((float)completion) /
                                  (getNumOfEpochs() * (getNumOfEpochs() - 1)),
                              accuracy);
-  //  std::cerr << epoch << " " << accuracy << std::endl;
-  //  std::cerr << chart_series->chart() << std::endl;
   setUpdatesEnabled(this->chart_series);
-  if (ui->training_progress_bar->value() == 100) {
-    //    TODO move this into finish slot
-    ui->test_model_push_button_2->setEnabled(true);
-    emit StopTraining();
-  }
 }
 
 void MainWindow::MSEUpdated(int epoch, float mse) {
-	this->mse_series->append(epoch, mse);
+  this->mse_values.push_back(mse);
+  if (epoch == 1)
+    this->mse_series->append(0, mse * 1.2);
+  this->mse_series->append(epoch, mse);
+  this->mse_y->setMax(*std::max_element(mse_values.begin(), mse_values.end()) * 1.25);
+}
+
+void MainWindow::TrainingFinished() {
+  ui->test_model_push_button_2->setEnabled(true);
 }

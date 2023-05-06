@@ -335,30 +335,39 @@ namespace s21 {
 
 	template<typename Type>
 	std::istream &operator>>(std::istream &is, Matrix<Type> &matrix) {
-		size_t						rows, cols;
-		std::vector<float>			data;
-		std::vector<float>			line_data;
-		std::string					line;
-		std::stringstream			ss;
-		float						tmp;
+        std::vector<float>	data;
+        std::stringstream	ss;
+        std::string			line;
+        size_t				input_size;
+        size_t				size;
+        size_t 				i;
+        size_t				j;
+        float				weight = 0;
 
-		is >> rows >> cols;
-		data.reserve(rows * cols);
-		for (size_t i = 0; i < rows && is >> line; ++i) {
-			ss.str(line);
-			while (ss >> tmp)
-				line_data.push_back(tmp);
-			if (line_data.size() != cols)
-				throw MatrixCalculationsException("Invalid input file: Elements count on matrix line is incorrect");
-			// is >> tmp;
-			for (size_t j = 0; j < line_data.size(); ++j) {
-				data.push_back(line_data[j]);
-			}
-			// data.emplace_back(line_data.begin(), line_data.end());
-		}
+        line = "";
+        while (line.empty())
+            std::getline(is, line);
+        ss = std::stringstream(line);
+        ss >> input_size >> size;
+        if (input_size <= 0 || input_size > 0xFFFF || size <= 0 || size > 0xFFFF)
+            throw MatrixCalculationsException("Incorrect matrix size.");
+        data.reserve(input_size * size);
+        for (j = 0; j < input_size && std::getline(is, line); ++j) {
+            ss = std::stringstream(line);
+            i = 0;
+            while (ss >> weight) {
+                data.push_back(weight);
+                ++i;
+            }
+            if (i != size)
+                throw MatrixCalculationsException("Invalid matrix's line length.");
+        }
+        if (j != input_size) {
+            throw MatrixCalculationsException("Input ended unexpectedly.");
+        }
 		matrix = Matrix<float>(data);
-		matrix.set_rows(rows);
-		matrix.set_cols(cols);
+		matrix.set_rows(input_size);
+		matrix.set_cols(size);
 		return is;
 	}
 
