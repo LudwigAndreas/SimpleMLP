@@ -35,6 +35,11 @@ MainWindow::MainWindow(QWidget *parent)
   ConnectController();
 }
 
+MainWindow::~MainWindow() {
+   delete ui;
+   delete m_controller;
+}
+
 int MainWindow::getNumOfEpochs() const {
   return ui->num_of_epochs_spin_box->value();
 }
@@ -108,8 +113,6 @@ void MainWindow::ConnectController() {
   connect(this, SIGNAL(SaveModel(std::string)), m_controller,
           SLOT(HandleSaveModel(std::string)));
 }
-
-MainWindow::~MainWindow() { delete ui; }
 
 int MainWindow::getTestingDatasetFraction() const {
   return ui->testing_size_horizontal_slider->value();
