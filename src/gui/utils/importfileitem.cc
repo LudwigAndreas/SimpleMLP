@@ -19,6 +19,8 @@ void ImportFileItem::dropEvent(QDropEvent *event) {
         if (file_try->open(QIODevice::ReadOnly)) {
             this->file = file_try;
             emit fileWasUploaded();
+        } else {
+            delete file_try;
         }
     } else {
         QMessageBox::information(this, tr("Unable to open file"), "File open error.");

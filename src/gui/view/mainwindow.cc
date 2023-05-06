@@ -36,11 +36,17 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {
-   delete ui;
-   delete m_controller;
-   delete training_dataset_file;
-   delete testing_dataset_file;
-   delete model_config_file;
+  delete m_controller;
+  delete training_dataset_file;
+  delete testing_dataset_file;
+  delete model_config_file;
+
+  qDeleteAll(ui->chart_widget->chart()->axes());
+  delete chart_series;
+  delete mse_series;
+  delete ui->chart_widget->chart();
+
+  delete ui;
 }
 
 int MainWindow::getNumOfEpochs() const {
