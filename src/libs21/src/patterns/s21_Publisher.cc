@@ -10,13 +10,13 @@ public:
     }
 
     void remove_listener(const std::function<void()>& listener) {
-    for (auto it = listeners_.begin(); it != listeners_.end(); ++it) {
-        if (it->target<void(*)()>() == listener.target<void(*)()>()) {
-            listeners_.erase(it);
-            return;
+        for (auto it = listeners_.begin(); it != listeners_.end(); ++it) {
+            if (it->target<void(*)()>() == listener.target<void(*)()>()) {
+                listeners_.erase(it);
+                return;
+            }
         }
     }
-}
 
     void publish() {
         for (auto listener : listeners_) {
@@ -35,7 +35,7 @@ public:
     }
 };
 
-class ConcretePublisher : public Publisher{
+class ConcretePublisher : public Publisher {
     void foo() {
         for (int i = 0; i < 3; ++i) {
             std::cout << "Publisher doing work";
@@ -45,17 +45,23 @@ class ConcretePublisher : public Publisher{
 
 };
 
-class ConcreteSubscriber : public Subscriber{
+class ConcreteSubscriber : public Subscriber {
 
 };
 
 int main() {
     Publisher publisher;
     Subscriber subscriber1, subscriber2;
-    publisher.add_listener([&]() { subscriber1.notify(); });
-    publisher.add_listener([&]() { subscriber2.notify(); });
+    publisher.add_listener([&]() {
+        subscriber1.notify();
+    });
+    publisher.add_listener([&]() {
+        subscriber2.notify();
+    });
     publisher.publish();
-    publisher.remove_listener([&]() { subscriber1.notify(); });
+    publisher.remove_listener([&]() {
+        subscriber1.notify();
+    });
     publisher.publish();
     return 0;
 }

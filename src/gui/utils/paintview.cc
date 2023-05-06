@@ -17,36 +17,36 @@ void PaintView::paintEvent(QPaintEvent *event)
     (void) event;
     QPainter painter(viewport());
     QPalette pal(palette());
-    pal.setColor(QPalette::Window , Qt::white);
+    pal.setColor(QPalette::Window, Qt::white);
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
     painter.setRenderHint(QPainter::RenderHint::SmoothPixmapTransform, true);
     painter.setPen(QPen(Qt::white, 24, Qt::SolidLine));
     setPalette(pal);
     if (pixmap) {
-		if (new_pixmap) {
-			vv.clear();
-			new_pixmap = false;
-		}
+        if (new_pixmap) {
+            vv.clear();
+            new_pixmap = false;
+        }
 //		TODO: pixmap.data may be not pixmap
-		painter.drawPixmap(-1, -1, pixmap->scaled(this->width(), this->height()));
+        painter.drawPixmap(-1, -1, pixmap->scaled(this->width(), this->height()));
     }
-	for (auto & line : vv) {
-		painter.drawEllipse(line.first(), 3, 3);
-		for (int i = 0; i < line.size() - 1; ++i) {
-			painter.drawLine(line[i], line[i + 1]);
-		}
-		painter.drawEllipse(line.back(), 3, 3);
-	}
+    for (auto & line : vv) {
+        painter.drawEllipse(line.first(), 3, 3);
+        for (int i = 0; i < line.size() - 1; ++i) {
+            painter.drawLine(line[i], line[i + 1]);
+        }
+        painter.drawEllipse(line.back(), 3, 3);
+    }
     hide();
     show();
 }
 
 void PaintView::mousePressEvent(QMouseEvent *event) {
     draw = true;
-	vv.push_back(QVector<QPoint>());
-	vv.back().push_back(event->pos());
-	QGraphicsView::mousePressEvent(event);
+    vv.push_back(QVector<QPoint>());
+    vv.back().push_back(event->pos());
+    QGraphicsView::mousePressEvent(event);
 }
 
 void PaintView::mouseMoveEvent(QMouseEvent *event) {
@@ -61,7 +61,7 @@ void PaintView::mouseReleaseEvent(QMouseEvent *event) {
     draw = false;
     QPixmap scr = this->grab().scaled(28, 28);
     scr.save(s21::constant::letter_file.c_str());
-	emit file_saved();
+    emit file_saved();
     QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -90,8 +90,8 @@ void PaintView::dropEvent(QDropEvent *event)
         return;
     }
     this->pixmap->save(s21::constant::letter_file.c_str());
-	new_pixmap = true;
-	emit file_saved();
+    new_pixmap = true;
+    emit file_saved();
 }
 
 void PaintView::dragEnterEvent(QDragEnterEvent *event) {
