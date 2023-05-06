@@ -2,7 +2,7 @@
 
 ROOT_DIR="$1"
 
-cat << EOF > "$ROOT_DIR/src/gui/utils/const.h"
+cat <<EOF >"$ROOT_DIR/src/gui/utils/const.h"
 #ifndef SIMPLEMLP_CONST_H
 # define SIMPLEMLP_CONST_H
 
