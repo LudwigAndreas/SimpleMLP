@@ -7,8 +7,9 @@
 #include "core/LetterRecognitionMlpModelBuilder.h"
 #include "core/utils/IMLPModel.h"
 
-#include "../../core/ModelWorker/ModelTestWorker.h"
-#include "../../core/ModelWorker/ModelTrainWorker.h"
+#include "core/ModelWorker/ModelTestWorker.h"
+#include "core/ModelWorker/ModelTrainWorker.h"
+#include "gui/view/testdatainfodialog.h"
 
 class MainWindow;
 
@@ -38,9 +39,11 @@ protected slots:
   void FileWasDrawn();
   void HandleSaveModel(std::string filename);
   void HandleMSEUpdate(int epoch, float mse);
+  void DeletePredictWindow();
 
 private:
   MainWindow *window;
+  TestDataInfoDialog *predict_window;
   s21::IMLPModel *current_model;
   QThread *training_thread;
   ModelTrainWorker *training_worker;

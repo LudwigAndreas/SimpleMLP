@@ -59,8 +59,9 @@ void MainWindow::trainDatasetFileWasUploaded(QFile *file) {
     QMessageBox::information(
         this, tr("Wrong file format"),
         "Incorrect file format. The file must have the .csv extension ");
+    delete file;
   } else {
-    if (this->training_dataset_file != nullptr) {
+    if (this->training_dataset_file) {
       delete this->training_dataset_file;
       this->training_dataset_file = nullptr;
     }
@@ -86,6 +87,7 @@ void MainWindow::on_toolButton_3_pressed() {
   if (!file->open(QIODevice::ReadOnly)) {
     QMessageBox::information(this, tr("Unable to open file"),
                              file->errorString());
+    delete file;                         
     return;
   } else {
     trainDatasetFileWasUploaded(file);
@@ -103,9 +105,12 @@ void MainWindow::on_start_training_push_button_pressed() {
   ui->num_of_epochs_spin_box->hide();
   emit TrainModel(this->training_dataset_file);
 
-  if (!ui->chart_widget->chart()->axes(Qt::Horizontal).isEmpty())
+  if (!ui->chart_widget->chart()->axes(Qt::Horizontal).isEmpty()) {
+    auto axis = ui->chart_widget->chart()->axes(Qt::Horizontal);
     ui->chart_widget->chart()->removeAxis(
         ui->chart_widget->chart()->axes(Qt::Horizontal).first());
+    qDeleteAll(axis);
+  }
   auto *x = new QValueAxis();
   x->setMax(ui->num_of_epochs_spin_box->value());
   x->setTickCount(ui->num_of_epochs_spin_box->value() + 1);

@@ -38,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
    delete ui;
    delete m_controller;
+   delete training_dataset_file;
+   delete testing_dataset_file;
+   delete model_config_file;
 }
 
 int MainWindow::getNumOfEpochs() const {
