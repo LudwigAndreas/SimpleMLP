@@ -4,6 +4,7 @@
 #include "core/exceptions/ModelProcessingException.h"
 
 #include <list>
+#include <QDebug>
 
 ModelTrainWorker::ModelTrainWorker() {}
 
@@ -17,7 +18,7 @@ void ModelTrainWorker::process() {
       for (size_t j = 0; j < dataset.size(); ++j) {
         if (this->stop)
           return;
-        if (j != (size_t)dataset.current_iteration || dataset.size() == 1) {
+        if (j != i || dataset.size() == 1) {
           ++num_of_batches_trained;
           correct_guesses = 0;
           for (int k = 0; k < (int)dataset[j].size(); ++k) {
@@ -31,15 +32,14 @@ void ModelTrainWorker::process() {
           }
         }
         emit statusChanged(i + 1,
-                           ((float)num_of_batches_trained) /
-                               (dataset.size() * (dataset.size() - 1)) * 100,
+                           ((float) num_of_batches_trained) /
+                               (dataset.size() * std::max(1ul, dataset.size() - 1)) * 100,
                            ((float)correct_guesses * 100) / dataset[j].size());
       }
       emit MeanErrorCalculated(
           i + 1, this->CalculateMSE(
-                     dataset[dataset.current_iteration % dataset.size()]));
+                     dataset[i % dataset.size()]));
       SaveModel(model, i);
-      ++dataset.current_iteration;
     }
     return;
   } catch (std::exception &e) {

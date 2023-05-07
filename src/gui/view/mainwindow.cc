@@ -49,6 +49,11 @@ MainWindow::~MainWindow() {
   delete ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *ev) {
+  m_controller->QuitIntention();
+  QMainWindow::closeEvent(ev);
+}
+
 int MainWindow::getNumOfEpochs() const {
   return ui->num_of_epochs_spin_box->value();
 }

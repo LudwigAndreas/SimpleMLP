@@ -142,8 +142,7 @@ void MainWindow::update_training_status(int epoch, int completion,
      << "</span></p></body></html>";
   ui->train_info_text_label->setText(ss.str().data());
   ui->training_progress_bar->setValue(completion);
-  this->chart_series->append(((float)completion) /
-                                 (getNumOfEpochs() * (getNumOfEpochs() - 1)),
+  this->chart_series->append((float)(completion * getNumOfEpochs()) / 100,
                              accuracy);
   setUpdatesEnabled(this->chart_series);
 }
