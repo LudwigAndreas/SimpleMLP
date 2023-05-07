@@ -52,8 +52,21 @@ void ModelController::HandleModelImported(QFile *file) {
       file->fileName().toStdString());
 }
 
+void ModelController::QuitIntention() {
+  if (this->IsTrainingRunning()) {
+    QuitTraining();
+  }
+  if (this->IsTestingRunning()) {
+    QuitTesting();
+  }
+}
+
 bool ModelController::IsTrainingRunning() {
   return training_thread != nullptr && training_thread->isRunning();
+}
+
+bool ModelController::IsTestingRunning() {
+  return testing_thread != nullptr && testing_thread->isRunning();
 }
 
 void ModelController::HandleStartTraining(QFile *file) {
@@ -113,7 +126,7 @@ void ModelController::QuitTraining() {
 }
 
 void ModelController::TrainingFinished() {
-  QuitTraining();
+  this->training_thread->quit();
 }
 
 void ModelController::HandleStartTesting(QFile *file) {

@@ -44,6 +44,8 @@ namespace s21 {
 					group.reserve(group_size);
 				}
 			}
+			if (group.size())
+				groups.emplace_back(group);
 		}
 
 		DatasetGroup &operator[](size_t index)				{ return groups[index]; }

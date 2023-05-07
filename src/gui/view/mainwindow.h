@@ -59,6 +59,8 @@ public:
 
   void TrainingFinished();
 
+  void closeEvent(QCloseEvent *ev);
+
 private slots:
 
   void on_train_model_push_button_pressed();

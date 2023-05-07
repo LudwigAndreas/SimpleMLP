@@ -21,8 +21,10 @@ public:
   ~ModelController();
 
   bool IsTrainingRunning();
+  bool IsTestingRunning();
   bool IsModelInitialized();
   void SetWindow(MainWindow *window);
+  void QuitIntention();
 
 protected slots:
   void HandleModelConfigured();
