@@ -26,9 +26,6 @@ class MLPSerializer {
   static void SerializeMLPModel(IMLPModel *model, const std::string &filename) {
     auto *matrix_model = dynamic_cast<s21::MLPMatrixModel *>(model);
     auto *graph_model = dynamic_cast<s21::MLPGraphModel *>(model);
-    // if (matrix_model || graph_model) {
-
-    // }
     if (matrix_model)
       SerializeMLPMatrixModel(matrix_model, filename);
     else if (graph_model)

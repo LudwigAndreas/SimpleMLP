@@ -4,8 +4,6 @@
 #include "core/utils/IMLPModel.h"
 #include "core/utils/MLPSerializer.h"
 
-// argv[1] = model
-// argv[2] = testing_dataset
 int main(int argc, char **argv) {
   if (argc < 2) return 1;
   s21::IMLPModel *model =

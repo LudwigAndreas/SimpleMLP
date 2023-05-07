@@ -1,13 +1,14 @@
 # Application name
 NAME = SimpleMLP
 
+OS = $(shell uname)
+
 # Project Version
 VERSION = 1.0
 
 # Make and cmake settings
 CMAKE = cmake
 CMAKE_FLAGS = -DCMAKE_PREFIX_PATH=$(QT_PATH) -DCMAKE_OUT_DIR=$(BIN_DIR) -DCMAKE_BUILD_TYPE=Release #Release / Debug
-OS = $(shell uname)
 ifeq ($(OS), Linux)
   OPEN=xdg-open
 else
@@ -16,7 +17,7 @@ endif
 
 # Directories
 # To create the folders and structure of the project more correctly, put the Makefile in the root of the project and change the SRC variable from '.' to 'src'
-INSTALL_PATH = /usr/bin
+INSTALL_PATH = ~/Applications
 ROOT_DIR = $(shell pwd)
 SRC_DIR = $(ROOT_DIR)/src
 TEST_DIR = $(SRC_DIR)/tests
@@ -46,25 +47,31 @@ PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(addprefix $(SRC_DIR)/, $(T
 
 all: $(BIN_DIR)/$(NAME)
 
-# all:
-# 	@echo -n $(ROOT_DIR)correctly
-
-$(BIN_DIR)/$(NAME):
-	@bash generate_constants.sh $(ROOT_DIR)
+$(BIN_DIR)/$(NAME): $(SRC_FILES) 
 	@make -C $(LIB_DIR)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
 	@cmake -S $(SRC_DIR) -DPROJECT_NAME=$(NAME) $(CMAKE_FLAGS) -B $(BUILD_DIR)
 	@cmake --build $(BUILD_DIR)
-	#@./$(BIN_DIR)/$(NAME)
+
+$(ROOT_DIR)/src/gui/utils/const.h: generate_constants.sh
+	@bash generate_constants.sh $(ROOT_DIR)
 
 install: $(BIN_DIR)/$(NAME)
-	@cp $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
+ifeq ($(OS),Darwin)
+	@cp -rf $(BIN_DIR)/$(NAME).app $(INSTALL_PATH)
+else
+	@cp -rf $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
+endif
 	
 uninstall:
-	@rm -f $(INSTALL_PATH)/$(NAME)
+ifeq ($(OS),Darwin)
+	@rm -rf $(BIN_DIR)/$(NAME).app $(INSTALL_PATH)
+else
+	@rm -rf $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
+endif
 
-dist: $(BIN_DIR)/$(NAME)
+dist:
 	@mkdir -p $(DIST_PATH)
 	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(SRC_DIR) Makefile $(ROOT_DIR)/README.md $(ROOT_DIR)/LICENSE 
 
@@ -83,13 +90,13 @@ else
 	@echo "I do not know how to run leaks test on linux"
 endif
 
-dvi: github $(DVIS) 
+dvi: github #$(DVIS) 
 
 $(DOC_DIR)/%.dvi: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
 	@cd $(DOC_DIR) && $(TEXI2DVI) ../$<
 
-pdf: github $(PDFS) 
+pdf: github #$(PDFS) 
 
 $(DOC_DIR)/%.pdf: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
@@ -100,8 +107,8 @@ github:
 
 style:
 	@cp $(ROOT_DIR)/materials/linters/.clang-format .clang-format
-	@clang-format -style=Google --verbose -i $(SRC_FILES)
-	@clang-format -style=Google -n $(SRC_FILES)
+	@clang-format -style=Google -i $(SRC_FILES)
+	@clang-format -style=Google --verbose -n $(SRC_FILES)
 	@rm .clang-format
 
 clean:
@@ -114,4 +121,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re tests leaks $(BIN_DIR)/$(NAME)
+.PHONY: all clean fclean re tests leaks dvi pdf github dist uninstall install

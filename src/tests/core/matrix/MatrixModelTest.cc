@@ -32,7 +32,6 @@ TEST(MLPMatrixModelTest, ForwardTest) {
   auto output = model->Forward(input);
 
   EXPECT_EQ(output.size(), 2);
-  // Ensure output is in the range [0, 1]
   for (const auto &o : output) {
     EXPECT_GE(o, 0.0f);
     EXPECT_LE(o, 1.0f);
@@ -59,7 +58,6 @@ TEST(MLPMatrixModelTest, BackwardTest) {
   model->Forward(input);
   model->Backward(target);
 
-  // Ensure the weights and biases have been updated
   for (size_t i = 0; i < model->get_layers().size() - 1; ++i) {
     EXPECT_NE(model->get_layers()[i]->weight_matrices, weights[i]);
     EXPECT_NE(model->get_layers()[i]->bias, biases[i]);
