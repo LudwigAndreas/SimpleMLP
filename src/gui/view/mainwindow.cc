@@ -1,9 +1,8 @@
 #include "mainwindow.h"
 
-#include <sstream>
-
 #include <QLogValueAxis>
 #include <QValueAxis>
+#include <sstream>
 
 #include "core/LetterRecognitionMlpModelBuilder.h"
 #include "gui/utils/importfileitem.h"

@@ -13,7 +13,7 @@ std::vector<s21::Sample> ReadDataset(std::string filename) {
     throw UploadFileException("Error opening dataset file");
   }
   while (file >> str) {
-    std::vector<std::string> letter = s21::split(str, ",");
+    std::vector<std::string> letter = s21::Split(str, ",");
     std::vector<float> pixels;
     std::vector<float> answer(26, 0);
     answer[std::atoi(letter[0].data()) - 1] = 1;

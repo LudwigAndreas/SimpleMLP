@@ -8,7 +8,7 @@
 class ModelWorker : public QObject {
   Q_OBJECT
 
-protected:
+ protected:
   s21::IMLPModel *model;
   std::string dataset_file_name;
   int num_of_epochs;
@@ -16,7 +16,7 @@ protected:
 
   void SaveModel(s21::IMLPModel *model, int iteration);
 
-public:
+ public:
   ModelWorker();
   virtual ~ModelWorker();
 
@@ -25,8 +25,8 @@ public:
   void setNumOfEpochs(int num);
   void stopTraining();
 
-public slots:
+ public slots:
   virtual void process() = 0;
 };
 
-#endif // SIMPLEMLP_MODELWORKER_H
+#endif  // SIMPLEMLP_MODELWORKER_H
