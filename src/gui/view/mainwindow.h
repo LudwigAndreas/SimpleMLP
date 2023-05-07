@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow {
 
   void closeEvent(QCloseEvent *ev);
 
-private slots:
+ private slots:
 
   void on_train_model_push_button_pressed();
 

@@ -56,9 +56,6 @@ float MLPGraphModel::Train(DatasetGroup samples, bool silent_mode) {
   float accuracy = ((float)correct_guesses / (float)samples.size());
   if (!silent_mode)
     std::cerr << "Train: " << accuracy * 100 << "% accuracy" << std::endl;
-  // if (auto_decrease) {
-  // 	lr = start_lr * (1 - std::min(accuracy, 0.99f));
-  // }
   return accuracy;
 }
 
@@ -112,7 +109,7 @@ void MLPGraphModel::set_lr(float lr) { MLPGraphModel::lr = lr; }
 bool MLPGraphModel::is_auto_decrease() const { return auto_decrease; }
 
 void MLPGraphModel::set_auto_decrease(bool auto_decrease) {
-  auto_decrease = auto_decrease;
+  this->auto_decrease = auto_decrease;
 }
 
 std::vector<MLPGraphLayer *> &MLPGraphModel::get_layers() { return layers; }

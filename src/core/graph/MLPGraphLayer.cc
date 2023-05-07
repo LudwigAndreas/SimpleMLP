@@ -127,7 +127,6 @@ std::istream &operator>>(std::istream &is, MLPGraphLayer &layer) {
   ss = std::stringstream(line);
   ss >> input_size >> size;
   if (1 != input_size || layer.Size() != size)
-    // std::raise(SIGTRAP);
     throw UploadFileException("Incorrect bias vector size.");
   if (std::getline(is, line)) {
     ss = std::stringstream(line);

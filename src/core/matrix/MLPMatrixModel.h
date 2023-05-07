@@ -38,9 +38,9 @@ class MLPMatrixModel : public s21::IMLPModel {
 
   const ActivationFunction &get_af() const;
 
-		bool is_auto_decrease() const;
+  bool is_auto_decrease() const;
 
-		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer);
+  void set_units_per_layer(const std::vector<size_t> &unitsPerLayer);
 
   void set_layers(std::vector<MLPMatrixLayer *> l);
 
@@ -48,16 +48,13 @@ class MLPMatrixModel : public s21::IMLPModel {
 
   void set_af(ActivationFunction &af);
 
-		void set_auto_decrease(bool flag);
+  void set_auto_decrease(bool flag);
 
-		Matrix<float> NormalizedInput(Matrix<float> matrix);
+  Matrix<float> NormalizedInput(Matrix<float> matrix);
 
   std::vector<float> Forward(Matrix<float> matrix) override;
 
   void Backward(Matrix<float> target) override;
-
-  // float TestOutput(std::vector<s21::Sample> samples, bool silent_mode =
-  // false, std::string filename = "") override;
 
   int Predict(Matrix<float> x) override;
 

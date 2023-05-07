@@ -120,9 +120,7 @@ void ModelController::QuitTraining() {
   }
 }
 
-void ModelController::TrainingFinished() {
-  this->training_thread->quit();
-}
+void ModelController::TrainingFinished() { this->training_thread->quit(); }
 
 void ModelController::HandleStartTesting(QFile *file) {
   if (testing_thread) {

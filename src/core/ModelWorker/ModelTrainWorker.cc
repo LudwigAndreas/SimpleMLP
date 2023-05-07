@@ -15,8 +15,7 @@ void ModelTrainWorker::process() {
       int correct_guesses = 0;
 
       for (size_t j = 0; j < dataset.size(); ++j) {
-        if (this->stop)
-          return;
+        if (this->stop) return;
         if (j != i || dataset.size() == 1) {
           ++num_of_batches_trained;
           correct_guesses = 0;
@@ -29,14 +28,14 @@ void ModelTrainWorker::process() {
               model->Backward(dataset[j][k].y);
           }
         }
-        emit statusChanged(i + 1,
-                           ((float) num_of_batches_trained) /
-                               (dataset.size() * std::max(1ul, dataset.size() - 1)) * 100,
-                           ((float)correct_guesses * 100) / dataset[j].size());
+        emit statusChanged(
+            i + 1,
+            ((float)num_of_batches_trained) /
+                (dataset.size() * std::max(1ul, dataset.size() - 1)) * 100,
+            ((float)correct_guesses * 100) / dataset[j].size());
       }
-      emit MeanErrorCalculated(
-          i + 1, this->CalculateMSE(
-                     dataset[i % dataset.size()]));
+      emit MeanErrorCalculated(i + 1,
+                               this->CalculateMSE(dataset[i % dataset.size()]));
       SaveModel(model, i);
     }
     return;

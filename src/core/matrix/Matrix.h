@@ -151,7 +151,6 @@ class Matrix {
     std::vector<Type> transposed = target.T().ToVector();
     typename std::vector<Type>::iterator begin, end, tbegin;
 
-    // #pragma omp parallel for
     begin = data.begin();
     end = data.begin() + cols;
     for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -168,14 +167,11 @@ class Matrix {
 
   Matrix MatrixMultiplicationTransposed(Matrix &target) {
     if (cols != target.get_cols()) raise(SIGTRAP);
-    // throw MatrixCalculationsException("Matrix Multiplication Exception:
-    // MatrixMultiplicationTransposed(Matrix). Matrix dimensions not match");
 
     Matrix output(rows, target.get_rows());
     std::vector<Type> transposed = target.ToVector();
     typename std::vector<Type>::iterator begin, end, tbegin;
 
-    // #pragma omp parallel for
     begin = data.begin();
     end = data.begin() + cols;
     for (size_t r = 0; r < output.get_rows(); ++r) {
@@ -208,7 +204,6 @@ class Matrix {
 
   Matrix ScalarMultiplication(Type scalar) {
     Matrix output((*this));
-    // #pragma omp parallel for
     for (size_t r = 0; r < output.get_rows(); ++r) {
       for (size_t c = 0; c < output.get_cols(); ++c) {
         output(r, c) = scalar * (*this)(r, c);
@@ -224,7 +219,6 @@ class Matrix {
           "Matrix Addition Exception: Add(Matrix &). Matrix dimensions not "
           "match");
     Matrix output(rows, cols);
-    // #pragma omp parallel for
     for (size_t r = 0; r < output.get_rows(); ++r) {
       for (size_t c = 0; c < output.get_cols(); ++c) {
         output(r, c) = (*this)(r, c) + target(r, c);
@@ -239,7 +233,6 @@ class Matrix {
           "Matrix Addition Exception: Add(Matrix). Matrix dimensions not "
           "match");
     Matrix output(rows, cols);
-    // #pragma omp parallel for
     for (size_t r = 0; r < output.get_rows(); ++r) {
       for (size_t c = 0; c < output.get_cols(); ++c) {
         output(r, c) = (*this)(r, c) + target(r, c);
@@ -255,7 +248,6 @@ class Matrix {
   /* Matrix subtraction */
   Matrix operator-() {
     Matrix output(rows, cols);
-    // #pragma omp parallel for
     for (size_t r = 0; r < rows; ++r) {
       for (size_t c = 0; c < cols; ++c) {
         output(r, c) = -(*this)(r, c);
@@ -274,24 +266,18 @@ class Matrix {
     return Add(neg_target);
   }
 
-  Matrix operator-(const Matrix<Type> &target) const {  // for cleaner usage
-    return Sub(target);
-  }
+  Matrix operator-(const Matrix<Type> &target) const { return Sub(target); }
 
-  Matrix operator-(Matrix<Type> target) {  // for cleaner usage
-    return Sub(target);
-  }
+  Matrix operator-(Matrix<Type> target) { return Sub(target); }
 
   /* Matrix transposing */
   Matrix Transpose() noexcept {
     Matrix transposed(cols, rows);
     const size_t block = 16;
-    // #pragma omp parallel for
     for (size_t i = 0; i < rows; i += block) {
       for (size_t j = 0; j < cols; ++j) {
         for (size_t b = 0; b < block && i + b < rows; ++b)
-          transposed[j * rows + i + b] =
-              data[(i + b) * cols + j];  // swap row and col
+          transposed[j * rows + i + b] = data[(i + b) * cols + j];
       }
     }
     return transposed;
@@ -301,7 +287,6 @@ class Matrix {
 
   Matrix ApplyFunction(const std::function<Type(const Type &)> &function) {
     Matrix output(rows, cols);
-    // #pragma omp parallel for
     for (size_t r = 0; r < rows; ++r) {
       for (size_t c = 0; c < cols; ++c) {
         output(r, c) = function((*this)(r, c));
@@ -378,14 +363,11 @@ static Matrix<T> GenerateNDMatrix(size_t rows, size_t cols) {
 
   std::random_device rd;
   std::mt19937 gen(rd());
-  // std::mt19937 gen(time(nullptr));
 
-  // init Gaussian distr. w/ N(mean=0, stdev=1/sqrt(numel))
   T n(M.get_cols() * M.get_rows());
   T stdev(1 / sqrt(n));
   std::normal_distribution<T> d(0, stdev);
 
-  // fill each element w/ draw from distribution
   for (size_t r = 0; r < rows; ++r) {
     for (size_t c = 0; c < cols; ++c) {
       M(r, c) = d(gen);

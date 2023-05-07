@@ -52,8 +52,6 @@ class MLPGraphModel : public IMLPModel {
   void set_auto_decrease(bool auto_decrease);
 
   std::vector<MLPGraphLayer *> &get_layers();
-  // std::vector<MLPGraphLayer *> &set_layers();
-
   static IMLPModel *MakeModel(size_t in_channels, size_t out_channels,
                               size_t hidden_units_per_layer, int hidden_layers,
                               float lr, ActivationFunction func,
@@ -64,8 +62,6 @@ class MLPGraphModel : public IMLPModel {
   virtual float Train(DatasetGroup samples, bool b = false);
   virtual float Test(DatasetGroup samples, bool b = false);
   virtual int Predict(Matrix<float>);
-  // virtual float TestOutput(std::vector<Sample> samples, bool silent_mode =
-  // false, std::string filename = "");
 };
 
 std::istream &operator>>(std::istream &is, MLPGraphModel &model);

@@ -73,11 +73,7 @@ s21::IMLPModel* s21::LetterRecognitionMLPModelBuilder::GetResult() {
   if (learning_rate == 0) {
     learning_rate = 0.5f;
   }
-  // if (func == nullptr) {
-  // 	func = ActivationFunction(
-  // 			ActivationFunction::Sigmoid
-  // 			);
-  // }
+
   if (base == PerceptronBase::Matrix) {
     return MLPMatrixModel::MakeModel(in_channels, out_channels,
                                      hidden_units_per_layer, hidden_layers,

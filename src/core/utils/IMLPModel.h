@@ -26,9 +26,7 @@ class IMLPModel {
         max = tmp;
       }
     }
-    return prediction;  // +1 for dataset (who tf thought that it would be a
-                        // good idea to numerate dataset choices from 1 and not
-                        // from 0)
+    return prediction;
   }
   virtual ~IMLPModel() {}
 };

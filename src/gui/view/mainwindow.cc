@@ -16,10 +16,6 @@ MainWindow::MainWindow(QWidget *parent)
   this->model_config_file = nullptr;
   this->training_dataset_file = nullptr;
   this->testing_dataset_file = nullptr;
-  //  this->testing_worker = nullptr;
-  //  this->training_worker = nullptr;
-  //  this->builder = new s21::LetterRecognitionMLPModelBuilder();
-  //  ui->chart_widget->setCurrentWidget(chart);
 
   ui->stackedWidget->setCurrentIndex(0);
   ui->testing_progress_bar->setValue(0);
