@@ -47,7 +47,7 @@ PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(TEX_FILES))
 
 all: $(BIN_DIR)/$(NAME)
 
-$(BIN_DIR)/$(NAME): $(SRC_FILES) 
+$(BIN_DIR)/$(NAME): $(SRC_FILES) $(ROOT_DIR)/src/gui/utils/const.h
 	@make -C $(LIB_DIR)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
@@ -73,7 +73,7 @@ endif
 
 dist:
 	@mkdir -p $(DIST_PATH)
-	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(SRC_DIR) Makefile $(ROOT_DIR)/README.md $(ROOT_DIR)/LICENSE 
+	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(shell basename $(SRC_DIR)) Makefile README.md LICENSE 
 
 tests:
 	@make -C $(LIB_DIR)
@@ -90,13 +90,13 @@ else
 	@echo "I do not know how to run leaks test on linux"
 endif
 
-dvi: github #$(DVIS) 
+dvi: github $(DVIS) 
 
 $(DOC_DIR)/%.dvi: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
 	@cd $(DOC_DIR) && $(TEXI2DVI) $<
 
-pdf: github #$(PDFS) 
+pdf: github $(PDFS) 
 
 $(DOC_DIR)/%.pdf: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)

@@ -80,7 +80,8 @@ std::vector<float> MLPMatrixModel::Forward(Matrix<float> matrix) {
     Matrix<float> y = layers[i]->neuron_values * layers[i]->weight_matrices;
     y = y + layers[i]->bias;
     layers[i + 1]->raw = y;
-    y = y.ApplyFunction(af.GetFunction());
+	if (i < units_per_layer.size() - 1)
+	    y = y.ApplyFunction(af.GetFunction());
     layers[i + 1]->neuron_values = y;
   }
   return softmax(layers.back()->neuron_values.ToVector());

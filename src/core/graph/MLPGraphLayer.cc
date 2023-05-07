@@ -55,11 +55,13 @@ void MLPGraphLayer::CalculateLayer(ActivationFunction &af) {
     neurons[i].raw_value = 0;
     for (size_t j = 0; j < neurons[i].weight.size(); ++j)
       neurons[i].raw_value += neurons[i].weight[j] * (*input)[j].value;
-    neurons[i].value = af.ApplyFunction(neurons[i].raw_value);
+    if (output) {
+      neurons[i].value = af.ApplyFunction(neurons[i].raw_value);
+    }
   }
   if (!output) {
     std::vector<float> temp;
-    for (auto neuron : neurons) temp.push_back(neuron.value);
+    for (auto neuron : neurons) temp.push_back(neuron.raw_value);
     temp = softmax(temp);
     for (size_t i = 0; i < temp.size(); ++i) neurons[i].value = temp[i];
   }
