@@ -41,8 +41,8 @@ TEXI2DVI = texi2dvi
 TEXI2PDF = texi2pdf
 TEX_FILES = $(RES_DIR)/tex/SimpleMLP.tex
 
-DVIS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.dvi,$(addprefix $(SRC_DIR)/, $(TEX_FILES)))
-PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(addprefix $(SRC_DIR)/, $(TEX_FILES)))
+DVIS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.dvi,$(TEX_FILES))
+PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(TEX_FILES))
 
 all: $(BIN_DIR)/$(NAME)
 
@@ -87,13 +87,13 @@ dvi: $(DVIS) github
 
 $(DOC_DIR)/%.dvi: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
-	@cd $(DOC_DIR) && $(TEXI2DVI) ../$<
+	@cd $(DOC_DIR) && $(TEXI2DVI) $<
 
 pdf: $(PDFS) github
 
 $(DOC_DIR)/%.pdf: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
-	@cd $(DOC_DIR) && $(TEXI2PDF) ../$<
+	@cd $(DOC_DIR) && $(TEXI2PDF) $<
 
 github:
 	@$(OPEN) "https://github.com/LudwigAndreas/SimpleMLP"
