@@ -5,10 +5,9 @@
 #include <QObject>
 
 #include "core/LetterRecognitionMlpModelBuilder.h"
-#include "core/utils/IMLPModel.h"
-
 #include "core/ModelWorker/ModelTestWorker.h"
 #include "core/ModelWorker/ModelTrainWorker.h"
+#include "core/utils/IMLPModel.h"
 #include "gui/view/testdatainfodialog.h"
 
 class MainWindow;
@@ -16,7 +15,7 @@ class MainWindow;
 class ModelController : public QObject {
   Q_OBJECT
 
-public:
+ public:
   ModelController();
   ~ModelController();
 
@@ -26,7 +25,7 @@ public:
   void SetWindow(MainWindow *window);
   void QuitIntention();
 
-protected slots:
+ protected slots:
   void HandleModelConfigured();
   void HandleModelImported(QFile *file);
   void HandleStartTraining(QFile *file);
@@ -43,7 +42,7 @@ protected slots:
   void HandleMSEUpdate(int epoch, float mse);
   void DeletePredictWindow();
 
-private:
+ private:
   MainWindow *window;
   TestDataInfoDialog *predict_window;
   s21::IMLPModel *current_model;
@@ -54,4 +53,4 @@ private:
   s21::LetterRecognitionMLPModelBuilder *builder;
 };
 
-#endif // SIMPLEMLP_MODELCONTROLLER_H
+#endif  // SIMPLEMLP_MODELCONTROLLER_H

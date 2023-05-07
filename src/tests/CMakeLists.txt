@@ -38,7 +38,6 @@ set(PROJECT_SOURCES
         ../core/DatasetReading.cc
         ../core/graph/MLPGraphLayer.cc
         ../core/graph/MLPGraphModel.cc
-        ../core/graph/MLPGraphNode.cc
         ../core/LetterRecognitionMlpModelBuilder.cc
         ../core/matrix/MLPMatrixLayer.cc
         ../core/matrix/MLPMatrixModel.cc
@@ -55,7 +54,7 @@ set(PROJECT_SOURCES
 set(TEST_SOURCES
         main.cc
         core/graph/GraphLayerTest.cc
-        # core/graph/GraphModelTest.cc
+        core/graph/GraphModelTest.cc
         core/matrix/MatrixTest.cc
         core/matrix/MatrixModelTest.cc
 )

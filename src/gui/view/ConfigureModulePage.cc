@@ -28,8 +28,7 @@ void MainWindow::on_train_model_push_button_pressed() {
           "high, it is not guaranteed that "
           "the learning will go as planned. Do you want to continue?",
           QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No);
-      if (ms != QMessageBox::Yes)
-        return;
+      if (ms != QMessageBox::Yes) return;
     }
     emit ModelConfigured();
   } else if (ui->tabWidget->currentIndex() == 1 &&

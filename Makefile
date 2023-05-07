@@ -25,7 +25,9 @@ TEST_BUILD_DIR = $(BUILD_DIR)/tests
 BIN_DIR = $(ROOT_DIR)/bin
 DIST_PATH = $(ROOT_DIR)/dist
 DOC_DIR = $(ROOT_DIR)/docs
-RES_DIR = $(SRC)/resources
+RES_DIR = $(SRC_DIR)/resources
+
+SRC_FILES = $(shell find $(SRC_DIR) -type f -name "*.h" -o -name "*.cc")
 
 # Static library
 LIB_POSTFIX = s21
@@ -45,7 +47,7 @@ PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(addprefix $(SRC_DIR)/, $(T
 all: $(BIN_DIR)/$(NAME)
 
 # all:
-# 	@echo -n $(ROOT_DIR)
+# 	@echo -n $(ROOT_DIR)correctly
 
 $(BIN_DIR)/$(NAME):
 	@bash generate_constants.sh $(ROOT_DIR)
@@ -98,8 +100,8 @@ github:
 
 style:
 	@cp $(ROOT_DIR)/materials/linters/.clang-format .clang-format
-	@clang-format -style=Google -i **/*.cc **/*.h
-	@clang-format -style=Google -n **/*.cc **/*.h
+	@clang-format -style=Google --verbose -i $(SRC_FILES)
+	@clang-format -style=Google -n $(SRC_FILES)
 	@rm .clang-format
 
 clean:
