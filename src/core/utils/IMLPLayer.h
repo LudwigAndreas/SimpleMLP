@@ -2,9 +2,7 @@
 #define IMLPLAYER_H
 
 namespace s21 {
-	class IMLPLayer {
-		
-	};
-}
+class IMLPLayer {};
+}  // namespace s21
 
 #endif

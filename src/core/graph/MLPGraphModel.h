@@ -3,72 +3,73 @@
 
 #include <fstream>
 
-#include "../utils/IMLPModel.h"
-#include "../utils/ActivationFunction.h"
-#include "../graph/MLPGraphLayer.h"
 #include "../DatasetReading.h"
+#include "../graph/MLPGraphLayer.h"
+#include "../utils/ActivationFunction.h"
+#include "../utils/IMLPModel.h"
 
 namespace s21 {
-	typedef float T;
+typedef float T;
 
-	class MLPGraphModel : public IMLPModel {
-	private:
-		std::vector<size_t>				units_per_layer;
-		ActivationFunction				af;
-		bool							auto_decrease;
-		float							lr;
-		float							start_lr;
-		std::vector<MLPGraphLayer *>	layers;
-			
-	public:
-		explicit MLPGraphModel(std::vector<size_t> units_per_layer,
-								const ActivationFunction &func,
-								bool use_auto_decrease = true,
-								float lr = .05f);
+class MLPGraphModel : public IMLPModel {
+ private:
+  std::vector<size_t> units_per_layer;
+  ActivationFunction af;
+  bool auto_decrease;
+  float lr;
+  float start_lr;
+  std::vector<MLPGraphLayer *> layers;
 
-		MLPGraphModel() : af(ActivationFunction()) {}
+ public:
+  explicit MLPGraphModel(std::vector<size_t> units_per_layer,
+                         const ActivationFunction &func,
+                         bool use_auto_decrease = true, float lr = .05f);
 
-		~MLPGraphModel() { for (auto layer : layers) delete layer; }
-								
-		MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
+  MLPGraphModel() : af(ActivationFunction()) {}
 
-		const std::vector<size_t> &get_units_per_layer() const;
-		void setUnitsPerLayer(const std::vector<size_t> &unitsPerLayer);
+  ~MLPGraphModel() {
+    for (auto layer : layers) delete layer;
+  }
 
-		const std::vector<MLPGraphLayer *> &get_layers() const;
-		void set_layers(const std::vector<MLPGraphLayer *> &layers);
+  MLPGraphLayer *AddLayer(MLPGraphLayer *layer);
 
-		const ActivationFunction &getAf() const;
-		void setAf(ActivationFunction &af);
+  const std::vector<size_t> &get_units_per_layer() const;
+  void set_units_per_layer(const std::vector<size_t> &unitsPerLayer);
 
-		float getStartLr() const;
-		void setStartLr(float startLr);
+  const std::vector<MLPGraphLayer *> &get_layers() const;
+  void set_layers(const std::vector<MLPGraphLayer *> &layers);
 
-		float getLr() const;
-		void setLr(float lr);
+  const ActivationFunction &get_af() const;
+  void set_af(ActivationFunction &af);
 
-		bool isAutoDecrease() const;
-		void setAutoDecrease(bool autoDecrease);
+  float get_start_lr() const;
+  void set_start_lr(float startLr);
 
-		std::vector<MLPGraphLayer *> &get_layers();
-		// std::vector<MLPGraphLayer *> &set_layers();
+  float get_lr() const;
+  void set_lr(float lr);
 
-		static IMLPModel *MakeModel(size_t in_channels, size_t out_channels,
-									size_t hidden_units_per_layer, 
-									int hidden_layers, float lr, 
-									ActivationFunction func, 
-									bool use_auto_decrease = true);
+  bool is_auto_decrease() const;
+  void set_auto_decrease(bool auto_decrease);
 
-		virtual std::vector<T> Forward(Matrix<T>);
-		virtual void Backward(Matrix<T>);
-		virtual float Train(DatasetGroup samples, bool b = false);
-		virtual float Test(DatasetGroup samples, bool b = false);
-		virtual int Predict(Matrix<float>);
-		// virtual float TestOutput(std::vector<Sample> samples, bool silent_mode = false, std::string filename = "");
-	};
+  std::vector<MLPGraphLayer *> &get_layers();
+  // std::vector<MLPGraphLayer *> &set_layers();
 
-	std::istream &operator>>(std::istream &is, MLPGraphModel &model);
-	std::ostream &operator<<(std::ostream &os, MLPGraphModel &model);
-}
+  static IMLPModel *MakeModel(size_t in_channels, size_t out_channels,
+                              size_t hidden_units_per_layer, int hidden_layers,
+                              float lr, ActivationFunction func,
+                              bool use_auto_decrease = true);
+
+  virtual std::vector<T> Forward(Matrix<T>);
+  virtual void Backward(Matrix<T>);
+  virtual float Train(DatasetGroup samples, bool b = false);
+  virtual float Test(DatasetGroup samples, bool b = false);
+  virtual int Predict(Matrix<float>);
+  // virtual float TestOutput(std::vector<Sample> samples, bool silent_mode =
+  // false, std::string filename = "");
+};
+
+std::istream &operator>>(std::istream &is, MLPGraphModel &model);
+std::ostream &operator<<(std::ostream &os, MLPGraphModel &model);
+}  // namespace s21
 
 #endif

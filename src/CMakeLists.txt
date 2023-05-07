@@ -53,7 +53,6 @@ add_executable(${PROJECT_NAME}
         ${app_icon_macos}
         core/DatasetReading.h
         core/LetterRecognitionMlpModelBuilder.cc
-        core/graph/MLPGraphNode.cc
         core/graph/MLPGraphModel.cc
         core/graph/MLPGraphLayer.cc
         core/graph/MLPGraphLayer.h

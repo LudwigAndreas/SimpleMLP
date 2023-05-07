@@ -1,9 +1,8 @@
-#include "gui/view/mainwindow.h"
-
 #include <QValueAxis>
 #include <iomanip>
 
 #include "gui/utils/const.h"
+#include "gui/view/mainwindow.h"
 #include "ui_mainwindow.h"
 
 void MainWindow::onStartTrainingPage() {
@@ -27,9 +26,10 @@ void MainWindow::onStartTrainingPage() {
 bool MainWindow::checkTrainingStatus() {
   if (m_controller->IsTrainingRunning()) {
     QMessageBox training_is_running_message;
-    training_is_running_message.setText("If you stop the learning process, "
-                                        "the progress will not be saved. "
-                                        "Are you sure you want to stop?");
+    training_is_running_message.setText(
+        "If you stop the learning process, "
+        "the progress will not be saved. "
+        "Are you sure you want to stop?");
     training_is_running_message.setWindowTitle(
         tr("The training is already running"));
     training_is_running_message.setStandardButtons(QMessageBox::Yes |
@@ -45,13 +45,11 @@ bool MainWindow::checkTrainingStatus() {
 }
 
 void MainWindow::on_test_model_push_button_2_pressed() {
-  if (checkTrainingStatus())
-    ui->stackedWidget->setCurrentIndex(2);
+  if (checkTrainingStatus()) ui->stackedWidget->setCurrentIndex(2);
 }
 
 void MainWindow::on_to_configure_push_button_pressed() {
-  if (checkTrainingStatus())
-    ui->stackedWidget->setCurrentIndex(0);
+  if (checkTrainingStatus()) ui->stackedWidget->setCurrentIndex(0);
 }
 
 void MainWindow::trainDatasetFileWasUploaded(QFile *file) {
@@ -87,7 +85,7 @@ void MainWindow::on_toolButton_3_pressed() {
   if (!file->open(QIODevice::ReadOnly)) {
     QMessageBox::information(this, tr("Unable to open file"),
                              file->errorString());
-    delete file;                         
+    delete file;
     return;
   } else {
     trainDatasetFileWasUploaded(file);
@@ -142,18 +140,18 @@ void MainWindow::update_training_status(int epoch, int completion,
      << "</span></p></body></html>";
   ui->train_info_text_label->setText(ss.str().data());
   ui->training_progress_bar->setValue(completion);
-  this->chart_series->append(((float)completion) /
-                                 (getNumOfEpochs() * (getNumOfEpochs() - 1)),
-                             accuracy);
+  this->chart_series->append(
+      ((float)completion) / (getNumOfEpochs() * (getNumOfEpochs() - 1)),
+      accuracy);
   setUpdatesEnabled(this->chart_series);
 }
 
 void MainWindow::MSEUpdated(int epoch, float mse) {
   this->mse_values.push_back(mse);
-  if (epoch == 1)
-    this->mse_series->append(0, mse * 1.2);
+  if (epoch == 1) this->mse_series->append(0, mse * 1.2);
   this->mse_series->append(epoch, mse);
-  this->mse_y->setMax(*std::max_element(mse_values.begin(), mse_values.end()) * 1.25);
+  this->mse_y->setMax(*std::max_element(mse_values.begin(), mse_values.end()) *
+                      1.25);
 }
 
 void MainWindow::TrainingFinished() {
