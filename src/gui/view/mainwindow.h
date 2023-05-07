@@ -9,14 +9,13 @@
 #include <QMessageBox>
 #include <QThread>
 #include <QValueAxis>
-
 #include <sstream>
 
 #include "core/LetterRecognitionMlpModelBuilder.h"
-#include "core/utils/IMLPModel.h"
-#include "gui/controller/ModelController.h"
 #include "core/ModelWorker/ModelTestWorker.h"
 #include "core/ModelWorker/ModelTrainWorker.h"
+#include "core/utils/IMLPModel.h"
+#include "gui/controller/ModelController.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,7 +26,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
-public:
+ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
@@ -101,7 +100,7 @@ private slots:
 
   void on_stackedWidget_currentChanged(int index);
 
-signals:
+ signals:
   void ModelConfigured();
 
   void ModelImported(QFile *file);
@@ -116,7 +115,7 @@ signals:
 
   void SaveModel(std::string file_path);
 
-private:
+ private:
   Ui::MainWindow *ui;
   QFile *model_config_file;
   QFile *training_dataset_file;
@@ -140,4 +139,4 @@ private:
   void trainDatasetFileWasUploaded(QFile *file);
   void testDatasetFileWasUploaded(QFile *file);
 };
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

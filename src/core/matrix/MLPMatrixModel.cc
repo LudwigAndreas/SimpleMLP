@@ -46,11 +46,11 @@ namespace s21 {
 		return af;
 	}
 
-	bool MLPMatrixModel::IsAutodecrease() const {
+	bool MLPMatrixModel::is_auto_decrease() const {
 		return auto_decrease;
 	}
 
-	void MLPMatrixModel::set_autodecrease(bool flag) {
+	void MLPMatrixModel::set_auto_decrease(bool flag) {
 		this->auto_decrease = flag;
 	}
 
@@ -92,7 +92,7 @@ namespace s21 {
 			Matrix<float> y = layers[i]->neuron_values * layers[i]->weight_matrices;
 			y = y + layers[i]->bias;
 			layers[i + 1]->raw = y;
-			y = y.apply_function(af.getFunction());
+			y = y.ApplyFunction(af.GetFunction());
 			layers[i + 1]->neuron_values = y;
 		}
 		return softmax(layers.back()->neuron_values.ToVector());
@@ -103,8 +103,8 @@ namespace s21 {
 		layers[layers.size() - 2]->error = (layers.back()->neuron_values - target);
 		
 		for (size_t i = units_per_layer.size() - 3; ; --i) {
-			layers[i]->error = (layers[i + 1]->error.matmulTransposed(layers[i + 1]->weight_matrices))
-				& layers[i + 1]->raw.apply_function(af.getDerivative());
+			layers[i]->error = (layers[i + 1]->error.MatrixMultiplicationTransposed(layers[i + 1]->weight_matrices))
+				& layers[i + 1]->raw.ApplyFunction(af.GetDerivative());
 			if (i == 0)
 				break;
 		}
@@ -114,83 +114,63 @@ namespace s21 {
 		}
 	}
 
-// 	float MLPMatrixModel::TestOutput(std::vector<s21::Sample> samples, bool silent_mode, std::string filename) {
-// 		// std::fstream		output;
-// 		int					correct_guesses = 0;
-// 		float				accuracy;
-// 		std::vector<float>	y_hat;
-// 		int					index;
-
-// 		// if (!filename.empty())
-// 		// 	output.open(filename, std::ofstream::out | std::ofstream::trunc);
-// 		for (auto & sample : samples) {
-// 			y_hat = Forward(sample.x);
-// 			index = getMostProbablePrediction(y_hat);
-// 			if (index == getMostProbablePrediction(sample.y.ToVector()))
-// 				++correct_guesses;
-// //				if (output.is_open())
-// //					log(output, getMostProbablePrediction(sample.y.ToVector()), index, y_hat[index]);
-// 		}
-// 		accuracy = ((float)correct_guesses / samples.size());
-// 		if (!silent_mode)
-// 			std::cerr << "Test: " << accuracy * 100 << "% accuracy" << std::endl;
-// 		return accuracy;
-// 	}
-
-	int MLPMatrixModel::Predict(Matrix<float> x) {
-		return getMostProbablePrediction(Forward(x));
-	}
-
-	IMLPModel *MLPMatrixModel::MakeModel(size_t in_channels, size_t out_channels, size_t hidden_units_per_layer, int hidden_layers, float lr, ActivationFunction func, bool use_auto_decrease) {
-		std::vector<size_t> units_per_layer;
-		units_per_layer.push_back(in_channels);
-
-		for (int i = 0; i < hidden_layers; ++i)
-			units_per_layer.push_back(hidden_units_per_layer);
-
-		units_per_layer.push_back(out_channels);
-		auto *model = new MLPMatrixModel(units_per_layer, func, use_auto_decrease, lr);
-		return model;
-	}
-
-	std::ostream &operator<<(std::ostream &os, const MLPMatrixModel &model) {
-		for (auto unit: model.get_units_per_layer()) {
-			os << unit << " ";
-		}
-		os << model.get_lr() << '\n'
-		   << model.get_af() << '\n';
-		for (const auto &layer : model.get_layers())
-			os << *layer;
-		return os;
-	}
-
-	std::istream &operator>>(std::istream &is, MLPMatrixModel &model) {
-		std::vector<MLPMatrixLayer *> layers;
-		std::string units_per_layer_str;
-		std::string af_str;
-		
-		// std::string line;
-		std::getline(is, units_per_layer_str);
-		std::getline(is, af_str);
-
-		auto upls = s21::split(units_per_layer_str, " ");
-		auto af = ActivationFunction(af_str);
-		std::vector<size_t> units_per_layer;
-		for (auto i = upls.begin(); i < upls.end() - 1; ++i)
-			units_per_layer.push_back(std::atoi(i->data()));
-		model.set_units_per_layer(units_per_layer);
-		model.set_lr(std::atof(upls.rbegin()->data()));
-		model.set_af(af);
-
-		for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
-			Matrix<float> w, b;
-			is >> w >> b;
-			layers.push_back(new MLPMatrixLayer(w, b));
-		}
-		layers.push_back(new MLPMatrixLayer());
-		model.set_layers(std::move(layers));
-		
-		return is;
-	}
-
+int MLPMatrixModel::Predict(Matrix<float> x) {
+  return GetMostProbablePrediction(Forward(x));
 }
+
+IMLPModel *MLPMatrixModel::MakeModel(size_t in_channels, size_t out_channels,
+                                     size_t hidden_units_per_layer,
+                                     int hidden_layers, float lr,
+                                     ActivationFunction func,
+                                     bool use_auto_decrease) {
+  std::vector<size_t> units_per_layer;
+  units_per_layer.push_back(in_channels);
+
+  for (int i = 0; i < hidden_layers; ++i)
+    units_per_layer.push_back(hidden_units_per_layer);
+
+  units_per_layer.push_back(out_channels);
+  auto *model =
+      new MLPMatrixModel(units_per_layer, func, use_auto_decrease, lr);
+  return model;
+}
+
+std::ostream &operator<<(std::ostream &os, const MLPMatrixModel &model) {
+  for (auto unit : model.get_units_per_layer()) {
+    os << unit << " ";
+  }
+  os << model.get_lr() << '\n' << model.get_af() << '\n';
+  for (const auto &layer : model.get_layers()) os << *layer;
+  return os;
+}
+
+std::istream &operator>>(std::istream &is, MLPMatrixModel &model) {
+  std::vector<MLPMatrixLayer *> layers;
+  std::string units_per_layer_str;
+  std::string af_str;
+
+  // std::string line;
+  std::getline(is, units_per_layer_str);
+  std::getline(is, af_str);
+
+  auto upls = s21::Split(units_per_layer_str, " ");
+  auto af = ActivationFunction(af_str);
+  std::vector<size_t> units_per_layer;
+  for (auto i = upls.begin(); i < upls.end() - 1; ++i)
+    units_per_layer.push_back(std::atoi(i->data()));
+  model.set_units_per_layer(units_per_layer);
+  model.set_lr(std::atof(upls.rbegin()->data()));
+  model.set_af(af);
+
+  for (size_t i = 0; i < units_per_layer.size() - 1; ++i) {
+    Matrix<float> w, b;
+    is >> w >> b;
+    layers.push_back(new MLPMatrixLayer(w, b));
+  }
+  layers.push_back(new MLPMatrixLayer());
+  model.set_layers(std::move(layers));
+
+  return is;
+}
+
+}  // namespace s21

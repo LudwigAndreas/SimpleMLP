@@ -1,10 +1,9 @@
 #include "ModelTrainWorker.h"
 
+#include <list>
+
 #include "core/DatasetReading.h"
 #include "core/exceptions/ModelProcessingException.h"
-
-#include <list>
-#include <QDebug>
 
 ModelTrainWorker::ModelTrainWorker() {}
 
@@ -22,10 +21,9 @@ void ModelTrainWorker::process() {
           ++num_of_batches_trained;
           correct_guesses = 0;
           for (int k = 0; k < (int)dataset[j].size(); ++k) {
-            if (this->stop)
-              return;
+            if (this->stop) return;
             if (model->Predict(dataset[j][k].x) ==
-                model->getMostProbablePrediction(dataset[j][k].y.ToVector()))
+                model->GetMostProbablePrediction(dataset[j][k].y.ToVector()))
               ++correct_guesses;
             else
               model->Backward(dataset[j][k].y);

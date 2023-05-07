@@ -1,30 +1,53 @@
-#include <gtest/gtest.h>
+#include <vector>
 
 #include "core/graph/MLPGraphModel.h"
-#include "core/matrix/MLPMatrixModel.h"
-#include "core/utils/MLPSerializer.h"
+#include "core/matrix/Matrix.h"
+#include "gtest/gtest.h"
 
-class MLPMatrixGraphModelTest : public ::testing::Test {
-protected:
-	void SetUp() override {
+TEST(MLPGraphModelTest, InitializationTest) {
+  s21::ActivationFunction af = s21::ActivationFunction::Sigmoid;
+  std::vector<size_t> units_per_layer {2, 4, 4, 1};
+  float lr = 0.1f;
+
+  s21::MLPGraphModel *model = new s21::MLPGraphModel(units_per_layer, af, true, lr);
+  EXPECT_EQ(model->get_units_per_layer(), units_per_layer);
+  EXPECT_EQ(model->get_af(), af);
+  EXPECT_EQ(model->get_lr(), lr);
+  EXPECT_TRUE(model->is_auto_decrease());
+  delete model;
+}
+
+TEST(MLPGraphModelTest, ForwardTest) {
+  s21::ActivationFunction af = s21::ActivationFunction::Sigmoid;
+  std::vector<size_t> units_per_layer {2, 4, 4, 2};
+  float lr = 0.1f;
+
+  s21::MLPGraphModel *model = new s21::MLPGraphModel(units_per_layer, af, true, lr);
+  s21::Matrix<float> input = s21::Matrix<float>({0.5, 0.5}, 1, 2);
+  auto output = model->Forward(input);
+
+  EXPECT_EQ(output.size(), 2);
+  // Ensure output is in the range [0, 1]
+  for (const auto &o : output) {
+    EXPECT_GE(o, 0.0f);
+    EXPECT_LE(o, 1.0f);
   }
-	void TearDown() override {
-
-	}
-
-};
-
-TEST(MLPMatrixGraphModelTest, size) {
-  s21::MLPMatrixModel *matrix_model = s21::MLPSerializer::DeserializeMLPModel();
+  EXPECT_FLOAT_EQ(std::accumulate(output.begin(), output.end(), 0.f), 1);
+  delete model;
 }
 
-TEST(MLPMatrixGraphModelTest, Forward) {
-  
-  auto layers = model.get_layers();
-  auto input = Matrix<float>({1, 0});
-  auto result = model.Forward(input);
+TEST(MLPGraphModelTest, BackwardTest) {
+  s21::ActivationFunction af = s21::ActivationFunction::Sigmoid;
+  std::vector<size_t> units_per_layer {2, 4, 4, 2};
+  float lr = 0.1f;
 
-
-  ASSERT_FLOAT_EQ(result[0], 0);
+  s21::MLPGraphModel *model = new s21::MLPGraphModel(units_per_layer, af, true, lr);
+  s21::Matrix<float> input = s21::Matrix<float>({0.5, 0.5}, 1, 2);
+  s21::Matrix<float> target = s21::Matrix<float>({1, 0}, 1, 2);
+  auto output = model->Forward(input);
+  model->Backward(target);
+  auto new_output = model->Forward(input);
+  // Ensure the weights and biases have been updated
+  EXPECT_NE(output, new_output);
+  delete model;
 }
-
