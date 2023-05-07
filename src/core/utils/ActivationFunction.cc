@@ -53,10 +53,10 @@ bool ActivationFunction::operator!=(const ActivationFunction &rhs) const {
   return !(*this == rhs);
 }
 
-std::function<float(float)> ActivationFunction::getFunction() { return f; }
-std::function<float(float)> ActivationFunction::getDerivative() { return df; }
-float ActivationFunction::applyFunction(float input) { return f(input); }
-float ActivationFunction::applyDerivative(float input) { return df(input); }
+std::function<float(float)> ActivationFunction::GetFunction() { return f; }
+std::function<float(float)> ActivationFunction::GetDerivative() { return df; }
+float ActivationFunction::ApplyFunction(float input) { return f(input); }
+float ActivationFunction::ApplyDerivative(float input) { return df(input); }
 
 ActivationFunction::operator std::string() const {
   if (type == Sigmoid) return "Sigmoid";
