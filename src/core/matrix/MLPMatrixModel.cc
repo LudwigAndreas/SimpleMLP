@@ -46,6 +46,14 @@ namespace s21 {
 		return af;
 	}
 
+	bool MLPMatrixModel::IsAutodecrease() const {
+		return auto_decrease;
+	}
+
+	void MLPMatrixModel::set_autodecrease(bool flag) {
+		this->auto_decrease = flag;
+	}
+
 	void MLPMatrixModel::set_units_per_layer(const std::vector<size_t> &unitsPerLayer) {
 		units_per_layer = unitsPerLayer;
 		//TODO: add check for setter logic

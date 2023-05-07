@@ -37,6 +37,8 @@ class MLPMatrixModel : public s21::IMLPModel {
 
 		const ActivationFunction &get_af() const;
 
+		bool IsAutodecrease() const;
+
 		void set_units_per_layer(const std::vector<size_t> &unitsPerLayer);
 
 		void set_layers(std::vector<MLPMatrixLayer *> l);
@@ -44,6 +46,8 @@ class MLPMatrixModel : public s21::IMLPModel {
 		void set_lr(float lr);
 
 		void set_af(ActivationFunction &af);
+
+		void set_autodecrease(bool flag);
 
 		Matrix<float> NormalizedInput(Matrix<float> matrix);
 
