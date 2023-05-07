@@ -33,6 +33,8 @@ class ActivationFunction {
  public:
   ActivationFunction(Flags flag);
   ActivationFunction(std::string name = "");
+  bool operator==(const ActivationFunction &rhs) const;
+  bool operator!=(const ActivationFunction &rhs) const;
   std::function<float(float)> GetFunction();
   std::function<float(float)> GetDerivative();
   float ApplyFunction(float);
