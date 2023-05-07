@@ -76,18 +76,18 @@ tests:
 
 leaks: tests
 ifeq ($(OS), Darwin)
-	@leaks -atExit -- ./$(BIN_DIR)/$(NAME)-tests
+	@leaks -atExit -- $(BIN_DIR)/$(NAME)-tests
 else
 	@echo "I do not know how to run leaks test on linux"
 endif
 
-dvi: $(DVIS) github
+dvi: github $(DVIS) 
 
 $(DOC_DIR)/%.dvi: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
 	@cd $(DOC_DIR) && $(TEXI2DVI) ../$<
 
-pdf: $(PDFS) github
+pdf: github $(PDFS) 
 
 $(DOC_DIR)/%.pdf: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
