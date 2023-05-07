@@ -9,15 +9,6 @@ MLPGraphLayer::MLPGraphLayer(size_t size, const ActivationFunction &af,
   this->set_output_layer(output);
 }
 
-// MLPGraphLayer::MLPGraphLayer(std::vector<MLPGraphNode> &&neurons,
-// 							 ActivationFunction *af,
-// 							 MLPGraphLayer *input,
-// 							 MLPGraphLayer *output)
-// { 	this->neurons = std::move(neurons); 	this->size 	  =
-// this->neurons.size(); 	this->af 	  = af;
-// this->set_input_layer(input); 	this->set_output_layer(output);
-// }
-
 void MLPGraphLayer::GenerateLayer() {
   if (input) {
     std::vector<float> ndvector =
@@ -64,14 +55,11 @@ void MLPGraphLayer::CalculateLayer(ActivationFunction &af) {
     neurons[i].raw_value = 0;
     for (size_t j = 0; j < neurons[i].weight.size(); ++j)
       neurons[i].raw_value += neurons[i].weight[j] * (*input)[j].value;
-
-    if (output) {
-      neurons[i].value = af.ApplyFunction(neurons[i].raw_value);
-    }
+    neurons[i].value = af.ApplyFunction(neurons[i].raw_value);
   }
   if (!output) {
     std::vector<float> temp;
-    for (auto neuron : neurons) temp.push_back(neuron.raw_value);
+    for (auto neuron : neurons) temp.push_back(neuron.value);
     temp = softmax(temp);
     for (size_t i = 0; i < temp.size(); ++i) neurons[i].value = temp[i];
   }

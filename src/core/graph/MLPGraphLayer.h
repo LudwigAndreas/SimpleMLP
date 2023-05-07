@@ -25,10 +25,6 @@ class MLPGraphLayer {
                 MLPGraphLayer *input = nullptr,
                 MLPGraphLayer *output = nullptr);
 
-  MLPGraphLayer(std::vector<MLPGraphNode> &&neurons,
-                const ActivationFunction &af, MLPGraphLayer *input = nullptr,
-                MLPGraphLayer *output = nullptr);
-
   MLPGraphLayer(MLPGraphLayer &) = default;
   MLPGraphLayer(MLPGraphLayer &&) = default;
   MLPGraphLayer &operator=(MLPGraphLayer &) = default;
