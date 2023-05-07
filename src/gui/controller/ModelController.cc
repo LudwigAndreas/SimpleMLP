@@ -192,6 +192,8 @@ void ModelController::QuitTesting() {
       delete testing_thread;
       testing_thread = nullptr;
     }
+    delete testing_worker;
+    testing_worker = nullptr;
   }
 }
 
