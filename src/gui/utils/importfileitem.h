@@ -11,21 +11,21 @@
 #include <QMimeData>
 
 class ImportFileItem : public QLabel {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    ImportFileItem();
-    ImportFileItem(QWidget *);
-    bool isFileWasUploaded();
-    QFile *getUploadedFile();
+  ImportFileItem();
+  ImportFileItem(QWidget *);
+  bool isFileWasUploaded();
+  QFile *getUploadedFile();
 
 protected:
-    QFile *file;
+  QFile *file;
 
-    virtual void dropEvent(QDropEvent *event);
-    virtual void dragEnterEvent(QDragEnterEvent *event);
+  virtual void dropEvent(QDropEvent *event);
+  virtual void dragEnterEvent(QDragEnterEvent *event);
 
 signals:
-    void fileWasUploaded();
+  void fileWasUploaded();
 };
 
-#endif  // IMPORTFILEITEM_H
+#endif // IMPORTFILEITEM_H

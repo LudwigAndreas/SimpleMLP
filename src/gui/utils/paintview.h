@@ -15,36 +15,36 @@
 #include <QWidget>
 
 class PaintView : public QGraphicsView {
-    Q_OBJECT
+  Q_OBJECT
 
-    bool draw;
-    bool new_pixmap = false;
-    //	QVector<QPoint> vv;
-    QVector<QVector<QPoint> > vv;
-    QImage pic;
-    QGraphicsScene *scene;
+  bool draw;
+  bool new_pixmap = false;
+  //	QVector<QPoint> vv;
+  QVector<QVector<QPoint>> vv;
+  QImage pic;
+  QGraphicsScene *scene;
 
 public:
-    explicit PaintView(QWidget *parent = nullptr);
-    ~PaintView();
-    void clear();
-    QPixmap *getPixmap();
+  explicit PaintView(QWidget *parent = nullptr);
+  ~PaintView();
+  void clear();
+  QPixmap *getPixmap();
 
 protected:
-    QPixmap *pixmap;
+  QPixmap *pixmap;
 
-    virtual void dropEvent(QDropEvent *event) override;
-    virtual void dragEnterEvent(QDragEnterEvent *event) override;
-    virtual void dragMoveEvent(QDragMoveEvent *event) override;
+  virtual void dropEvent(QDropEvent *event) override;
+  virtual void dragEnterEvent(QDragEnterEvent *event) override;
+  virtual void dragMoveEvent(QDragMoveEvent *event) override;
 
-    void paintEvent(QPaintEvent *) override;
-    void mousePressEvent(QMouseEvent *) override;
-    void mouseMoveEvent(QMouseEvent *) override;
-    void mouseReleaseEvent(QMouseEvent *) override;
+  void paintEvent(QPaintEvent *) override;
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseMoveEvent(QMouseEvent *) override;
+  void mouseReleaseEvent(QMouseEvent *) override;
 public slots:
 
 signals:
-    void file_saved();
+  void file_saved();
 };
 
-#endif  // PAINTVIEW_H
+#endif // PAINTVIEW_H

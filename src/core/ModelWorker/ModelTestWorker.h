@@ -5,25 +5,25 @@
 #include "core/utils/ConfusionMatrix.h"
 
 class ModelTestWorker : public ModelWorker {
-    Q_OBJECT
+  Q_OBJECT
 protected:
-    int fraction;
+  int fraction;
 
 public:
-    ModelTestWorker();
+  ModelTestWorker();
 
-    void setDatasetFraction(int value);
+  void setDatasetFraction(int value);
 
 public slots:
-    void process() override;
+  void process() override;
 
 signals:
-    void statusChanged(int completion);
+  void statusChanged(int completion);
 
-    void finishedResult(std::vector<s21::ConfusionMatrix> *accuracy,
-                        float time = 0);
+  void finishedResult(std::vector<s21::ConfusionMatrix> *accuracy,
+                      float time = 0);
 
-    void finished();
+  void finished();
 };
 
-#endif  // SIMPLEMLP_MODELTESTWORKER_H
+#endif // SIMPLEMLP_MODELTESTWORKER_H

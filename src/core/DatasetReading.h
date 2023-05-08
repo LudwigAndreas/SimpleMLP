@@ -14,4 +14,4 @@ std::vector<s21::Sample> ReadDataset(std::string filename);
 
 std::map<int, char> readSymbolMapping(const std::string &filename);
 
-#endif  // SIMPLEMLP_DATASETREADING_H
+#endif // SIMPLEMLP_DATASETREADING_H

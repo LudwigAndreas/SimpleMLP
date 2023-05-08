@@ -23,5 +23,5 @@ float bounded_linear(float x);
 float d_bounded_linear(float x);
 
 std::vector<float> softmax(std::vector<float> matrix);
-}  // namespace s21
-#endif  // SIMPLEMLP_AFLIBRARY_H
+} // namespace s21
+#endif // SIMPLEMLP_AFLIBRARY_H

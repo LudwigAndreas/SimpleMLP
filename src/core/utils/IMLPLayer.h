@@ -3,6 +3,6 @@
 
 namespace s21 {
 class IMLPLayer {};
-}  // namespace s21
+} // namespace s21
 
 #endif

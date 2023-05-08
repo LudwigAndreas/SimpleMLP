@@ -13,5 +13,5 @@ float CalculatePrecision(std::vector<s21::ConfusionMatrix> *result, int size);
 float CalculateAccuracy(std::vector<s21::ConfusionMatrix> *result, int size);
 
 int CalculateSize(std::vector<s21::ConfusionMatrix> *result);
-}  // namespace s21
-#endif  // SIMPLEMLP_MODELMETRICS_H
+} // namespace s21
+#endif // SIMPLEMLP_MODELMETRICS_H

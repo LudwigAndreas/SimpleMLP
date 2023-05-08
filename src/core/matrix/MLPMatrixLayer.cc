@@ -8,16 +8,16 @@ MLPMatrixLayer::MLPMatrixLayer(Matrix<float> w, Matrix<float> b)
 MLPMatrixLayer::MLPMatrixLayer() : is_output_layer(true) {}
 
 std::istream &operator>>(std::istream &is, MLPMatrixLayer &layer) {
-    is >> layer.weight_matrices;
-    is >> layer.bias;
-    return is;
+  is >> layer.weight_matrices;
+  is >> layer.bias;
+  return is;
 }
 
 std::ostream &operator<<(std::ostream &os, const MLPMatrixLayer &layer) {
-    if (!layer.is_output_layer) {
-        os << layer.weight_matrices;
-        os << layer.bias;
-    }
-    return os;
+  if (!layer.is_output_layer) {
+    os << layer.weight_matrices;
+    os << layer.bias;
+  }
+  return os;
 }
-}  // namespace s21
+} // namespace s21

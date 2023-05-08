@@ -8,12 +8,12 @@
 
 namespace s21 {
 struct MLPGraphNode {
-    float raw_value;
-    float value;
-    float error;
-    float bias;
-    std::vector<float> weight;
+  float raw_value;
+  float value;
+  float error;
+  float bias;
+  std::vector<float> weight;
 };
-}  // namespace s21
+} // namespace s21
 
 #endif
