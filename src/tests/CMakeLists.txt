@@ -34,7 +34,7 @@ include_directories(
   ${SRC_DIR}/libs21/include
 )
 
-set(PROJECT_SOURCES 
+set(PROJECT_SOURCES
         ../core/DatasetReading.cc
         ../core/graph/MLPGraphLayer.cc
         ../core/graph/MLPGraphModel.cc

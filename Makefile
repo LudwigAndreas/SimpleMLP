@@ -63,7 +63,7 @@ ifeq ($(OS),Darwin)
 else
 	@cp -rf $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
 endif
-	
+
 uninstall:
 ifeq ($(OS),Darwin)
 	@rm -rf $(BIN_DIR)/$(NAME).app $(INSTALL_PATH)
@@ -73,7 +73,7 @@ endif
 
 dist:
 	@mkdir -p $(DIST_PATH)
-	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(shell basename $(SRC_DIR)) Makefile README.md LICENSE 
+	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(shell basename $(SRC_DIR)) Makefile README.md LICENSE
 
 tests:
 	@make -C $(LIB_DIR)
@@ -90,13 +90,13 @@ else
 	@echo "I do not know how to run leaks test on linux"
 endif
 
-dvi: github $(DVIS) 
+dvi: github $(DVIS)
 
 $(DOC_DIR)/%.dvi: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
 	@cd $(DOC_DIR) && $(TEXI2DVI) $<
 
-pdf: github $(PDFS) 
+pdf: github $(PDFS)
 
 $(DOC_DIR)/%.pdf: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
