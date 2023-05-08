@@ -143,7 +143,7 @@ std::istream &operator>>(std::istream &is, MLPGraphModel &model) {
   for (auto i = upls.begin(); i < upls.end() - 1; ++i)
     units_per_layer.push_back(std::atoi(i->data()));
   model.set_units_per_layer(units_per_layer);
-  model.set_lr(std::atoi(upls.rbegin()->data()));
+  model.set_lr(std::atof(upls.rbegin()->data()));
   model.set_af(af);
 
   MLPGraphLayer *input_layer = nullptr;
