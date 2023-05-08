@@ -10,29 +10,29 @@ class TestDataInfoDialog;
 }
 
 class TestDataInfoDialog : public QDialog {
-  Q_OBJECT
+    Q_OBJECT
 
- public:
-  explicit TestDataInfoDialog(QWidget *parent = nullptr);
-  ~TestDataInfoDialog();
+public:
+    explicit TestDataInfoDialog(QWidget *parent = nullptr);
+    ~TestDataInfoDialog();
 
-  void SetModelMetrics(int size, float recall, float precision, float accuracy,
-                       float time);
+    void SetModelMetrics(int size, float recall, float precision, float accuracy,
+                         float time);
 
- protected:
-  void showEvent(QShowEvent *event) override;
+protected:
+    void showEvent(QShowEvent *event) override;
 
- private slots:
-  void on_pushButton_pressed();
-  //  void DataWasObtained();
+private slots:
+    void on_pushButton_pressed();
+    //  void DataWasObtained();
 
- private:
-  Ui::TestDataInfoDialog *ui;
-  float recall;
-  float precision;
-  float accuracy;
-  float time;
-  int size;
+private:
+    Ui::TestDataInfoDialog *ui;
+    float recall;
+    float precision;
+    float accuracy;
+    float time;
+    int size;
 };
 
 #endif  // TESTDATAINFODIALOG_H

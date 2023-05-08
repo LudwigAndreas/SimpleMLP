@@ -20,7 +20,7 @@ void resize_bmp_data(unsigned char* original_data, int width_px, int height_px,
                      int num_channels);
 
 std::vector<float> bmp_data_to_grayscale(const unsigned char* bmp_data,
-                                         int width, int height, int channels);
+        int width, int height, int channels);
 }  // namespace s21
 
 #endif  // SIMPLEMLP_LIBFT_H

@@ -6,21 +6,21 @@
 #include "core/utils/IMLPModel.h"
 
 class ModelTrainWorker : public ModelWorker {
-  Q_OBJECT
- public:
-  ModelTrainWorker();
+    Q_OBJECT
+public:
+    ModelTrainWorker();
 
- public slots:
-  void process() override;
+public slots:
+    void process() override;
 
- signals:
-  void statusChanged(int epoch, int completion, float accuracy);
-  void MeanErrorCalculated(int epoch, float mse);
+signals:
+    void statusChanged(int epoch, int completion, float accuracy);
+    void MeanErrorCalculated(int epoch, float mse);
 
-  void finished();
+    void finished();
 
- private:
-  float CalculateMSE(s21::DatasetGroup &batch);
+private:
+    float CalculateMSE(s21::DatasetGroup &batch);
 };
 
 #endif  // SIMPLEMLP_MODELTRAINWORKER_H
