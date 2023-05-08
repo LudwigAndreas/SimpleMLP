@@ -1,13 +1,14 @@
 # Application name
 NAME = SimpleMLP
 
+OS = $(shell uname)
+
 # Project Version
 VERSION = 1.0
 
 # Make and cmake settings
 CMAKE = cmake
 CMAKE_FLAGS = -DCMAKE_PREFIX_PATH=$(QT_PATH) -DCMAKE_OUT_DIR=$(BIN_DIR) -DCMAKE_BUILD_TYPE=Release #Release / Debug
-OS = $(shell uname)
 ifeq ($(OS), Linux)
   OPEN=xdg-open
 else
@@ -16,16 +17,18 @@ endif
 
 # Directories
 # To create the folders and structure of the project more correctly, put the Makefile in the root of the project and change the SRC variable from '.' to 'src'
-INSTALL_PATH = /usr/bin
+INSTALL_PATH = ~/Applications
 ROOT_DIR = $(shell pwd)
 SRC_DIR = $(ROOT_DIR)/src
-TEST_DIR = $(ROOT_DIR)/tests
+TEST_DIR = $(SRC_DIR)/tests
 BUILD_DIR = $(ROOT_DIR)/build
 TEST_BUILD_DIR = $(BUILD_DIR)/tests
 BIN_DIR = $(ROOT_DIR)/bin
 DIST_PATH = $(ROOT_DIR)/dist
 DOC_DIR = $(ROOT_DIR)/docs
-RES_DIR = $(SRC)/resources
+RES_DIR = $(SRC_DIR)/resources
+
+SRC_FILES = $(shell find $(SRC_DIR) -type f -name "*.h" -o -name "*.cc")
 
 # Static library
 LIB_POSTFIX = s21
@@ -39,67 +42,73 @@ TEXI2DVI = texi2dvi
 TEXI2PDF = texi2pdf
 TEX_FILES = $(RES_DIR)/tex/SimpleMLP.tex
 
-DVIS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.dvi,$(addprefix $(SRC_DIR)/, $(TEX_FILES)))
-PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(addprefix $(SRC_DIR)/, $(TEX_FILES)))
+DVIS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.dvi,$(TEX_FILES))
+PDFS = $(patsubst $(SRC_DIR)/%.tex,$(DOC_DIR)/%.pdf,$(TEX_FILES))
 
 all: $(BIN_DIR)/$(NAME)
 
-# all:
-# 	@echo -n $(ROOT_DIR)
-
-$(BIN_DIR)/$(NAME):
-	@bash generate_constants.sh $(ROOT_DIR)
+$(BIN_DIR)/$(NAME): $(SRC_FILES) $(ROOT_DIR)/src/gui/utils/const.h
 	@make -C $(LIB_DIR)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
 	@cmake -S $(SRC_DIR) -DPROJECT_NAME=$(NAME) $(CMAKE_FLAGS) -B $(BUILD_DIR)
 	@cmake --build $(BUILD_DIR)
-	#@./$(BIN_DIR)/$(NAME)
+
+$(ROOT_DIR)/src/gui/utils/const.h: generate_constants.sh
+	@bash generate_constants.sh $(ROOT_DIR)
 
 install: $(BIN_DIR)/$(NAME)
-	@cp $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
+ifeq ($(OS),Darwin)
+	@cp -rf $(BIN_DIR)/$(NAME).app $(INSTALL_PATH)
+else
+	@cp -rf $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
+endif
 	
 uninstall:
-	@rm -f $(INSTALL_PATH)/$(NAME)
+ifeq ($(OS),Darwin)
+	@rm -rf $(BIN_DIR)/$(NAME).app $(INSTALL_PATH)
+else
+	@rm -rf $(BIN_DIR)/$(NAME) $(INSTALL_PATH)
+endif
 
-dist: $(BIN_DIR)/$(NAME)
+dist:
 	@mkdir -p $(DIST_PATH)
-	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(SRC_DIR) Makefile $(ROOT_DIR)/README.md $(ROOT_DIR)/LICENSE 
+	@tar czf $(DIST_PATH)/$(NAME)-$(VERSION).tar.gz $(shell basename $(SRC_DIR)) Makefile README.md LICENSE 
 
 tests:
 	@make -C $(LIB_DIR)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BIN_DIR)
-	@cmake -S ./$(TEST_DIR) -DPROJECT_NAME=$(NAME)-tests $(CMAKE_FLAGS) -B $(TEST_BUILD_DIR)
+	@cmake -S $(TEST_DIR) -DPROJECT_NAME=$(NAME)-tests -DSRC_DIR=$(SRC_DIR) $(CMAKE_FLAGS) -B $(TEST_BUILD_DIR)
 	@cmake --build $(TEST_BUILD_DIR)
-	@./$(BIN_DIR)/$(NAME)-tests
+	@$(BIN_DIR)/$(NAME)-tests
 
 leaks: tests
 ifeq ($(OS), Darwin)
-	@leaks -atExit -- ./$(BIN_DIR)/$(NAME)-tests
+	@leaks -atExit -- $(BIN_DIR)/$(NAME)-tests
 else
 	@echo "I do not know how to run leaks test on linux"
 endif
 
-dvi: $(DVIS) github
+dvi: github $(DVIS) 
 
 $(DOC_DIR)/%.dvi: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
-	@cd $(DOC_DIR) && $(TEXI2DVI) ../$<
+	@cd $(DOC_DIR) && $(TEXI2DVI) $<
 
-pdf: $(PDFS) github
+pdf: github $(PDFS) 
 
 $(DOC_DIR)/%.pdf: $(SRC_DIR)/%.tex
 	@mkdir -p $(DOC_DIR)
-	@cd $(DOC_DIR) && $(TEXI2PDF) ../$<
+	@cd $(DOC_DIR) && $(TEXI2PDF) $<
 
 github:
 	@$(OPEN) "https://github.com/LudwigAndreas/SimpleMLP"
 
 style:
 	@cp $(ROOT_DIR)/materials/linters/.clang-format .clang-format
-	@clang-format -style=Google -i **/*.cc **/*.h
-	@clang-format -style=Google -n **/*.cc **/*.h
+	@clang-format -style=Google -i $(SRC_FILES)
+	@clang-format -style=Google --verbose -n $(SRC_FILES)
 	@rm .clang-format
 
 clean:
@@ -112,4 +121,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re tests leaks $(BIN_DIR)/$(NAME)
+.PHONY: all clean fclean re tests leaks dvi pdf github dist uninstall install

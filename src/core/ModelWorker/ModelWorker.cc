@@ -2,11 +2,10 @@
 
 #include <QDebug>
 
-#include "sstream"
-
 #include "core/exceptions/ModelProcessingException.h"
 #include "core/utils/MLPSerializer.h"
 #include "gui/utils/const.h"
+#include "sstream"
 
 ModelWorker::ModelWorker() {
   this->num_of_epochs = 5;

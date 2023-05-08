@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Set compilation flags
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og")
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -g -Og -fsanitize=address")
 set(CMAKE_CXX_FLAGS_RELEASE  "-Wall -Wextra  -Ofast -march=native")
 
 # Enable qt compilation
@@ -53,7 +53,6 @@ add_executable(${PROJECT_NAME}
         ${app_icon_macos}
         core/DatasetReading.h
         core/LetterRecognitionMlpModelBuilder.cc
-        core/graph/MLPGraphNode.cc
         core/graph/MLPGraphModel.cc
         core/graph/MLPGraphLayer.cc
         core/graph/MLPGraphLayer.h

@@ -1,31 +1,31 @@
 #ifndef IMPORTFILEITEM_H
 #define IMPORTFILEITEM_H
 
-#include <QFile>
 #include <QDebug>
-#include <QLabel>
-#include <QMimeData>
-#include <QDropEvent>
-#include <QMessageBox>
-#include <QFileDialog>
 #include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QFile>
+#include <QFileDialog>
+#include <QLabel>
+#include <QMessageBox>
+#include <QMimeData>
 
-class ImportFileItem : public QLabel
-{
-    Q_OBJECT
-public:
-    ImportFileItem();
-    ImportFileItem(QWidget *);
-    bool isFileWasUploaded();
-    QFile * getUploadedFile();
-protected:
-    QFile *file;
+class ImportFileItem : public QLabel {
+  Q_OBJECT
+ public:
+  ImportFileItem();
+  ImportFileItem(QWidget *);
+  bool isFileWasUploaded();
+  QFile *getUploadedFile();
 
-    virtual void dropEvent(QDropEvent *event);
-    virtual void dragEnterEvent(QDragEnterEvent *event);
+ protected:
+  QFile *file;
 
-signals:
-    void fileWasUploaded();
+  virtual void dropEvent(QDropEvent *event);
+  virtual void dragEnterEvent(QDragEnterEvent *event);
+
+ signals:
+  void fileWasUploaded();
 };
 
-#endif // IMPORTFILEITEM_H
+#endif  // IMPORTFILEITEM_H

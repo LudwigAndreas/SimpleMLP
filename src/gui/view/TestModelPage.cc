@@ -1,8 +1,7 @@
-#include "gui/view/mainwindow.h"
-
-#include "libs21/include/libs21.h"
 #include "core/utils/MLPSerializer.h"
 #include "gui/utils/const.h"
+#include "gui/view/mainwindow.h"
+#include "libs21/include/libs21.h"
 #include "testdatainfodialog.h"
 #include "ui_mainwindow.h"
 
@@ -56,8 +55,9 @@ void MainWindow::testDatasetFileWasUploaded(QFile *file) {
     QMessageBox::information(
         this, tr("Wrong file format"),
         "Incorrect file format. The file must have the .csv extension ");
+    delete file;
   } else {
-    if (this->testing_dataset_file != nullptr) {
+    if (this->testing_dataset_file) {
       delete this->testing_dataset_file;
       this->testing_dataset_file = nullptr;
     }
@@ -81,6 +81,7 @@ void MainWindow::on_toolButton_4_pressed() {
   if (!file->open(QIODevice::ReadOnly)) {
     QMessageBox::information(this, tr("Unable to open file"),
                              file->errorString());
+    delete file;
     return;
   } else {
     testDatasetFileWasUploaded(file);

@@ -2,24 +2,22 @@
 #define SIMPLEMLP_MODELTESTWORKER_H
 
 #include "ModelWorker.h"
-
 #include "core/utils/ConfusionMatrix.h"
 
 class ModelTestWorker : public ModelWorker {
-
   Q_OBJECT
-protected:
+ protected:
   int fraction;
 
-public:
+ public:
   ModelTestWorker();
 
   void setDatasetFraction(int value);
 
-public slots:
+ public slots:
   void process() override;
 
-signals:
+ signals:
   void statusChanged(int completion);
 
   void finishedResult(std::vector<s21::ConfusionMatrix> *accuracy,
@@ -28,4 +26,4 @@ signals:
   void finished();
 };
 
-#endif // SIMPLEMLP_MODELTESTWORKER_H
+#endif  // SIMPLEMLP_MODELTESTWORKER_H

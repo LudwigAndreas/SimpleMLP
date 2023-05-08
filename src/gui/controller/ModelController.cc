@@ -2,13 +2,12 @@
 
 #include <QMessageBox>
 
-#include "libs21/include/libs21.h"
-
 #include "core/utils/MLPSerializer.h"
 #include "core/utils/ModelMetrics.h"
 #include "gui/utils/const.h"
 #include "gui/view/mainwindow.h"
 #include "gui/view/testdatainfodialog.h"
+#include "libs21/include/libs21.h"
 
 ModelController::ModelController() {
   this->current_model = nullptr;
@@ -22,10 +21,8 @@ ModelController::ModelController() {
 
 ModelController::~ModelController() {
   delete current_model;
-  delete training_thread;
-  delete training_worker;
-  delete testing_thread;
-  delete testing_worker;
+  QuitTesting();
+  QuitTraining();
   delete builder;
 }
 
@@ -37,8 +34,7 @@ void ModelController::HandleModelConfigured() {
   int hiddenUnitsPerLayer = window->getHiddenUnitsPerLayer();
   std::string perceptionBase = window->getPerceptionBase();
   float learningRate = window->getLearningRate();
-  if (current_model)
-    delete current_model;
+  if (current_model) delete current_model;
   current_model = builder->HiddenLayers(numOfHiddenLayers)
                       ->ActivationFunc(activationFunc)
                       ->HiddenUnitsPerLayer(hiddenUnitsPerLayer)
@@ -48,16 +44,37 @@ void ModelController::HandleModelConfigured() {
 }
 
 void ModelController::HandleModelImported(QFile *file) {
+  if (current_model) delete current_model;
   this->current_model = s21::MLPSerializer<float>::DeserializeMLPModel(
       file->fileName().toStdString());
+}
+
+void ModelController::QuitIntention() {
+  if (this->IsTrainingRunning()) {
+    QuitTraining();
+  }
+  if (this->IsTestingRunning()) {
+    QuitTesting();
+  }
 }
 
 bool ModelController::IsTrainingRunning() {
   return training_thread != nullptr && training_thread->isRunning();
 }
 
+bool ModelController::IsTestingRunning() {
+  return testing_thread != nullptr && testing_thread->isRunning();
+}
+
 void ModelController::HandleStartTraining(QFile *file) {
+  if (training_thread) {
+    if (training_thread->isRunning()) training_thread->quit();
+  }
   this->training_thread = new QThread();
+  if (training_worker) {
+    training_worker->stopTraining();
+    delete training_worker;
+  }
   this->training_worker = new ModelTrainWorker();
   training_worker->setModel(current_model);
   training_worker->setNumOfEpochs(window->getNumOfEpochs());
@@ -68,22 +85,24 @@ void ModelController::HandleStartTraining(QFile *file) {
           SLOT(process()));
   connect(training_worker, SIGNAL(finished()), this->training_thread,
           SLOT(quit()));
-  connect(training_worker, SIGNAL(statusChanged(int,int,float)), this,
-          SLOT(TrainingStatusChanged(int,int,float)));
+  connect(training_worker, SIGNAL(statusChanged(int, int, float)), this,
+          SLOT(TrainingStatusChanged(int, int, float)));
   connect(training_worker, SIGNAL(finished()), training_worker,
           SLOT(deleteLater()));
-  connect(training_worker, SIGNAL(MeanErrorCalculated(int,float)), this,
-          SLOT(HandleMSEUpdate(int,float)));
-  connect(this->training_thread, SIGNAL(finished()), this->training_thread,
+  connect(training_worker, SIGNAL(MeanErrorCalculated(int, float)), this,
+          SLOT(HandleMSEUpdate(int, float)));
+  connect(training_worker, SIGNAL(finished()), this, SLOT(TrainingFinished()));
+  connect(training_thread, SIGNAL(finished()), this->training_thread,
           SLOT(deleteLater()));
-  connect(this->training_thread, SIGNAL(finished()), this,
-          SLOT(TrainingFinished()));
 
   this->training_thread->start();
 }
 
 void ModelController::TrainingStatusChanged(int epoch, int completion,
                                             float accuracy) {
+  if (completion == 100) {
+    window->TrainingFinished();
+  }
   window->update_training_status(epoch, completion, accuracy);
 }
 
@@ -96,17 +115,16 @@ void ModelController::QuitTraining() {
       delete training_thread;
       training_thread = nullptr;
     }
+    delete this->training_worker;
+    this->training_worker = nullptr;
   }
 }
 
-void ModelController::TrainingFinished() {
-  window->TrainingFinished();
-}
+void ModelController::TrainingFinished() { this->training_thread->quit(); }
 
 void ModelController::HandleStartTesting(QFile *file) {
   if (testing_thread) {
-    if (testing_thread->isRunning())
-      testing_thread->quit();
+    if (testing_thread->isRunning()) testing_thread->quit();
   }
   this->testing_thread = new QThread();
   if (testing_worker) {
@@ -126,9 +144,9 @@ void ModelController::HandleStartTesting(QFile *file) {
   connect(testing_worker, SIGNAL(statusChanged(int)), this,
           SLOT(TestingStatusChanged(int)));
   connect(testing_worker,
-          SIGNAL(finishedResult(std::vector<s21::ConfusionMatrix>*,float)),
+          SIGNAL(finishedResult(std::vector<s21::ConfusionMatrix> *, float)),
           this,
-          SLOT(TestingFinished(std::vector<s21::ConfusionMatrix>*,float)));
+          SLOT(TestingFinished(std::vector<s21::ConfusionMatrix> *, float)));
   connect(testing_worker, SIGNAL(finished()), testing_worker,
           SLOT(deleteLater()));
   connect(this->testing_thread, SIGNAL(finished()), this->testing_thread,
@@ -140,15 +158,20 @@ void ModelController::TestingStatusChanged(int completion) {
   this->window->update_testing_status(completion);
 }
 
+void ModelController::DeletePredictWindow() { delete predict_window; }
+
 void ModelController::TestingFinished(std::vector<s21::ConfusionMatrix> *result,
                                       float time) {
-  auto *predict_window = new TestDataInfoDialog();
-  int size = s21::calculate_size(result);
-  predict_window->SetModelMetrics(size, s21::calculate_recall(result, size),
-                                  s21::calculate_precision(result, size),
-                                  s21::calculate_accuracy(result, size), time);
+  this->predict_window = new TestDataInfoDialog();
+  int size = s21::CalculateSize(result);
+  predict_window->SetModelMetrics(size, s21::CalculateRecall(result, size),
+                                  s21::CalculatePrecision(result, size),
+                                  s21::CalculateAccuracy(result, size), time);
   window->show_predict_window();
-  predict_window->show();
+  this->predict_window->show();
+  connect(this->predict_window, SIGNAL(destroyed()), this,
+          SLOT(DeletePredictWindow()));
+  delete result;
 }
 
 void ModelController::QuitTesting() {
@@ -160,6 +183,8 @@ void ModelController::QuitTesting() {
       delete testing_thread;
       testing_thread = nullptr;
     }
+    delete testing_worker;
+    testing_worker = nullptr;
   }
 }
 
@@ -196,4 +221,5 @@ void ModelController::HandleSaveModel(std::string filename) {
 
 void ModelController::HandleMSEUpdate(int epoch, float mse) {
   this->window->MSEUpdated(epoch, mse);
+  if (epoch == this->window->getNumOfEpochs()) QuitTraining();
 }

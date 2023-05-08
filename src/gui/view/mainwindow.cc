@@ -1,9 +1,8 @@
 #include "mainwindow.h"
 
-#include <sstream>
-
 #include <QLogValueAxis>
 #include <QValueAxis>
+#include <sstream>
 
 #include "core/LetterRecognitionMlpModelBuilder.h"
 #include "gui/utils/importfileitem.h"
@@ -17,10 +16,6 @@ MainWindow::MainWindow(QWidget *parent)
   this->model_config_file = nullptr;
   this->training_dataset_file = nullptr;
   this->testing_dataset_file = nullptr;
-  //  this->testing_worker = nullptr;
-  //  this->training_worker = nullptr;
-  //  this->builder = new s21::LetterRecognitionMLPModelBuilder();
-  //  ui->chart_widget->setCurrentWidget(chart);
 
   ui->stackedWidget->setCurrentIndex(0);
   ui->testing_progress_bar->setValue(0);
@@ -33,6 +28,26 @@ MainWindow::MainWindow(QWidget *parent)
   InitChart();
   ConnectDragNDrop();
   ConnectController();
+}
+
+MainWindow::~MainWindow() {
+  delete m_controller;
+  delete training_dataset_file;
+  delete testing_dataset_file;
+  delete model_config_file;
+
+  qDeleteAll(ui->chart_widget->chart()->axes());
+  delete chart_series;
+  delete mse_series;
+  delete ui->chart_widget->chart();
+  delete ui->chart_widget;
+
+  delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent *ev) {
+  m_controller->QuitIntention();
+  QMainWindow::closeEvent(ev);
 }
 
 int MainWindow::getNumOfEpochs() const {
@@ -108,8 +123,6 @@ void MainWindow::ConnectController() {
   connect(this, SIGNAL(SaveModel(std::string)), m_controller,
           SLOT(HandleSaveModel(std::string)));
 }
-
-MainWindow::~MainWindow() { delete ui; }
 
 int MainWindow::getTestingDatasetFraction() const {
   return ui->testing_size_horizontal_slider->value();

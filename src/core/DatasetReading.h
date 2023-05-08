@@ -8,7 +8,7 @@
 
 #include "utils/Sample.h"
 
-std::vector<std::string> split(std::string s, std::string delimiter);
+std::vector<std::string> Split(std::string s, std::string delimiter);
 
 std::vector<s21::Sample> ReadDataset(std::string filename);
 
