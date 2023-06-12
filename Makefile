@@ -29,6 +29,7 @@ DOC_DIR = $(ROOT_DIR)/docs
 RES_DIR = $(SRC_DIR)/resources
 
 SRC_FILES = $(shell find $(SRC_DIR) -type f -name "*.h" -o -name "*.cc")
+SCRIPT_PATH = src/generate_constants.sh
 
 # Static library
 LIB_POSTFIX = s21
@@ -53,9 +54,11 @@ $(BIN_DIR)/$(NAME): $(SRC_FILES) $(ROOT_DIR)/src/gui/utils/const.h
 	@mkdir -p $(BIN_DIR)
 	@cmake -S $(SRC_DIR) -DPROJECT_NAME=$(NAME) $(CMAKE_FLAGS) -B $(BUILD_DIR)
 	@cmake --build $(BUILD_DIR)
+	@rm -f SimpleMLP
+	@ln -s bin/SimpleMLP SimpleMLP
 
-$(ROOT_DIR)/src/gui/utils/const.h: generate_constants.sh
-	@bash generate_constants.sh $(ROOT_DIR)
+$(ROOT_DIR)/src/gui/utils/const.h: $(SCRIPT_PATH)
+	@bash $(SCRIPT_PATH) $(ROOT_DIR)
 
 install: $(BIN_DIR)/$(NAME)
 ifeq ($(OS),Darwin)
@@ -114,9 +117,11 @@ style:
 clean:
 	@make -C $(LIB_DIR) clean
 	@rm -rf $(BUILD_DIR)
+	@rm -f SimpleMLP
 
 fclean: clean
 	@make -C $(LIB_DIR) fclean
+	@rm -rf $(ROOT_DIR)/src/gui/utils/const.h
 	@rm -rf $(BIN_DIR) $(DOC_DIR) $(DIST_PATH) $(BUILD_DIR)/autosave*
 
 re: fclean all

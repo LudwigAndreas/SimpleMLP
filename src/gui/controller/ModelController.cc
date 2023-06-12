@@ -199,6 +199,7 @@ void ModelController::FileWasDrawn() {
   if (!image) {
     QMessageBox::warning(this->window, tr("Image error"),
                          "Letter imported wrong. Please restart application.");
+    return ;
   }
   auto grayscale = s21::bmp_data_to_grayscale(image, new_width, new_height, 3);
   if (current_model) {

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 
 # Set the project name
 if(NOT PROJECT_NAME)
-    set(PROJECT_NAME "Project")
+    set(PROJECT_NAME "SimpleMLP")
 endif()
 project(${PROJECT_NAME} VERSION 1.0 LANGUAGES CXX)
 # Set c++ standard
