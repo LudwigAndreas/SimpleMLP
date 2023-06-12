@@ -5,7 +5,7 @@ datasets/emnist-letters
 */*.DS_Store
 */*/*.DS_Store
 .vscode
-build
+build*
 .idea
 SimpleMLP
 .qt
