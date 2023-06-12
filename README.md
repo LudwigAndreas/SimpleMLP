@@ -11,6 +11,10 @@
 </p>
 <h2>Features 🤯</h2>
 <ul>
+   <li>Learning on given training dataset using cross-validation
+      <img src="materials/README/Training.png" alt="">
+   <li>Testing trained model with built-in drawing field or by importing pre-drawn image
+      <img src="materials/README/Testing.png" alt="">
    <li>Configure model properties for training such as:
       <ul>
          <li>Perceptron implementation type
@@ -32,10 +36,6 @@
       <img src="materials/README/Config.png" alt="">
    <li>Import pretrained model
       <img src="materials/README/LoadingPretrained.png" alt="">
-   <li>Learning on given training dataset using cross-validation
-      <img src="materials/README/Training.png" alt="">
-   <li>Testing trained model with built-in drawing field or by importing pre-drawn image 
-      <img src="materials/README/Testing.png" alt="">
    <li>Testing trained model on testing dataset 
       <img src="materials/README/TestingInProgress.png" alt="">
 </ul>
@@ -45,7 +45,7 @@
    make install
    </code>
 </pre>
-<br><p>And that's it! Compiled application will be located in the <i>bin</i> directory. </p>
+<p>And that's it! Compiled application will be located in the <i>bin</i> directory. </p>
 <p>On MacOS it will also be located in Launchpad for ease of use. </p>
 <p>On Windows... Well, we are working on it! </p>
 <h2>Requirements ☑️</h2>
@@ -57,7 +57,7 @@
 <ul>
    <li> Support any dataset by using mapping
    <li> Change pen's color for different datasets 
-   <li> Create both portable and installable version of application for Windows 
+   <li> Create both portable and installable applications for Windows 
 </ul>
 <h2>Acknowledgements 🙇</h2>
 <ul>
