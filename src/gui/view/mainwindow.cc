@@ -28,6 +28,17 @@ MainWindow::MainWindow(QWidget *parent)
   InitChart();
   ConnectDragNDrop();
   ConnectController();
+
+  // ---
+  QPalette pal = ui->tabWidget->palette();
+  pal.setColor(QPalette::Active, QPalette::Button, QColor(40, 40, 40));
+  pal.setColor(QPalette::Inactive, QPalette::Button, QColor(40, 40, 40));
+  ui->tabWidget->setPalette(pal);
+  ui->tabWidget_2->setPalette(pal);
+
+  // QFont font = QFont("cantarell", 50);
+  // ui->prediction_result_label->setFont(font);
+  // ---
 }
 
 MainWindow::~MainWindow() {

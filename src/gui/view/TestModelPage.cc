@@ -90,8 +90,9 @@ void MainWindow::on_toolButton_4_pressed() {
 
 void MainWindow::onModelGuessed(char letter) {
   if (m_controller->IsModelInitialized()) {
+    size_t font_size = ui->prediction_result_label->property("font").value<QFont>().pointSize();
     std::stringstream ss;
-    ss << "<html><head/><body><p><span style=\" font-size:288pt;\">" << letter
+    ss << "<html><head/><body><p><span style=\" font-size:" << font_size << "pt;\">" << letter
        << "</span></p></body></html>";
     ui->prediction_result_label->setText(QString(ss.str().data()));
   } else {

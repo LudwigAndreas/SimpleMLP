@@ -717,11 +717,7 @@ class Ui_MainWindow {
         "field.",
         nullptr));
     groupBox_8->setTitle(QString());
-    prediction_result_label->setText(QCoreApplication::translate(
-        "MainWindow",
-        "<html><head/><body><p><span style=\" "
-        "font-size:288pt;\"></span></p></body></html>",
-        nullptr));
+    prediction_result_label->setFont(QFont("Helvetica", 192));
     pushButton->setText(
         QCoreApplication::translate("MainWindow", "Clear", nullptr));
     tabWidget_2->setTabText(
