@@ -4,12 +4,29 @@
       <br> <img src="src/resources/icons/a.ico" alt="Logo" width="140" height="140">
    </p>
 </h1>
-<p>
-   Implementation of a basic multilayer perceptron using C++ without any external libraries.
-   <br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Qt_logo_2016.svg/2560px-Qt_logo_2016.svg.png" alt="Qt" align="center" height="30">
- framework is used for GUI, project is written according to MVC design pattern.
-</p>
-<h2>Features 🤯</h2>
+
+Implementation of a basic multilayer perceptron using C++ without any external libraries. Qt framework is used for GUI, project is written according to MVC design pattern. The project is a part of the School 21 curriculum.
+
+## Table of Contents
+
+- [About](#about)
+   - [Features](#features)
+- [Getting Started](#getting-started)
+   - [Prerequisites](#prerequisites)
+   - [Installing](#installing)
+- [Running the tests](#running-the-tests)
+- [Usage](#usage)
+- [Built Using](#built-using)
+- [Authors](#authors)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
+
+## About
+
+This project is a basic implementation of a multilayer perceptron. It allows to train and test the model on a given dataset. The project is written in C++ without any external libraries. The GUI is implemented using the Qt framework. The project is written according to the MVC design pattern.
+
+### Features
+
 <ul>
    <li>Learning on given training dataset using cross-validation
       <img src="materials/README/Training.png" alt="">
@@ -39,27 +56,81 @@
    <li>Testing trained model on testing dataset 
       <img src="materials/README/TestingInProgress.png" alt="">
 </ul>
-<h2>Installation ⚙️</h2>
-<pre>
-   <code>
-   make install
-   </code>
-</pre>
-<p>And that's it! Compiled application will be located in the <i>bin</i> directory. </p>
-<p>On MacOS it will also be located in Launchpad for ease of use. </p>
-<p>On Windows... Well, we are working on it! </p>
-<h2>Requirements ☑️</h2>
-<ul>
-   <li> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/ISO_C%2B%2B_Logo.svg/1822px-ISO_C%2B%2B_Logo.svg.png" alt="Qt" align="center" height="36"> C++17
-   <li> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Qt_logo_2016.svg/2560px-Qt_logo_2016.svg.png" alt="Qt" align="center" height="30"> Qt6.5.0
-</ul>
-<h2>TODO 👨‍💻</h2>
-<ul>
-   <li> Support any dataset by using mapping
-   <li> Change pen's color for different datasets 
-   <li> Create both portable and installable applications for Windows 
-</ul>
-<h2>Acknowledgements 🙇</h2>
-<ul>
-   <li> <a href="https://youtu.be/bW4dKxtUFpg">Dmitriy Korobchenko</a> for video explaining maths behind back propagation algorithm
-</ul>
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+What things you need to install the software and how to install them.
+
+```text
+cmake >= 3.10
+gcc >= 7.5.0
+Qt >= 6.5.0
+```
+
+```bash
+sudo apt-get install cmake
+sudo apt-get install gcc
+sudo apt-get install qt6-base-dev
+```
+
+### Installing
+
+A step by step series of examples that tell you how to get a development env running.
+
+Clone the repository.
+
+```bash
+git clone
+
+cd MonitoringSystem
+```
+
+Run the Makefile with the following command:
+
+```bash
+make install
+```
+
+## Running the tests
+
+Explain how to run the automated tests for this system.
+
+```bash
+make test
+```
+
+## Usage
+
+To run the project, execute the following command:
+
+```bash
+./SimpleMLP
+```
+
+## Built Using
+
+- [C++](https://en.cppreference.com/w/) - Programming language
+- [CMake](https://cmake.org/) - Build system
+- [Qt](https://doc.qt.io/qt-5/qtwidgets-index.html) - GUI framework
+- [Google Test](https://google.github.io/googletest/) - Testing framework
+
+## Authors
+
+This project was developed by:
+
+| <img src="https://avatars.githubusercontent.com/u/88089961?v=4" alt="drawing" width="50"/> |[LudwigAndreas](https://github.com/LudwigAndreas)|
+| --- | --- |
+| <img src="https://avatars.githubusercontent.com/u/57820208?s=60&v=4" alt="drawing" width="50"/> | [AndrefHub](https://github.com/AndrefHub) |
+
+## Acknowledgements
+
+- [School 21](https://21-school.ru/) - Educational institution.
+- [Dmitriy Korobchenko](https://youtu.be/bW4dKxtUFpg) for video explaining maths behind back propagation algorithm.
+
+## License
+
+This project is licensed under the School 21 License - see the [LICENSE](LICENSE) file for details.
